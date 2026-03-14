@@ -12,12 +12,15 @@
 		width:100%;
 		text-align: center;
 		align-content: center;
-		color: white;
+		color: black;
 		pointer-events: none;
 		font-family: 'Courier New', Courier, monospace;
 	}
 	body{
 		overflow: hidden;
+		background-color: white;
+		padding: 0;
+		margin:0
 	}
 </style>
 
@@ -56,10 +59,26 @@
 
 	}
 
-
+	let releaseDate = new Date ("April 21, 2026 00:00:00").getTime()
 	setInterval(()=>{
-		var time = new Date()
-		timer.textContent = time.toLocaleTimeString() 
+		var distance = releaseDate - (new Date().getTime());
+
+		var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+		var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+		
+		if (hours < 10){
+			hours = "0" + hours
+		}
+		if (minutes < 10){
+			minutes = "0" + minutes
+		}
+		if (seconds < 10){
+			seconds = "0" + seconds
+		}
+
+		timer.textContent = days + ":" + hours + ":" + minutes + ":" + seconds ;
 	},1000)
 
 
