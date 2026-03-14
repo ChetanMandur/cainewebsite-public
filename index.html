@@ -1,0 +1,73 @@
+<style>
+	canvas{
+		width: 100%;
+		height: 100%;
+		/* object-fit:cover; */
+	}
+
+	.canvasText{
+		position: absolute;
+		top:0;
+		height:100%;
+		width:100%;
+		text-align: center;
+		align-content: center;
+		color: white;
+		pointer-events: none;
+		font-family: 'Courier New', Courier, monospace;
+	}
+	body{
+		overflow: hidden;
+	}
+</style>
+
+
+
+
+<body>
+	<canvas id="canvas" >
+		
+	</canvas>
+	<h1 class="canvasText" id = "timer">
+	</h1>
+	<video id="video" src="./public/test.webm" controls autoplay hidden  loop></video>
+</body>
+
+
+
+<script>
+	var video = document.getElementById("video")
+	var canvas = document.getElementById("canvas")
+	var canvasContext = canvas.getContext("2d")
+	var video = document.getElementById("video")
+
+	var timer = document.getElementById("timer")
+
+	
+	canvas.addEventListener("click", ()=>{
+		video.play()
+	})
+
+
+
+	function paintCanvas(){
+		canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
+		requestAnimationFrame(()=>{paintCanvas()})
+
+	}
+
+
+	setInterval(()=>{
+		var time = new Date()
+		timer.textContent = time.toLocaleTimeString() 
+	},1000)
+
+
+	requestAnimationFrame(()=>{paintCanvas()})
+	
+
+
+	
+
+	
+</script>
