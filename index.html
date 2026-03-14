@@ -2,25 +2,39 @@
 	canvas{
 		width: 100%;
 		height: 100%;
-		/* object-fit:cover; */
+		object-fit:cover;
 	}
-
-	.canvasText{
+	.content{
+		display: flex;
 		position: absolute;
 		top:0;
-		height:100%;
+		left:0;
 		width:100%;
-		text-align: center;
-		align-content: center;
-		color: black;
+		height: 100%;
+
+		justify-content: center;
+		align-items: center;
 		pointer-events: none;
+	}
+	.timer{
+		width:fit-content;
+		height:fit-content;
 		font-family: 'Courier New', Courier, monospace;
+
+	}
+	.muteButton{
+		position: absolute;
+		right:0;
+		bottom:0;
+		width:3%;
+		height:5%;
+		
 	}
 	body{
 		overflow: hidden;
 		background-color: white;
 		padding: 0;
-		margin:0
+		margin:0;
 	}
 </style>
 
@@ -28,12 +42,13 @@
 
 
 <body>
-	<canvas id="canvas" >
-		
-	</canvas>
-	<h1 class="canvasText" id = "timer">
-	</h1>
-	<video id="video" src="./public/test.webm" controls autoplay hidden  loop></video>
+	<canvas id="canvas" ></canvas>
+	 <div class="content">
+		<h1 class="timer" id="timer"></h1>
+		<img class="muteButton" src="https://www.svgrepo.com/show/506727/mute.svg" id="muteButton" alt="mute">
+	 </div>
+	<video id="video" src="./public/test.webm"  autoplay hidden muted loop playsinline></video>
+	<h1>hi</h1>
 </body>
 
 
@@ -45,13 +60,17 @@
 	var video = document.getElementById("video")
 
 	var timer = document.getElementById("timer")
+	var muteButton = document.getElementById("muteButton")
 
-	
 	canvas.addEventListener("click", ()=>{
-		video.play()
+		video.muted = !video.muted
+		if (video.muted){
+			muteButton.src = "https://www.svgrepo.com/show/506727/mute.svg"
+		}
+		else{
+			muteButton.src = "https://www.svgrepo.com/show/506778/volume-up.svg"
+		}
 	})
-
-
 
 	function paintCanvas(){
 		canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
@@ -60,7 +79,8 @@
 	}
 
 	let releaseDate = new Date ("April 21, 2026 00:00:00").getTime()
-	setInterval(()=>{
+
+	function updateTimer(){
 		var distance = releaseDate - (new Date().getTime());
 
 		var days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -79,14 +99,14 @@
 		}
 
 		timer.textContent = days + ":" + hours + ":" + minutes + ":" + seconds ;
-	},1000)
+		requestAnimationFrame(()=>{updateTimer()})
+	}
 
 
-	requestAnimationFrame(()=>{paintCanvas()})
-	
+	requestAnimationFrame(()=>{
+		video.play()
+		paintCanvas()
+		updateTimer()
+	})
 
-
-	
-
-	
 </script>
