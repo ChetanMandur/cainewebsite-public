@@ -4,7 +4,8 @@
 		padding:0;
 		margin:0;
 		overflow-x:hidden;
-		color:black
+		color:black;
+		overflow-y:hidden;
 	}
 	
 	.section{
@@ -13,6 +14,7 @@
 		display: flex;
 		position: relative;
 		background-color: black;
+		overflow: hidden;
 	}
 	.section * { 
 		position: absolute;
@@ -43,6 +45,7 @@
 		-webkit-user-drag: none;
 		font-family: monospace;
 		white-space: nowrap;
+		user-select: none;
 	}
 </style>
 
@@ -117,18 +120,54 @@
 	var firstSection = document.getElementById("firstSection")
 	var secondSection = document.getElementById("secondSection")
 
-	var lastScroll = 0
-	document.addEventListener("scroll", (event)=>{
-		if (window.scrollY >= lastScroll){
-			secondSection.scrollIntoView({behavior:"smooth", block:"start"})
+	function scrollUp(){
+		firstSection.scrollIntoView({behavior:"smooth", block:"start"})
+	}
 
-		}
-		else if (window.scrollY < lastScroll){
-			firstSection.scrollIntoView({behavior:"smooth", block:"start"})
+	function scrollDown(){
+		secondSection.scrollIntoView({behavior:"smooth", block:"start"})
 
+	}
+
+	document.addEventListener("wheel",(event)=>{
+		event.stopPropagation()
+		if (event.deltaY > 0){
+			scrollDown()
 		}
-		lastScroll = window.scrollY
+		else if (event.deltaY < 0){
+			scrollUp()
+		}
 	})
+
+	var lastScroll = 0
+	document.addEventListener("pointermove", (event)=>{
+		pointerDown = (event.buttons == 1) || (event.pressure > 0)
+
+		if ((lastScroll < event.offsetY) && pointerDown){
+			scrollUp()
+		}
+		else if ((lastScroll > event.offsetY) && pointerDown){
+			scrollDown()
+		}
+
+		lastScroll = event.offsetY
+	})
+
+	document.addEventListener("keydown", (event)=>{
+		console.log(event.key, event.shiftKey,)
+		upPressed = (event.key == "ArrowUp") || (event.key == "PageUp") || (event.key == "Home") || ((event.key == " " && event.shiftKey))
+		downPressed = (event.key == "ArrowDown") || (event.key == "PageDown") || (event.key == "End") || ((event.key == " " && !event.shiftKey))
+
+		if (upPressed){
+			scrollUp()
+		}
+		else if (downPressed){
+			scrollDown()
+		}
+
+	})
+
+	doc
 </script>
 
 <!-- Timer Script -->
