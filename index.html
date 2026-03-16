@@ -225,19 +225,14 @@
 		}
 	}
 
-	var lastWheel = 0
 	document.addEventListener("wheel",(event)=>{
-
-		wheelStopped = lastWheel == 0
 		event.stopPropagation()
-		if ((event.deltaY > 0) && wheelStopped){
+		if (event.deltaY > 0){
 			scrollDown()
 		}
-		else if ((event.deltaY < 0) && wheelStopped){
+		else if (event.deltaY < 0){
 			scrollUp()
 		}
-
-		lastWheel = event.deltaY
 	})
 
 	var lastScroll = 0
