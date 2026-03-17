@@ -176,6 +176,12 @@
 			});
 		}
 
+		function toTheCenter(sectionPart){
+			sectionPart.forEach(element=>{
+				element.style.top="0%"
+			})
+		}
+
 		function toTheBottom(sectionPart){
 			sectionPart.forEach(element => {
 				element.style.top="100%"
@@ -184,41 +190,36 @@
 
 		switch (currentSection) {
 			case 0:
-				sections[0].style.top="0%"
-
+				toTheCenter(sections.slice(0,1))
 				toTheBottom(sections.slice(1))
 				break;
 			case 1:
-				sections[0].style.top="0%"
-				sections[1].style.top="0%"
-
+				toTheCenter(sections.slice(0,2))
 				toTheBottom(sections.slice(2))
 
 				break;
 			case 2:
 				toTheTop(sections.slice(0,2))
-				sections[2].style.top="0%"
+				toTheCenter(sections.slice(2,3))
 				toTheBottom(sections.slice(3))
 				break;
 
 			case 3:
 				toTheTop(sections.slice(0,2))
-				sections[2].style.top="0%"
-				sections[3].style.top="0%"
+				toTheCenter(sections.slice(2,4))
 				toTheBottom(sections.slice(4))
 
 				break;
 
 			case 4:
 				toTheTop(sections.slice(0,2))
-				sections[2].style.top="0%"
-				sections[3].style.top="0%"
-				sections[4].style.top="0%"
+				toTheCenter(sections.slice(2,5))
 				toTheBottom(sections.slice(5))
 				break;
 			case 5:
 				toTheTop(sections.slice(0,5))
-				sections[5].style.top="0%"
+				toTheCenter(sections.slice(5,6))
+
 				break;
 			default:
 				break;
