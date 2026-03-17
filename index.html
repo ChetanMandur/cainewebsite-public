@@ -34,7 +34,7 @@
 	.section canvas{
 		width: 100%;
 		height: 100%;
-		object-fit:fill;
+		object-fit:cover;
 	}
 	.section .muteButton{
 		right:0;
@@ -151,7 +151,7 @@
 	function scrollUp(){
 		if (currentSection >0){
 			currentSection--
-			console.log(currentSection)
+			// console.log(currentSection)
 
 		}
 		scrollCaseHandler()
@@ -160,7 +160,7 @@
 	function scrollDown(){
 		if (currentSection < sectionsSize-1){
 			currentSection++
-			console.log(currentSection)
+			// console.log(currentSection)
 		}
 		scrollCaseHandler()
 
@@ -235,20 +235,51 @@
 		}
 	})
 
-	var lastScroll = 0
-	document.addEventListener("pointermove", (event)=>{
-		pointerDown = (event.buttons == 1) || (event.pressure > 0)
+	// var lastScroll = 0
+	// document.addEventListener("pointermove", (event)=>{
+	// 	pointerDown = (event.buttons == 1) || (event.pressure > 0)
 
-		if ((lastScroll < event.offsetY) && pointerDown){
-			scrollUp()
-		}
-		else if ((lastScroll > event.offsetY) && pointerDown){
-			scrollDown()
-		}
+	// 	if ((lastScroll < event.offsetY) && pointerDown){
+	// 		scrollUp()
+	// 	}
+	// 	else if ((lastScroll > event.offsetY) && pointerDown){
+	// 		scrollDown()
+	// 	}
 
-		lastScroll = event.offsetY
+	// 	lastScroll = event.offsetY
+	// })
+
+	document.addEventListener("pointerdown", (event)=>{
+		event.preventDefault()
+		var pointerDownPosition = event.offsetY
+		var pointerMovePosition = 0
+		console.log("pointerDown", pointerDownPosition)
+
+		function pointerMove (event) {
+			event.preventDefault()
+
+			pointerMovePosition = event.offsetY - pointerDownPosition
+			console.log("pointerMove", pointerMovePosition)
+		}
+		document.addEventListener("pointermove", pointerMove)
+
+		document.addEventListener("pointerup", (event)=>{
+			event.preventDefault()
+			console.log("pointerUp", pointerMovePosition)
+			if (pointerMovePosition > 0){
+				scrollUp()	
+
+			}
+			else if (pointerMovePosition < 0){
+				scrollDown()
+
+			}
+
+			document.removeEventListener("pointermove", pointerMove)
+		},{once:true})
+
 	})
-
+	
 	document.addEventListener("keydown", (event)=>{
 		console.log(event.key, event.shiftKey,)
 		upPressed = (event.key == "ArrowUp") || (event.key == "PageUp") || (event.key == "Home") || ((event.key == " " && event.shiftKey))
