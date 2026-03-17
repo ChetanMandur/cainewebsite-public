@@ -309,7 +309,12 @@
 <script>
 	var timer = document.getElementById("timer")
 
-	let releaseDate = new Date ("April 21, 2026 00:00:00").getTime()
+	// let releaseDate = new Date ("April 21, 2026 00:00:00").getTime()
+	
+	let currentDate = new Date()
+	let releaseDate = currentDate.setSeconds(currentDate.getSeconds() + 1)
+
+	let timerAnimationID = null
 
 	function updateTimer(){
 		var distance = releaseDate - (new Date().getTime());
@@ -320,6 +325,9 @@
 		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 		var milliseconds = Math.floor((distance % (1000)));
 		
+		if (days < 10){
+			days = "0" + days
+		}
 		
 		if (hours < 10){
 			hours = "0" + hours
@@ -331,8 +339,6 @@
 			seconds = "0" + seconds
 		}
 
-
-
 		if (milliseconds < 10){
 			milliseconds = "0"+ "0" + milliseconds
 		}
@@ -341,11 +347,18 @@
 		}
 
 		timer.textContent = days + ":" + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-		requestAnimationFrame(()=>{updateTimer()})
+
+		if (distance <= 0){
+			console.log("STOP!", distance)
+			timer.textContent = "00" + ":" + "00" + ":" + "00" + ":" + "00" + ":" + "000";
+			cancelAnimationFrame(timerAnimationID)
+		}
+		else{
+			timerAnimationID = requestAnimationFrame(()=>{updateTimer()})
+		}
 	}
 
-
-	requestAnimationFrame(()=>{
+	timerAnimationID= requestAnimationFrame(()=>{
 		updateTimer()
 	})
 
