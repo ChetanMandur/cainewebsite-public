@@ -235,71 +235,60 @@
 		}
 	}
 
-	// function wheelEvent(event){
-	// 	// document.removeEventListener("wheel",wheelEvent)
-	// 	console.log("hit!", event.deltaY)
-	// 	event.stopPropagation()
-	// 	if (event.deltaY > 0){
-	// 		scrollDown()
-	// 	}
-	// 	else if (event.deltaY < 0){
-	// 		scrollUp()
-	// 	}
-	// 	document.removeEventListener("wheel",wheelEvent)
-	// 	setTimeout(()=>{
-	// 		document.addEventListener("wheel", wheelEvent)
-	// 	},600)
-	// }
+	// //Debounce function 1
+	// var scrollTimeoutID 
+	// document.addEventListener("wheel", (event)=>{
+	// 	console.log("wheelevent")
+	// 	clearTimeout(scrollTimeoutID)
+		
+	// 	scrollTimeoutID = setTimeout(()=>{
+	// 		console.log("hit!")
+	// 		if (event.deltaY > 0){
+	// 			scrollDown()
+	// 		}
+	// 		else if (event.deltaY < 0){
+	// 			scrollUp()
+	// 		}
+	// 	},200)
+	// })
 
-	// document.addEventListener("wheel", wheelEvent)
+	// // Debounce function 2
+	// var scrollTimeoutID
+	// var canScroll = true
+	// document.addEventListener("wheel", (event)=>{
+	// 	clearTimeout(scrollTimeoutID)
+	// 	console.log("wheel event")
+	// 	scrollTimeoutID = setTimeout(()=>{
+	// 		canScroll = true
+	// 	},500)
 
-	var isScrolling = true
+	// 	if (canScroll){
+	// 		canScroll = false
+	// 		if (event.deltaY > 0){
+	// 			scrollDown()
+	// 		}
+	// 		else if (event.deltaY < 0){
+	// 			scrollUp()
+	// 		}
+	// 	}
+	// })
+
+	// Throttle function
+	var scrolledDate = 0
 	document.addEventListener("wheel", (event)=>{
-		if ((event.deltaY > 0 || event.deltaY < 0) && !isScrolling){
-			console.log("SCROLL HIT")
-			isScrolling = true
-
+		const date = new Date().getTime()
+		console.log((date - scrolledDate))
+		if ((date - scrolledDate) > 1000){
 			if (event.deltaY > 0){
 				scrollDown()
 			}
 			else if (event.deltaY < 0){
 				scrollUp()
 			}
+			scrolledDate = new Date().getTime()
 		}
-		else if ((event.deltaY == 0)&&( isScrolling)){
-			console.log("SCROLL STOPPED")
-			isScrolling = false
-		}
-		
 
 	})
-	// document.addEventListener("scroll",(event)=>{
-	// 	console.log("hit")
-	// })
-	// document.addEventListener("wheel",(event)=>{
-	// 	// console.log("hit!", event.deltaY)
-	// 	event.stopPropagation()
-	// 	if (event.deltaY > 0){
-	// 		scrollDown()
-	// 	}
-	// 	else if (event.deltaY < 0){
-	// 		scrollUp()
-	// 	}
-	// }, {passive:false})
-
-	// var lastScroll = 0
-	// document.addEventListener("pointermove", (event)=>{
-	// 	pointerDown = (event.buttons == 1) || (event.pressure > 0)
-
-	// 	if ((lastScroll < event.offsetY) && pointerDown){
-	// 		scrollUp()
-	// 	}
-	// 	else if ((lastScroll > event.offsetY) && pointerDown){
-	// 		scrollDown()
-	// 	}
-
-	// 	lastScroll = event.offsetY
-	// })
 
 	document.addEventListener("pointerdown", (event)=>{
 		event.preventDefault()
