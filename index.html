@@ -103,7 +103,7 @@
 
 <body>
 	<div class="overlay" id="overlay">
-		<h1 class="timer" id="timer">hi</h1>
+		<h1 class="timer" id="timer"></h1>
 	</div>
 
 	<div class="sections-container" id="sections-container">
@@ -356,7 +356,21 @@
 	// let releaseDate = new Date ("April 21, 2026 00:00:00").getTime()
 	
 	let currentDate = new Date()
-	let releaseDate = currentDate.setSeconds(currentDate.getSeconds() - 2)
+	let releaseDate = undefined
+
+	async function getReleaseDate(){
+		const releaseDateResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate")
+		if (releaseDateResponse.ok){
+			const result = await releaseDateResponse.json()
+			console.log(result.releaseDate)
+			return result.releaseDate
+		}
+		else{
+			return new Date ("April 21, 2040 00:00:00").getTime()
+		}
+	}
+
+	
 
 	let timerUpdateAnimationID = null
 	function updateTimer(){
@@ -443,10 +457,16 @@
 		}
 	}
 
-	timerUpdateAnimationID= requestAnimationFrame(()=>{
-		updateTimer()
-	})
+	getReleaseDate().then((result)=>{
+		releaseDate = result
+		// releaseDate = currentDate.setSeconds(currentDate.getSeconds() - 2)
 
+	}).finally(()=>{
+			timerUpdateAnimationID= requestAnimationFrame(()=>{
+					updateTimer()
+				})
+		}
+	)
 </script>
 
 <!-- Canvas Script -->
