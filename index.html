@@ -352,8 +352,6 @@
 <!-- Timer Script -->
 <script>
 	var timer = document.getElementById("timer")
-
-	// let releaseDate = new Date ("April 21, 2026 00:00:00").getTime()
 	
 	let currentDate = new Date()
 	let releaseDate = undefined
@@ -438,11 +436,30 @@
 								var youtubeVideoContainer = document.getElementById("youtube-video-container")
 								var youtubeVideo = document.getElementById("youtube-video")
 								
-								youtubeVideo.src = "https://www.youtube.com/embed/5oz-qAt1X4c?si=6A1_gbXzjPPJiAdV"
+								async function getYoutubeLink(){
+									const youtubeLinkResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/youtubeLink")
+									if (youtubeLinkResponse.ok){
+										const result = await youtubeLinkResponse.json()
+										console.log(result.youtubeLink)
+										return result.youtubeLink
+									}
+									else{
+										return "ERROR"
+									}
+								}
 
-								overlay.style.display="none"
-								sectionsContainer.style.display="none"
-								youtubeVideoContainer.style.display="block"
+								getYoutubeLink().then((result)=>{
+									if (result != "ERROR"){
+										youtubeVideo.src = result
+									}
+									else{
+										console.log("not happy")
+									}
+								}).finally(()=>{
+									overlay.style.display="none"
+									sectionsContainer.style.display="none"
+									youtubeVideoContainer.style.display="block"
+								})
 							})
 						}
 					}
@@ -460,7 +477,6 @@
 	getReleaseDate().then((result)=>{
 		releaseDate = result
 		// releaseDate = currentDate.setSeconds(currentDate.getSeconds() - 2)
-
 	}).finally(()=>{
 			timerUpdateAnimationID= requestAnimationFrame(()=>{
 					updateTimer()
