@@ -277,8 +277,8 @@
 	var scrolledDate = 0
 	document.addEventListener("wheel", (event)=>{
 		const date = new Date().getTime()
-		console.log((date - scrolledDate))
-		if ((date - scrolledDate) > 1000){
+		// console.log((date - scrolledDate))
+		if ((date - scrolledDate) > 500){
 			if (event.deltaY > 0){
 				scrollDown()
 			}
@@ -294,19 +294,19 @@
 		event.preventDefault()
 		var pointerDownPosition = event.offsetY
 		var pointerMovePosition = 0
-		console.log("pointerDown", pointerDownPosition)
+		// console.log("pointerDown", pointerDownPosition)
 
 		function pointerMove (event) {
 			event.preventDefault()
 
 			pointerMovePosition = event.offsetY - pointerDownPosition
-			console.log("pointerMove", pointerMovePosition)
+			// console.log("pointerMove", pointerMovePosition)
 		}
 		document.addEventListener("pointermove", pointerMove)
 
 		document.addEventListener("pointerup", (event)=>{
 			event.preventDefault()
-			console.log("pointerUp", pointerMovePosition)
+			// console.log("pointerUp", pointerMovePosition)
 			if (pointerMovePosition > 0){
 				scrollUp()	
 
@@ -322,7 +322,7 @@
 	})
 	
 	document.addEventListener("keydown", (event)=>{
-		console.log(event.key, event.shiftKey,)
+		// console.log(event.key, event.shiftKey,)
 		upPressed = (event.key == "ArrowUp") || (event.key == "PageUp") || (event.key == "Home") || ((event.key == " " && event.shiftKey))
 		downPressed = (event.key == "ArrowDown") || (event.key == "PageDown") || (event.key == "End") || ((event.key == " " && !event.shiftKey))
 
@@ -380,7 +380,7 @@
 		timer.textContent = days + ":" + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
 
 		if (distance <= 0){
-			console.log("STOP!", distance)
+			// console.log("STOP!", distance)
 			timer.textContent = "00" + ":" + "00" + ":" + "00" + ":" + "00" + ":" + "000";
 			cancelAnimationFrame(timerAnimationID)
 		}
