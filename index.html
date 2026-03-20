@@ -345,8 +345,9 @@
 	let currentDate = new Date()
 	let releaseDate = currentDate.setSeconds(currentDate.getSeconds() + 2)
 
-	let timerAnimationID = null
+	
 
+	let timerUpdateAnimationID = null
 	function updateTimer(){
 		var distance = releaseDate - (new Date().getTime());
 
@@ -382,14 +383,47 @@
 		if (distance <= 0){
 			// console.log("STOP!", distance)
 			timer.textContent = "00" + ":" + "00" + ":" + "00" + ":" + "00" + ":" + "000";
-			cancelAnimationFrame(timerAnimationID)
+			cancelAnimationFrame(timerUpdateAnimationID)
+
+			var timerSize = timer.textContent.length
+			var timerDeleteAnimationId = null
+			function deleteTimerText(){
+				if (timerSize >= 0){
+					timer.textContent = timer.textContent.slice(0,timerSize)
+					timerSize--
+				}
+				else{
+					clearInterval(timerDeleteAnimationId)
+
+					var timerNewText = "ENTER"
+					var timerNewTextCurrentIndex = 0
+					var timerReplaceAnimationID = null
+					function replaceTimerText(){
+						if (timerNewTextCurrentIndex <= timerNewText.length){
+							timer.textContent = timerNewText.slice(0,timerNewTextCurrentIndex)
+							timerNewTextCurrentIndex++
+						}
+						else{
+							clearInterval(timerReplaceAnimationID)
+							timer.style.pointerEvents= "visibleFill"
+							timer.style.cursor = "pointer"
+							timer.addEventListener("pointerdown",()=>{
+								alert("hello")
+							})
+						}
+					}
+					timerReplaceAnimationID = setInterval(()=>{replaceTimerText()},500)
+				}
+			}
+			timerDeleteAnimationId=setInterval(()=>{deleteTimerText()},200)
+
 		}
 		else{
-			timerAnimationID = requestAnimationFrame(()=>{updateTimer()})
+			timerUpdateAnimationID = requestAnimationFrame(()=>{updateTimer()})
 		}
 	}
 
-	timerAnimationID= requestAnimationFrame(()=>{
+	timerUpdateAnimationID= requestAnimationFrame(()=>{
 		updateTimer()
 	})
 
