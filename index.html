@@ -63,6 +63,7 @@
 <style>
 	.secondSection{
 		background-color: transparent;
+		z-index: 999;
 	}
 
 	.secondSection *{
@@ -127,6 +128,16 @@
 
 		<div id="secondSection" class="section secondSection">
 		</div>
+
+		<div class="section">
+			<video src="./public/test2.webm"  autoplay hidden muted loop playsinline></video>
+			<canvas></canvas>
+		</div>
+		<div class="section">
+			<video src="./public/test2.webm"  autoplay hidden muted loop playsinline></video>
+			<canvas></canvas>
+		</div>
+
 		<div class="section">
 			<h1 style = "top:40%; left:20%">LIE</h1>
 		</div>
@@ -139,10 +150,7 @@
 		<div class="section">
 			<img src="./public/test.JPG" style="width: 100%;height: 100%;object-fit: cover;">
 		</div>
-		<div class="section">
-			<video src="./public/test2.webm"  autoplay hidden muted loop playsinline></video>
-			<canvas></canvas>
-		</div>
+		
 	</div>
 
 	<div class="youtube-video-container" id="youtube-video-container" >
@@ -183,61 +191,88 @@
 		if (forcedSection!= null){
 			currentSection = forcedSection
 		}
-		function toTheTop(sectionPart){
-			sectionPart.forEach(element => {
-				element.style.top="-100%"
+
+		console.log(currentSection)
+
+		function toTheTop(index){
+			sections[index].style.top="-100%"
+		}
+
+		function toTheCenter(index){
+			sections[index].style.top="0%"
+		}
+
+		function toTheBottom(index){
+			sections[index].style.top="100%"
+		}
+
+		function chunkToTheTop(start, end){
+			sections.slice(start,end).forEach((element, index) => {
+				toTheTop(start+index)
 			});
 		}
 
-		function toTheCenter(sectionPart){
-			sectionPart.forEach(element=>{
-				element.style.top="0%"
+		function chunkToTheCenter(start, end){
+			sections.slice(start,end).forEach((element, index)=>{
+				toTheCenter(start+index)
 			})
 		}
 
-		function toTheBottom(sectionPart){
-			sectionPart.forEach(element => {
-				element.style.top="100%"
+		function chunkToTheBottom(start, end){
+			sections.slice(start,end).forEach((element, index) => {
+				toTheBottom(start+index)
 			});
 		}
 
+		
+
 		switch (currentSection) {
 			case 0:
-				toTheCenter(sections.slice(0,1))
-				toTheBottom(sections.slice(1))
+				chunkToTheCenter(0,1)
+				chunkToTheBottom(1)
 				break;
 			case 1:
-				toTheCenter(sections.slice(0,2))
-				toTheBottom(sections.slice(2))
+				chunkToTheCenter(0,2)
+				chunkToTheBottom(2)
 
 				break;
+			
 			case 2:
-				toTheTop(sections.slice(0,2))
-				toTheCenter(sections.slice(2,3))
-				toTheBottom(sections.slice(3))
+				chunkToTheTop(0,1)
+				chunkToTheCenter(1,3)
+				chunkToTheBottom(3)
 				break;
 
 			case 3:
-				toTheTop(sections.slice(0,2))
-				toTheCenter(sections.slice(2,4))
-				toTheBottom(sections.slice(4))
-
+				chunkToTheTop(0,3)
+				toTheCenter(1)
+				toTheCenter(3)
+				chunkToTheBottom(4)
 				break;
-
+			
 			case 4:
-				toTheTop(sections.slice(0,2))
-				toTheCenter(sections.slice(2,5))
-				toTheBottom(sections.slice(5))
+				chunkToTheTop(0,4)
+				chunkToTheCenter(4,5)
+				chunkToTheBottom(5)
 				break;
-			// case 5:
-			// 	toTheTop(sections.slice(0,5))
-			// 	toTheCenter(sections.slice(5,6))
-			// 	toTheBottom(sections.slice(6,6))
-			// 	break;
+
+			case 5:
+				chunkToTheTop(0,4)
+				chunkToTheCenter(4,7)
+				chunkToTheBottom(6)
+				break;
+
+			case 6:
+				chunkToTheTop(0,4)
+				chunkToTheCenter(4,7)
+				chunkToTheBottom(7)
+				break;
+
+
 			default:
-				toTheTop(sections.slice(0,currentSection))
-				toTheCenter(sections.slice(currentSection,currentSection+1))
-				toTheBottom(sections.slice(currentSection+1,sections.length))
+				chunkToTheTop(0,currentSection)
+				chunkToTheCenter(currentSection, currentSection+1)
+				chunkToTheBottom(currentSection+1)
 				break;
 		}
 	}
