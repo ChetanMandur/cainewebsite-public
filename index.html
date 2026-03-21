@@ -120,8 +120,8 @@
 
 	<div class="sections-container" id="sections-container">
 		<div id="firstSection" class="section firstSection">
-			<video id="video" src="./public/test.webm"  autoplay hidden muted loop playsinline></video>
-			<canvas id="canvas" ></canvas>
+			<video src="./public/test.webm"  autoplay hidden muted loop playsinline></video>
+			<canvas></canvas>
 		</div>
 
 		<div id="secondSection" class="section secondSection">
@@ -166,7 +166,8 @@
 			<img src="./public/test.JPG" style="width: 100%;height: 100%;object-fit: cover;">
 		</div>
 		<div class="section">
-			<h1>YOOOOOOOOOOO</h1>
+			<video src="./public/test2.webm"  autoplay hidden muted loop playsinline></video>
+			<canvas></canvas>
 		</div>
 	</div>
 
@@ -508,20 +509,29 @@
 
 <!-- Canvas Script -->
 <script>
-	var video = document.getElementById("video")
-	var canvas = document.getElementById("canvas")
-	var canvasContext = canvas.getContext("2d")
+	var videos = Array.from(document.getElementsByTagName("video"))
+	var canvases = Array.from(document.getElementsByTagName("canvas"))
 
-	function paintCanvas(){
-		canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
-		requestAnimationFrame(()=>{paintCanvas()})
+	if (videos.length == canvases.length){
+		for (var i=0; i<videos.length;i++){
+			const video = videos[i]
+			const canvas = canvases[i]
+			const canvasContext = canvas.getContext("2d")
+			video.play()
 
+			function paintCanvas(video,canvas){
+				canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
+				requestAnimationFrame(()=>paintCanvas(video,canvas))
+			}
+
+			requestAnimationFrame(()=>{paintCanvas(video, canvas)})
+		}
+	}
+	else{
+		console.log("woahwoahwoah....woah")
 	}
 
-	requestAnimationFrame(()=>{
-		video.play()
-		paintCanvas()
-	})
+
 </script>
 
 <!-- Bottom Animations -->
