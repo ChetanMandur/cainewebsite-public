@@ -89,6 +89,7 @@
 		font-family: monospace;
 		opacity: 50%;
 		color: white;
+		background-color: black;
 	}
 </style>
 
@@ -125,33 +126,6 @@
 		</div>
 
 		<div id="secondSection" class="section secondSection">
-			<h1 style="top:50%;left:50%;color:white">hello world</h1>
-
-			<h1 class="bottomChangingText"  style="top:80%;left:10%;color:white"></h1>
-			<h1 class="bottomChangingText" style="top:50%;left:20%;color:white"></h1>
-			<h1 class="bottomChangingText" style="top:20%;left:50%;color:white"></h1>
-			<h1 class="bottomChangingText" style="top:70%;left:80%;color:white"></h1>
-
-			<h1 class="bottomChangingText"  style="top:00%;left:10%;color:white"></h1>
-			<h1 class="bottomChangingText" style="top:20%;left:20%;color:white"></h1>
-			<h1 class="bottomChangingText" style="top:90%;left:50%;color:white"></h1>
-			<h1 class="bottomChangingText" style="top:10%;left:80%;color:white"></h1>
-
-			<h1 class="bottomChangingNumber" style="top:60%;left:20%;color:white"></h1>
-			<h1 class="bottomChangingNumber"  style="top:90%;left:0%;color:white"></h1>
-			<h1 class="bottomChangingNumber" style="top:30%;left:50%;color:white"></h1>
-			<h1 class="bottomChangingNumber" style="top:90%;left:80%;color:white"></h1>
-
-			<h1 class="bottomChangingNumber"  style="top:40%;left:10%;color:white"></h1>
-			<h1 class="bottomChangingNumber" style="top:30%;left:20%;color:white"></h1>
-			<h1 class="bottomChangingNumber" style="top:70%;left:50%;color:white"></h1>
-			<h1 class="bottomChangingNumber" style="top:30%;left:80%;color:white"></h1>
-
-			<img class="doodle1" style="top:10%;left:10%" id="doodle1" src="./public/doodle1.png" alt="">
-			<img class="doodle2" style="top:10%;left:90%" id="doodle2" src="./public/doodle2.png" alt="">
-			<img class="doodle3" style="top:50%;left:5%" id="doodle3" src="./public/doodle3.png" alt="">
-			<img class="doodle4" style="top:40%;left:75%;transform: rotateZ(20deg);" id="doodle4" src="./public/doodle4.png" alt="">
-
 		</div>
 		<div class="section">
 			<h1 style = "top:40%; left:20%">LIE</h1>
@@ -534,20 +508,9 @@
 
 </script>
 
-<!-- Bottom Animations -->
+<!-- Second Section Animations -->
 <script>
-	var bottomTextBoxes = document.getElementsByClassName("bottomChangingText")
-	var bottomTextNumbers = document.getElementsByClassName("bottomChangingNumber")
-
-	setInterval(()=>{
-		var eyeball = document.getElementById("doodle4")
-
-		eyeball.src = "./public/doodle4part2.png"
-		setTimeout(()=>{
-			eyeball.src = "./public/doodle4.png"
-		},500)
-
-	},3000)
+	const secondSection = document.getElementById("secondSection")
 
 	const arrayOfWords = [
 		"CAN'T BREAK IT OFF",
@@ -573,26 +536,113 @@
 		"DID I FOLD IT, BABY?"
 	]
 
-	Array.from(bottomTextBoxes).forEach((element)=>{
-				element.textContent = arrayOfWords[Math.floor(Math.random() * arrayOfWords.length )]
-	})
+	function randomInt(max,min){
+		return (Math.floor(Math.random() * (max - min + 1)) + min)
+	}
 
-	Array.from(bottomTextNumbers).forEach((element)=>{
-				element.textContent = Math.floor(Math.random()*100000000000000000000000)
-	})
+	function moveElement(element,{topMax,topMin}, {leftMax,leftMin}){
+		element.style.top = randomInt(topMax,topMin) + "%"
+		element.style.left = randomInt(leftMax,leftMin) + "%"
 
-	setInterval(()=>{
-		Array.from(bottomTextBoxes).forEach((element)=>{
-				element.textContent = arrayOfWords[Math.floor(Math.random() * arrayOfWords.length )]
-		})
+	}
+
+	// Moving word text
+	for (var i=0; i<50;i++){
+		const newTextBox = document.createElement("h1")
+		const newTextBoxContent = document.createTextNode(arrayOfWords[Math.floor(Math.random() * arrayOfWords.length )])
+		newTextBox.appendChild(newTextBoxContent)
+
+		moveElement(newTextBox, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+
+		secondSection.appendChild(newTextBox)
+
+		setInterval(()=>{
+			newTextBox.textContent = arrayOfWords[Math.floor(Math.random() * arrayOfWords.length )]
+		}, 100)
+
+		setInterval(()=>{
+			moveElement(newTextBox, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+		},500)
+	}
+
+	// Moving number text
+	for (var i=0; i<50;i++){
+		const newTextBox = document.createElement("h1")
+
+		numberMax = 9999999
+		numberMin = 1000000
+		const newTextBoxContent = document.createTextNode(randomInt(numberMax, numberMin) )
+
+		newTextBox.appendChild(newTextBoxContent)
+
+		moveElement(newTextBox, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+
+		secondSection.appendChild(newTextBox)
+
+		setInterval(()=>{
+			newTextBox.textContent = randomInt(numberMax, numberMin) 
+		}, 50)
+
+		setInterval(()=>{
+			moveElement(newTextBox, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+		},1000)
+	}
+
+	// Moving Star 
+	for (var i=0; i<10; i++){
+		for (var j=0; j<4;j++){
+			const newImage = document.createElement("img")
+			secondSection.appendChild(newImage)
+			
+			switch (j) {
+				case 0:
+					newImage.src = "./public/star1.png"
+					break;
+				case 1:
+					newImage.src = "./public/star2.png"
+					break;
+				case 2:
+					newImage.src = "./public/star3.png"
+					break;
+				case 3:
+					newImage.src = "./public/star4.png"
+					break;
+				default:
+					break;
+			}
+			
+			newImage.style.transform = "rotateZ(" + randomInt(359,0) +"deg)"
+			
+			moveElement(newImage, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+
+			setInterval(()=>{
+				moveElement(newImage, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+			},500)
+		}
+	}
+
+	// Moving eyeball
+	for (var i=0; i<10; i++){
+		const newImage = document.createElement("img")
+			secondSection.appendChild(newImage)
+			newImage.src = "./public/doodle4.png"
+
+			newImage.style.transform = "rotateZ(" + randomInt(40,-40) +"deg)"
+
+			moveElement(newImage, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+
+			setInterval(()=>{
+				moveElement(newImage, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+			},3000)
+
+			setInterval(()=>{
+				newImage.src = "./public/doodle4part2.png"
+				setTimeout(()=>{
+					newImage.src = "./public/doodle4.png"
+				},randomInt(600,50))
+
+			},randomInt(3000,1000))
+	}
 
 
-	}, 200)
-
-	setInterval(()=>{
-		Array.from(bottomTextNumbers).forEach((element)=>{
-				element.textContent = Math.floor(Math.random()*100000000000000000)
-		})
-
-	}, 50)
 </script>
