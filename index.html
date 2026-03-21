@@ -122,9 +122,6 @@
 		<div id="firstSection" class="section firstSection">
 			<video id="video" src="./public/test.webm"  autoplay hidden muted loop playsinline></video>
 			<canvas id="canvas" ></canvas>
-			<p class="muteButton" id="muteButton" alt="mute"> Sound On </p>
-			
-			<!-- <img class="muteButton" src="https://www.svgrepo.com/show/506727/mute.svg" id="muteButton" alt="mute"> -->
 		</div>
 
 		<div id="secondSection" class="section secondSection">
@@ -167,6 +164,9 @@
 		</div>
 		<div class="section">
 			<img src="./public/test.JPG" style="width: 100%;height: 100%;object-fit: cover;">
+		</div>
+		<div class="section">
+			<h1>YOOOOOOOOOOO</h1>
 		</div>
 	</div>
 
@@ -254,12 +254,15 @@
 				toTheCenter(sections.slice(2,5))
 				toTheBottom(sections.slice(5))
 				break;
-			case 5:
-				toTheTop(sections.slice(0,5))
-				toTheCenter(sections.slice(5,6))
-
-				break;
+			// case 5:
+			// 	toTheTop(sections.slice(0,5))
+			// 	toTheCenter(sections.slice(5,6))
+			// 	toTheBottom(sections.slice(6,6))
+			// 	break;
 			default:
+				toTheTop(sections.slice(0,currentSection))
+				toTheCenter(sections.slice(currentSection,currentSection+1))
+				toTheBottom(sections.slice(currentSection+1,sections.length))
 				break;
 		}
 	}
@@ -509,25 +512,11 @@
 	var canvas = document.getElementById("canvas")
 	var canvasContext = canvas.getContext("2d")
 
-	var muteButton = document.getElementById("muteButton")
-
 	function paintCanvas(){
 		canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
 		requestAnimationFrame(()=>{paintCanvas()})
 
 	}
-
-	muteButton.addEventListener("click", ()=>{
-		video.muted = !video.muted
-		if (video.muted){
-			// muteButton.src = "https://www.svgrepo.com/show/506727/mute.svg"
-			muteButton.textContent = "Sound On"
-		}
-		else{
-			// muteButton.src = "https://www.svgrepo.com/show/506778/volume-up.svg"
-			muteButton.textContent = "Sound Off"
-		}
-	})
 
 	requestAnimationFrame(()=>{
 		video.play()
