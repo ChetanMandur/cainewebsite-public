@@ -97,7 +97,19 @@
 		width:100%;
 		height:100%;
 		background-color: black;
-		color:white
+		color:white;
+		display: none;
+	}
+</style>
+
+<style>
+	.error-container{
+		width:100%;
+		height:100%;
+		background-color: black;
+		color:white;
+		display: none;
+
 	}
 </style>
 
@@ -158,8 +170,12 @@
 		</div>
 	</div>
 
-	<div class="youtube-video-container" id="youtube-video-container" style="display:none">
+	<div class="youtube-video-container" id="youtube-video-container" >
 		<iframe id="youtube-video" width="100%" height="100%" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+	</div>
+
+	<div class="error-container" id="error-container">
+		you shouldn't be here
 	</div>
 </body>
 
@@ -353,7 +369,6 @@
 <script>
 	var timer = document.getElementById("timer")
 	
-	let currentDate = new Date()
 	let releaseDate = undefined
 
 	async function getReleaseDate(){
@@ -361,7 +376,7 @@
 		if (releaseDateResponse.ok){
 			const result = await releaseDateResponse.json()
 			console.log(result.releaseDate)
-			return result.releaseDate
+			return new Date(new Date(result.year, result.month, result.day, result.hours, result.minutes, result.seconds).toLocaleString("en-US", {timeZone: "America/New_York"}))
 		}
 		else{
 			return new Date ("April 21, 2040 00:00:00").getTime()
@@ -435,6 +450,7 @@
 								var sectionsContainer = document.getElementById("sections-container")
 								var youtubeVideoContainer = document.getElementById("youtube-video-container")
 								var youtubeVideo = document.getElementById("youtube-video")
+								var errorContainer = document.getElementById("error-container")
 								
 								async function getYoutubeLink(){
 									const youtubeLinkResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/youtubeLink")
@@ -451,14 +467,14 @@
 								getYoutubeLink().then((result)=>{
 									if (result != "ERROR"){
 										youtubeVideo.src = result
+										youtubeVideoContainer.style.display="block"
 									}
 									else{
 										console.log("not happy")
+										errorContainer.style.display="block"
 									}
-								}).finally(()=>{
 									overlay.style.display="none"
 									sectionsContainer.style.display="none"
-									youtubeVideoContainer.style.display="block"
 								})
 							})
 						}
@@ -476,6 +492,8 @@
 
 	getReleaseDate().then((result)=>{
 		releaseDate = result
+
+		// let currentDate = new Date()
 		// releaseDate = currentDate.setSeconds(currentDate.getSeconds() - 2)
 	}).finally(()=>{
 			timerUpdateAnimationID= requestAnimationFrame(()=>{
