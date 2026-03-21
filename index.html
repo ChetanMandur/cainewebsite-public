@@ -71,6 +71,12 @@
 	}
 </style>
 
+<style>
+	.final-section {
+		background-image: url("./public/cainelogo.png");
+	}
+</style>
+
 <!-- Overlay Styles -->
 <style>
 	.overlay{
@@ -128,29 +134,40 @@
 
 		<div id="secondSection" class="section secondSection">
 		</div>
-
 		<div class="section">
-			<video src="./public/test2.webm"  autoplay hidden muted loop playsinline></video>
+			<video src="./public/wc1.webm"  autoplay hidden muted loop playsinline></video>
 			<canvas></canvas>
 		</div>
 		<div class="section">
-			<video src="./public/test2.webm"  autoplay hidden muted loop playsinline></video>
+			<video src="./public/wc2.webm"  autoplay hidden muted loop playsinline></video>
 			<canvas></canvas>
 		</div>
+		<div class="section">
+			<video src="./public/wc3.webm"  autoplay hidden muted loop playsinline></video>
+			<canvas></canvas>
+			<h1 style = "top:40%; left:20%; z-index: 1000; background-color: red; font-size: xxx-large;">LIE</h1>
 
-		<div class="section">
-			<h1 style = "top:40%; left:20%">LIE</h1>
-		</div>
-		<div class="section" style="background-color: transparent;">
-			<h1 style = "top:60%; left:50%">2</h1>
-		</div>
-		<div class="section" style="background-color: transparent;">
-			<h1 style = "top:40%; left:70%">ME</h1>
 		</div>
 		<div class="section">
-			<img src="./public/test.JPG" style="width: 100%;height: 100%;object-fit: cover;">
+			<video src="./public/wc4.webm"  autoplay hidden muted loop playsinline></video>
+			<canvas></canvas>
+			<div style="width: 100%; height:100%;top:0;left:0;background-color: black;opacity: 0.4;"></div>
+
+			<h1 style = "top:60%; left:50%; z-index: 1000; background-color: red; font-size: xxx-large;">2</h1>
+
 		</div>
-		
+		<div class="section">
+			<video src="./public/l2m_mute.mp4"  autoplay hidden muted loop playsinline></video>
+			<canvas></canvas>
+			<h1 style = "top:40%; left:70%; z-index: 1000; background-color: red; font-size: xxx-large;">ME</h1>
+		</div>
+		<div class="section">
+			<video src="./public/wdywb_mute.mp4"  autoplay hidden muted loop playsinline></video>
+			<canvas></canvas>
+		</div>
+		<div class="section final-section" >
+			<!-- <img src="./public/cainelogo.png" alt="Caine Logo" style="width: 100%;height: 100%;object-fit: none;"> -->
+		</div>
 	</div>
 
 	<div class="youtube-video-container" id="youtube-video-container" >
@@ -252,18 +269,23 @@
 			
 			case 4:
 				chunkToTheTop(0,4)
+				toTheCenter(1)
 				chunkToTheCenter(4,5)
 				chunkToTheBottom(5)
 				break;
 
 			case 5:
 				chunkToTheTop(0,4)
+				toTheCenter(1)
+
 				chunkToTheCenter(4,7)
 				chunkToTheBottom(6)
 				break;
 
 			case 6:
 				chunkToTheTop(0,4)
+				toTheCenter(1)
+
 				chunkToTheCenter(4,7)
 				chunkToTheBottom(7)
 				break;
