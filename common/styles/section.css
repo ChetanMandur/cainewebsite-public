@@ -1,0 +1,33 @@
+/* Section Styles */
+.sections-container{
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.section{
+    width:100%;
+    height:100%;
+    display: flex;
+    position: absolute;
+    background-color: black;
+    overflow: hidden;
+    transition: 0.5s;
+    top:100%;
+}
+
+.section > * { 
+    position: absolute;
+    -webkit-user-drag: none;
+    font-family: monospace;
+    white-space: nowrap;
+    user-select: none;
+    color: white;
+}
+
+.section > canvas{
+    width: 100%;
+    height: 100%;
+    object-fit:cover;
+}
