@@ -73,7 +73,8 @@
 
 <style>
 	.final-section {
-		background-image: url("./public/cainelogo.png");
+		background-image: url("./assets/images/cainelogo.png");
+		background-position: top;
 	}
 </style>
 
@@ -128,22 +129,22 @@
 
 	<div class="sections-container" id="sections-container">
 		<div id="firstSection" class="section firstSection">
-			<video src="./public/test.webm"  autoplay hidden muted loop playsinline></video>
+			<video src="./assets/videos/test.webm"  autoplay hidden muted loop playsinline></video>
 			<canvas></canvas>
 		</div>
 
 		<div id="secondSection" class="section secondSection">
 		</div>
 		<div class="section">
-			<video src="./public/wc1.webm"  autoplay hidden muted loop playsinline></video>
+			<video src="./assets/videos/wc1.webm"  autoplay hidden muted loop playsinline></video>
 			<canvas></canvas>
 		</div>
 		<div class="section">
-			<video src="./public/wc2.webm"  autoplay hidden muted loop playsinline></video>
+			<video src="./assets/videos/wc2.webm"  autoplay hidden muted loop playsinline></video>
 			<canvas></canvas>
 		</div>
 		<div class="section">
-			<video src="./public/wc3.webm"  autoplay hidden muted loop playsinline></video>
+			<video src="./assets/videos/wc3.webm"  autoplay hidden muted loop playsinline></video>
 			<canvas></canvas>
 			<h1 style = "top:40%; left:20%; z-index: 1000; background-color: red; font-size: xxx-large;">LIE</h1>
 
@@ -158,7 +159,7 @@
 
 		</div>
 		<div class="section">
-			<video src="./public/l2m_mute.mp4"  autoplay hidden muted loop playsinline></video>
+			<video src="./assets/videos/l2m_mute.mp4"  autoplay hidden muted loop playsinline></video>
 			<canvas></canvas>
 			<h1 style = "top:40%; left:70%; z-index: 1000; background-color: red; font-size: xxx-large;">ME</h1>
 		</div>
@@ -654,16 +655,16 @@
 			
 			switch (j) {
 				case 0:
-					newImage.src = "./public/star1.png"
+					newImage.src = "./assets/images/star1.png"
 					break;
 				case 1:
-					newImage.src = "./public/star2.png"
+					newImage.src = "./assets/images/star2.png"
 					break;
 				case 2:
-					newImage.src = "./public/star3.png"
+					newImage.src = "./assets/images/star3.png"
 					break;
 				case 3:
-					newImage.src = "./public/star4.png"
+					newImage.src = "./assets/images/star4.png"
 					break;
 				default:
 					break;
@@ -683,7 +684,7 @@
 	for (var i=0; i<10; i++){
 		const newImage = document.createElement("img")
 			secondSection.appendChild(newImage)
-			newImage.src = "./public/doodle4.png"
+			newImage.src = "./assets/images/doodle4.png"
 
 			newImage.style.transform = "rotateZ(" + randomInt(40,-40) +"deg)"
 
@@ -694,9 +695,9 @@
 			},3000)
 
 			setInterval(()=>{
-				newImage.src = "./public/doodle4part2.png"
+				newImage.src = "./assets/images/doodle4part2.png"
 				setTimeout(()=>{
-					newImage.src = "./public/doodle4.png"
+					newImage.src = "./assets/images/doodle4.png"
 				},randomInt(600,50))
 
 			},randomInt(3000,1000))
