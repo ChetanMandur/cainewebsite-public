@@ -84,16 +84,16 @@ for (var i=0; i<10; i++){
         
         switch (j) {
             case 0:
-                newImage.src = "./assets/images/star1.png"
+                newImage.src = "/pages/album1/assets/images/star1.png"
                 break;
             case 1:
-                newImage.src = "./assets/images/star2.png"
+                newImage.src = "/pages/album1/assets/images/star2.png"
                 break;
             case 2:
-                newImage.src = "./assets/images/star3.png"
+                newImage.src = "/pages/album1/assets/images/star3.png"
                 break;
             case 3:
-                newImage.src = "./assets/images/star4.png"
+                newImage.src = "/pages/album1/assets/images/star4.png"
                 break;
             default:
                 break;
@@ -113,7 +113,7 @@ for (var i=0; i<10; i++){
 for (var i=0; i<10; i++){
     const newImage = document.createElement("img")
         secondSection.appendChild(newImage)
-        newImage.src = "./assets/images/doodle4.png"
+        newImage.src = "/pages/album1/assets/images/doodle4.png"
 
         newImage.style.transform = "rotateZ(" + randomInt(40,-40) +"deg)"
 
@@ -124,9 +124,9 @@ for (var i=0; i<10; i++){
         },3000)
 
         setInterval(()=>{
-            newImage.src = "./assets/images/doodle4part2.png"
+            newImage.src = "/pages/album1/assets/images/doodle4part2.png"
             setTimeout(()=>{
-                newImage.src = "./assets/images/doodle4.png"
+                newImage.src = "/pages/album1/assets/images/doodle4.png"
             },randomInt(600,50))
 
         },randomInt(3000,1000))
