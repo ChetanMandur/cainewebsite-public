@@ -28,10 +28,8 @@
 						newScript.setAttribute(currentAttribute.name, currentAttribute.value)
 					})
 					
-					// Add the new copy into the return array
+					// Add the new copy into the return array and remove the original tag from the DOM/source
 					extractedScripts.push(newScript)
-
-					// Remove the original tag from the DOM/source
 					currentScript.remove()
 
 				})
