@@ -6,7 +6,6 @@
 	<body>
 		<!-- Dynamic HTML loading -->
 		<script>
-
 			// Given a source element, find all child <script> tags and return a list of recreated script tags
 				//  Essentially, this is removing <script> tags from the source and adding them to an array which is returned
 					//  The new tags are not a full copy, but contain all key data
@@ -44,7 +43,7 @@
 				return parent
 			}
 
-			// Given a (file) path, fetch the HTML data, parse it, and inject it into DOM
+			// Given a (file) path, fetch the HTML data, parse/process it, return processed HTML/DOM
 			async function pageFetch(page) {
 				const pageResponse = await fetch(page)
 				if (pageResponse.ok){
@@ -55,31 +54,33 @@
 					const mainHead = document.getElementsByTagName("head")[0]
 					const mainBody = document.getElementsByTagName("body")[0]
 					
-					// Parse/process fetched HTML
+					// Parse and return the processed fetched HTML
 					const domParser = new DOMParser()
-					const pageParsed = domParser.parseFromString(pageResult, "text/html")
-
-					// Grab <head> and <body> from fetched HTML
-					const parsedHead = pageParsed.getElementsByTagName("head")[0]
-					const parsedBody = pageParsed.getElementsByTagName("body")[0]
-
-					// Extract <script> tags from the fetched <head> and <body> tags
-					const parsedHeadScripts = scriptExtractor(parsedHead)
-					const parsedBodyScripts = scriptExtractor(parsedBody)
-					
-					// Apply the content from the fetched <head> and <body> tags into the tags in DOM
-						// Since scriptExtractor() was run on the fetched tags, .innerHTML does not contain any <script> tags
-					mainHead.innerHTML += parsedHead.innerHTML
-					mainBody.innerHTML += parsedBody.innerHTML
-					
-					// Reapply <script> tags from extraction into DOM
-					scriptAppender(mainHead, parsedHeadScripts)
-					scriptAppender(mainBody, parsedBodyScripts)
+					return domParser.parseFromString(pageResult, "text/html")
 				}
 			}
 
-			document.addEventListener("DOMContentLoaded", ()=>{
-				pageFetch("./pages/album1")
+			// Given a DOM (from DOMParser) and a tag, extract the tag from the given DOM and apply it to the main DOM
+			function tagInjector(newDom, tag){
+				// Grab the tags from both the main (place of injection) and newDom (what will be injected)
+				const mainDomTag = document.getElementsByTagName(tag)[0]
+				const newDomTag = newDom.getElementsByTagName(tag)[0]
+
+				// Extract <script> tags
+				const newDomTagScripts = scriptExtractor(newDomTag)
+
+				// // Apply the content from the fetched <head> and <body> tags into the tags in DOM
+				// 	// Since scriptExtractor() was run on the fetched tags, .innerHTML does not contain any <script> tags
+				mainDomTag.innerHTML += newDomTag.innerHTML
+
+				// // Reapply <script> tags from extraction into the main DOM
+				scriptAppender(mainDomTag,newDomTagScripts)
+			}
+
+			document.addEventListener("DOMContentLoaded", async ()=>{
+				const pageDom = await pageFetch("./pages/album1")
+				tagInjector(pageDom, "head")
+				tagInjector(pageDom, "body")
 			})
 		</script>
 	</body>
