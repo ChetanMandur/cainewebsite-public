@@ -1,13 +1,8 @@
-.firstSection {
-		top:0%
-}
-
-.secondSection{
-    background-color: transparent;
+.second-section{
     z-index: 999;
 }
 
-.secondSection > *{
+.second-section > *{
     opacity: 40%;
 }
 

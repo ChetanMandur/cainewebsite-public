@@ -18,142 +18,17 @@
 
 	<meta property="og:url" content="https://securityofgod.mov/"/>
 	<meta property="og:image" content="https://securityofgod.mov/public/angel_logo.png"/>
-
-	<!-- General Styles -->
+	
+	<link rel="stylesheet" href="/common/styles/overlay.css">
+	<link rel="stylesheet" href="/common/styles/section.css">
+	<link rel="stylesheet" href="/common/styles/links.css">
 	<style>
-		html{
-			background-color: black;
-		}
-		body{
-			padding:0;
-			margin:0;
-			overflow-x:hidden;
-			color:black;
-			overflow-y:hidden;
-		}
-
-		.sections-container{
-			position: absolute;
-			overflow: hidden;
-			width: 100%;
-			height: 100%;
-		}
-		
-		.section{
-			width:100%;
-			height:100%;
-			display: flex;
-			position: absolute;
-			background-color: black;
-			overflow: hidden;
-			transition: 0.5s;
-			top:100%;
-			justify-content: center;
-			align-items: center;
-
-		}
-		.section > * { 
-			position: absolute;
-			-webkit-user-drag: none;
-			font-family: monospace;
-			white-space: nowrap;
-			user-select: none;
-			color: white;
-		}
-
-		.section > .section-footer{
-			display: flex;
-			position: absolute;
-			bottom:0%;
-			left:0%;
-			height:5%;
-			width: 100%;
-
-			flex-direction: row;
-			align-items: center;
-			justify-content: center;
-			column-gap: 2%;
-		}
-
-		a:link{
-			color:#ffffff;
-			text-decoration: none;
-		}
-
-		a:hover{
-			color: #03f0fc;
-			text-decoration: none;
-
-		}
-		
-		a:visited{
-			color:#ffffff;
-			text-decoration: none;
-		}
-		
-		a:visited:hover{
-			color: #03f0fc;
-			text-decoration: none;
-		}
-
-		.section > .section-link-tree{
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
-		.section > .section-link-tree > .section-link-tree-header{
-			font-size: xxx-large;
-			text-align: center;
-			padding: 0% 2vw;
-			width: 100%;
-			box-sizing: border-box;
-
-		}
-
-		.section > .section-link-tree > .section-link-tree-links{
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			font-size:xx-large;
-			row-gap: 20px;
-			margin-top: 5%;
-			margin-bottom: 10%;
-			text-decoration: none;
-		}
-
-		
-	</style>
-
-	<!-- Canvas Section Styles -->
-	<style>
-		.section canvas{
-			width: 100%;
-			height: 100%;
-			object-fit:cover;
-		}
-		.section .muteButton{
-			right:0;
-			bottom:0;
-			opacity: 50%;
-			color: white;
-			user-select: none;
+		a{
+			--link-hover-colour:red
+			/* --link-colour:red */
 		}
 	</style>
 
-	<!-- First Section Styles -->
-	<style>
-		.firstSection {
-			top:0%
-		}
-	</style>
-
-	<!-- Second Section Styles -->
-	<style>
-		.transparent-background{
-			background-color: transparent;
-		}
-	</style>
 
 	<style>
 		.final-section {
@@ -161,37 +36,24 @@
 			background-position: center;
 		}
 	</style>
-
-	<!-- Overlay Styles -->
-	<style>
-		.overlay{
-			position: fixed;
-			display: flex;
-			width:100%;
-			height:100%;
-			justify-content: center;
-			align-items: center;
-			pointer-events: none;
-			z-index: 999;
-		}
-	</style>
+	
 </head>
 
 
 <body>
 
 <div class="sections-container" id="sections-container">
-	<div id="firstSection" class="section firstSection">
+	<div id="firstSection" class="section first-section">
 		<video src="/pages/lie2me/assets/videos/l2m_mute.mp4"  autoplay hidden muted loop playsinline></video>
 		<canvas></canvas>
 	</div>
 
-	<div class="section transparent-background firstSection" >
+	<div class="section transparent-background first-section" >
 		<a id="l2m-mv-button" style="font-size: xx-large;">WATCH MUSIC VIDEO</a>
 		<div id="l2m-mv-footer" class="section-footer">
 			<a id="l2m-mv-footer-button" href="">(scroll down)</a>
 		</div>
-		<iframe style="display:none; width: 100%; height:100%" id="l2m-mv-youtube" width="1280px" height="720px" src="https://www.youtube.com/embed/lcvr7kuV850?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+		<iframe style="display:none; width: 100%; height:100%" id="l2m-mv-youtube" width="1280px" height="720px" src="https://www.youtube.com/embed/lcvr7kuV850" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 	</div>
 
 	<div class="section transparent-background">
