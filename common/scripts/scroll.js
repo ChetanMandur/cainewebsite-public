@@ -6,8 +6,6 @@ var currentSection = 0
 function scrollUp(){
     if (currentSection >0){
         currentSection--
-        // console.log(currentSection)
-
     }
     scrollCaseHandler()
 }
@@ -15,10 +13,38 @@ function scrollUp(){
 function scrollDown(){
     if (currentSection < sectionsSize-1){
         currentSection++
-        // console.log(currentSection)
     }
     scrollCaseHandler()
+}
 
+function toTheTop(index){
+    sections[index].style.top="-100%"
+}
+
+function toTheCenter(index){
+    sections[index].style.top="0%"
+}
+
+function toTheBottom(index){
+    sections[index].style.top="100%"
+}
+
+function chunkToTheTop(start, end){
+    sections.slice(start,end).forEach((element, index) => {
+        toTheTop(start+index)
+    });
+}
+
+function chunkToTheCenter(start, end){
+    sections.slice(start,end).forEach((element, index)=>{
+        toTheCenter(start+index)
+    })
+}
+
+function chunkToTheBottom(start, end){
+    sections.slice(start,end).forEach((element, index) => {
+        toTheBottom(start+index)
+    });
 }
 
 function scrollCaseHandler(forcedSection){
@@ -28,37 +54,6 @@ function scrollCaseHandler(forcedSection){
 
     console.log(currentSection)
 
-    function toTheTop(index){
-        sections[index].style.top="-100%"
-    }
-
-    function toTheCenter(index){
-        sections[index].style.top="0%"
-    }
-
-    function toTheBottom(index){
-        sections[index].style.top="100%"
-    }
-
-    function chunkToTheTop(start, end){
-        sections.slice(start,end).forEach((element, index) => {
-            toTheTop(start+index)
-        });
-    }
-
-    function chunkToTheCenter(start, end){
-        sections.slice(start,end).forEach((element, index)=>{
-            toTheCenter(start+index)
-        })
-    }
-
-    function chunkToTheBottom(start, end){
-        sections.slice(start,end).forEach((element, index) => {
-            toTheBottom(start+index)
-        });
-    }
-
-    
 
     switch (currentSection) {
         case 0:
@@ -116,49 +111,10 @@ function scrollCaseHandler(forcedSection){
     }
 }
 
-// //Debounce function 1
-// var scrollTimeoutID 
-// document.addEventListener("wheel", (event)=>{
-// 	console.log("wheelevent")
-// 	clearTimeout(scrollTimeoutID)
-    
-// 	scrollTimeoutID = setTimeout(()=>{
-// 		console.log("hit!")
-// 		if (event.deltaY > 0){
-// 			scrollDown()
-// 		}
-// 		else if (event.deltaY < 0){
-// 			scrollUp()
-// 		}
-// 	},200)
-// })
-
-// // Debounce function 2
-// var scrollTimeoutID
-// var canScroll = true
-// document.addEventListener("wheel", (event)=>{
-// 	clearTimeout(scrollTimeoutID)
-// 	console.log("wheel event")
-// 	scrollTimeoutID = setTimeout(()=>{
-// 		canScroll = true
-// 	},500)
-
-// 	if (canScroll){
-// 		canScroll = false
-// 		if (event.deltaY > 0){
-// 			scrollDown()
-// 		}
-// 		else if (event.deltaY < 0){
-// 			scrollUp()
-// 		}
-// 	}
-// })
-
 // Throttle function
 var scrolledDate = 0
 document.addEventListener("wheel", (event)=>{
     const date = new Date().getTime()
-    // console.log((date - scrolledDate))
     if ((date - scrolledDate) > 500){
         if (event.deltaY > 0){
             scrollDown()
@@ -175,19 +131,17 @@ document.addEventListener("pointerdown", (event)=>{
     event.preventDefault()
     var pointerDownPosition = event.offsetY
     var pointerMovePosition = 0
-    // console.log("pointerDown", pointerDownPosition)
+
 
     function pointerMove (event) {
         event.preventDefault()
 
         pointerMovePosition = event.offsetY - pointerDownPosition
-        // console.log("pointerMove", pointerMovePosition)
     }
     document.addEventListener("pointermove", pointerMove)
 
     document.addEventListener("pointerup", (event)=>{
         event.preventDefault()
-        // console.log("pointerUp", pointerMovePosition)
         if (pointerMovePosition > 0){
             scrollUp()	
 
@@ -203,7 +157,6 @@ document.addEventListener("pointerdown", (event)=>{
 })
 
 document.addEventListener("keydown", (event)=>{
-    // console.log(event.key, event.shiftKey,)
     const upPressed = (event.key == "ArrowUp") || (event.key == "PageUp") || (event.key == "Home") || ((event.key == " " && event.shiftKey))
     const downPressed = (event.key == "ArrowDown") || (event.key == "PageDown") || (event.key == "End") || ((event.key == " " && !event.shiftKey))
 
