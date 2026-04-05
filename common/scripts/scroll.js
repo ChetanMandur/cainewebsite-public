@@ -3,19 +3,6 @@ const sectionsSize = sections.length
 
 var currentSection = 0 
 
-function scrollUp(){
-    if (currentSection >0){
-        currentSection--
-    }
-    scrollCaseHandler()
-}
-
-function scrollDown(){
-    if (currentSection < sectionsSize-1){
-        currentSection++
-    }
-    scrollCaseHandler()
-}
 
 function toTheTop(index){
     sections[index].style.top="-100%"
@@ -47,14 +34,7 @@ function chunkToTheBottom(start, end){
     });
 }
 
-function scrollCaseHandler(forcedSection){
-    if (forcedSection!= null){
-        currentSection = forcedSection
-    }
-
-    console.log(currentSection)
-
-
+var scrollSwitchCase = (currentSection) =>{
     switch (currentSection) {
         case 0:
             chunkToTheCenter(0,1)
@@ -109,6 +89,28 @@ function scrollCaseHandler(forcedSection){
             chunkToTheBottom(currentSection+1)
             break;
     }
+}
+
+function scrollCaseHandler(forcedSection){
+    if (forcedSection!= null){
+        currentSection = forcedSection
+    }
+    console.log(currentSection)
+    scrollSwitchCase(currentSection)
+}
+
+function scrollUp(){
+    if (currentSection >0){
+        currentSection--
+    }
+    scrollCaseHandler()
+}
+
+function scrollDown(){
+    if (currentSection < sectionsSize-1){
+        currentSection++
+    }
+    scrollCaseHandler()
 }
 
 // Throttle function
