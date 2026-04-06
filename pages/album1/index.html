@@ -82,7 +82,64 @@
 		you shouldn't be here
 	</div>
 
-	<script type="module" src="/common/scripts/scroll.js"></script>
+	<script type="module">
+		import * as scroll from "/common/scripts/scroll.js"
+		scroll.initalizeScroll((section)=>{
+			switch (section) {
+				case 0:
+					scroll.chunkToTheCenter(0,1)
+					scroll.chunkToTheBottom(1)
+					break;
+				case 1:
+					scroll.chunkToTheCenter(0,2)
+					scroll.chunkToTheBottom(2)
+
+					break;
+				
+				case 2:
+					scroll.chunkToTheTop(0,1)
+					scroll.chunkToTheCenter(1,3)
+					scroll.chunkToTheBottom(3)
+					break;
+
+				case 3:
+					scroll.chunkToTheTop(0,3)
+					scroll.toTheCenter(1)
+					scroll.toTheCenter(3)
+					scroll.chunkToTheBottom(4)
+					break;
+				
+				case 4:
+					scroll.chunkToTheTop(0,4)
+					scroll.toTheCenter(1)
+					scroll.chunkToTheCenter(4,5)
+					scroll.chunkToTheBottom(5)
+					break;
+
+				case 5:
+					scroll.chunkToTheTop(0,4)
+					scroll.toTheCenter(1)
+
+					scroll.chunkToTheCenter(4,7)
+					scroll.chunkToTheBottom(6)
+					break;
+
+				case 6:
+					scroll.chunkToTheTop(0,4)
+					scroll.toTheCenter(1)
+					scroll.chunkToTheCenter(4,7)
+					scroll.chunkToTheBottom(7)
+					break;
+
+
+				default:
+					scroll.chunkToTheTop(0,section)
+					scroll.chunkToTheCenter(section, section+1)
+					scroll.chunkToTheBottom(section+1)
+					break;
+			}
+		})
+	</script>
 	<script type="module" src="/common/scripts/timer.js"></script>
 	<script type="module" src="/common/scripts/canvas.js"></script>
 	<script src="/pages/album1/animations.js"></script>
