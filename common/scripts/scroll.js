@@ -35,7 +35,7 @@ function chunkToTheBottom(start, end){
 
 var scrollSwitchCase = (section) =>{}
 
-function scrollCaseHandler(forcedSection){
+function scrollHandler(forcedSection){
     if (forcedSection!= null){
         currentSection = forcedSection
     }
@@ -47,14 +47,14 @@ function scrollUp(){
     if (currentSection >0){
         currentSection--
     }
-    scrollCaseHandler()
+    scrollHandler()
 }
 
 function scrollDown(){
     if (currentSection < sections.length-1){
         currentSection++
     }
-    scrollCaseHandler()
+    scrollHandler()
 }
 
 function initalizeScroll(newSwitchCase){
@@ -140,4 +140,5 @@ function initalizeScroll(newSwitchCase){
 export {initalizeScroll}
 export {toTheTop, toTheCenter, toTheBottom}
 export {chunkToTheTop, chunkToTheCenter, chunkToTheBottom}
+export {scrollHandler}
 
