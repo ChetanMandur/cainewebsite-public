@@ -7,10 +7,16 @@ async function getReleaseDate(){
     if (releaseDateResponse.ok){
         const result = await releaseDateResponse.json()
         console.log(result.releaseDate)
-        return new Date(new Date(result.year, result.month, result.day, result.hours, result.minutes, result.seconds).toLocaleString("en-US", {timeZone: "America/New_York"}))
+        return (new Date(
+            new Date(
+                result.year, result.month, result.day, result.hours, result.minutes, result.seconds
+            ).toLocaleString(
+                "en-US", {timeZone: "America/New_York"}
+            )
+        )).getTime()
     }
     else{
-        return new Date ("April 21, 2040 00:00:00").getTime()
+        return (new Date ("April 21, 2040 00:00:00")).getTime()
     }
 }
 
