@@ -140,7 +140,14 @@
 			}
 		})
 	</script>
-	<script type="module" src="/common/scripts/timer.js"></script>
+	<script type="module">
+		import * as timer from "/common/scripts/timer.js"
+
+		timer.initalizeTimer(
+			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
+			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/youtubeLink"
+		)
+	</script>
 	<script type="module" src="/common/scripts/canvas.js"></script>
 	<script src="/pages/album1/animations.js"></script>
 

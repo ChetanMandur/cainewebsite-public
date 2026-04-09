@@ -2,11 +2,14 @@ var timer = document.getElementById("timer")
 
 let releaseDate = undefined
 
+let releaseDateFetchURL = undefined
+let youtubeLinkFetchURL = undefined
+
 async function getReleaseDate(){
-    const releaseDateResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate")
+    const releaseDateResponse = await fetch(releaseDateFetchURL)
     if (releaseDateResponse.ok){
         const result = await releaseDateResponse.json()
-        console.log(result.releaseDate)
+        console.log(result)
         return (new Date(
             new Date(
                 result.year, result.month, result.day, result.hours, result.minutes, result.seconds
@@ -114,7 +117,7 @@ function enterButtonPointerDownEventHandler(event){
     var errorContainer = document.getElementById("error-container")
     
     async function getYoutubeLink(){
-        const youtubeLinkResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/youtubeLink")
+        const youtubeLinkResponse = await fetch(youtubeLinkFetchURL)
         if (youtubeLinkResponse.ok){
             const result = await youtubeLinkResponse.json()
             console.log(result.youtubeLink)
@@ -139,14 +142,18 @@ function enterButtonPointerDownEventHandler(event){
     })
 }
 
-getReleaseDate().then((result)=>{
-    releaseDate = result
-
-    // let currentDate = new Date()
-    // releaseDate = currentDate.setSeconds(currentDate.getSeconds() - 2)
-}).finally(()=>{
-        timerUpdateAnimationID= requestAnimationFrame(()=>{
-                updateTimerAnimation()
-            })
+export function initalizeTimer(timer, youtube){
+    if (timer == undefined || youtube == undefined){
+        console.error("You didn't give a timer and/or youtube link fetch URL")
+        return new Error("undefined parameter(s)")
     }
-)
+
+    releaseDateFetchURL = timer
+    youtubeLinkFetchURL = youtube
+
+    getReleaseDate().then((result)=>{
+        releaseDate = result
+    }).finally(()=>{
+        timerUpdateAnimationID = requestAnimationFrame(()=>{updateTimerAnimation()})
+    })
+}
