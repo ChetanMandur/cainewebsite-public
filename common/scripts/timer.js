@@ -21,8 +21,7 @@ async function getReleaseDate(){
 }
 
 let timerUpdateAnimationID = null
-
-function updateTimer(){
+function updateTimerAnimation(){
     var distance = releaseDate - (new Date().getTime());
 
     var days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -59,71 +58,85 @@ function updateTimer(){
         timer.textContent = "00" + ":" + "00" + ":" + "00" + ":" + "00" + ":" + "000";
         cancelAnimationFrame(timerUpdateAnimationID)
 
-        var timerSize = timer.textContent.length
-        var timerDeleteAnimationId = null
-        function deleteTimerText(){
-            if (timerSize >= 0){
-                timer.textContent = timer.textContent.slice(0,timerSize)
-                timerSize--
-            }
-            else{
-                clearInterval(timerDeleteAnimationId)
-
-                var timerNewText = "ENTER"
-                var timerNewTextCurrentIndex = 0
-                var timerReplaceAnimationID = null
-                function replaceTimerText(){
-                    if (timerNewTextCurrentIndex <= timerNewText.length){
-                        timer.textContent = timerNewText.slice(0,timerNewTextCurrentIndex)
-                        timerNewTextCurrentIndex++
-                    }
-                    else{
-                        clearInterval(timerReplaceAnimationID)
-                        timer.style.pointerEvents= "visibleFill"
-                        timer.style.cursor = "pointer"
-                        timer.addEventListener("pointerdown",()=>{
-                            var overlay = document.getElementById("overlay")
-                            var sectionsContainer = document.getElementById("sections-container")
-                            var youtubeVideoContainer = document.getElementById("youtube-video-container")
-                            var youtubeVideo = document.getElementById("youtube-video")
-                            var errorContainer = document.getElementById("error-container")
-                            
-                            async function getYoutubeLink(){
-                                const youtubeLinkResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/youtubeLink")
-                                if (youtubeLinkResponse.ok){
-                                    const result = await youtubeLinkResponse.json()
-                                    console.log(result.youtubeLink)
-                                    return result.youtubeLink
-                                }
-                                else{
-                                    return "ERROR"
-                                }
-                            }
-
-                            getYoutubeLink().then((result)=>{
-                                if (result != "ERROR"){
-                                    youtubeVideo.src = result
-                                    youtubeVideoContainer.style.display="block"
-                                }
-                                else{
-                                    console.log("not happy")
-                                    errorContainer.style.display="block"
-                                }
-                                overlay.style.display="none"
-                                sectionsContainer.style.display="none"
-                            })
-                        })
-                    }
-                }
-                timerReplaceAnimationID = setInterval(()=>{replaceTimerText()},500)
-            }
-        }
-        timerDeleteAnimationId=setInterval(()=>{deleteTimerText()},200)
-
+        timerDeleteAnimationID=requestAnimationFrame(()=>{deleteTimerTextAnimation(timer.textContent.length)})
     }
     else{
-        timerUpdateAnimationID = requestAnimationFrame(()=>{updateTimer()})
+        timerUpdateAnimationID = requestAnimationFrame(()=>{updateTimerAnimation()})
     }
+}
+
+let timerDeleteAnimationID = null
+function deleteTimerTextAnimation(timerSize){
+    if (timerSize >= 0){
+        timer.textContent = timer.textContent.slice(0,timerSize)
+        timerSize--
+        setTimeout(()=>{
+           timerDeleteAnimationID = requestAnimationFrame(()=>{
+                deleteTimerTextAnimation(timerSize)
+           })
+        },200)
+        
+    }
+    else{
+        cancelAnimationFrame(timerDeleteAnimationID)
+
+        timerReplaceAnimationID=requestAnimationFrame(()=>{replaceTimerTextAnimation("ENTER",0)})
+
+    }
+}
+
+let timerReplaceAnimationID = null
+function replaceTimerTextAnimation(newText, currentIndex){
+    if (currentIndex <= newText.length){
+        timer.textContent = newText.slice(0,currentIndex)
+        currentIndex++
+
+        setTimeout(()=>{
+           timerReplaceAnimationID = requestAnimationFrame(()=>{
+                replaceTimerTextAnimation(newText, currentIndex)
+           })
+        },500)
+    }
+    else{
+        cancelAnimationFrame(timerReplaceAnimationID)
+
+        timer.style.pointerEvents= "visibleFill"
+        timer.style.cursor = "pointer"
+        timer.addEventListener("pointerdown",enterButtonPointerDownEventHandler)
+    }
+}
+
+function enterButtonPointerDownEventHandler(event){
+    var overlay = document.getElementById("overlay")
+    var sectionsContainer = document.getElementById("sections-container")
+    var youtubeVideoContainer = document.getElementById("youtube-video-container")
+    var youtubeVideo = document.getElementById("youtube-video")
+    var errorContainer = document.getElementById("error-container")
+    
+    async function getYoutubeLink(){
+        const youtubeLinkResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/youtubeLink")
+        if (youtubeLinkResponse.ok){
+            const result = await youtubeLinkResponse.json()
+            console.log(result.youtubeLink)
+            return result.youtubeLink
+        }
+        else{
+            return "ERROR"
+        }
+    }
+
+    getYoutubeLink().then((result)=>{
+        if (result != "ERROR"){
+            youtubeVideo.src = result
+            youtubeVideoContainer.style.display="block"
+        }
+        else{
+            console.log("not happy")
+            errorContainer.style.display="block"
+        }
+        overlay.style.display="none"
+        sectionsContainer.style.display="none"
+    })
 }
 
 getReleaseDate().then((result)=>{
@@ -133,7 +146,7 @@ getReleaseDate().then((result)=>{
     // releaseDate = currentDate.setSeconds(currentDate.getSeconds() - 2)
 }).finally(()=>{
         timerUpdateAnimationID= requestAnimationFrame(()=>{
-                updateTimer()
+                updateTimerAnimation()
             })
     }
 )
