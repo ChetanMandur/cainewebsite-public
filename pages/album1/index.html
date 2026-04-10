@@ -145,7 +145,38 @@
 
 		timer.initalizeTimer(
 			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
-			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/youtubeLink"
+			(event)=>{
+				var overlay = document.getElementById("overlay")
+				var sectionsContainer = document.getElementById("sections-container")
+				var youtubeVideoContainer = document.getElementById("youtube-video-container")
+				var youtubeVideo = document.getElementById("youtube-video")
+				var errorContainer = document.getElementById("error-container")
+
+				async function getYoutubeLink(){
+					const youtubeLinkResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/youtubeLink")
+					if (youtubeLinkResponse.ok){
+						const result = await youtubeLinkResponse.json()
+						console.log(result.youtubeLink)
+						return result.youtubeLink
+					}
+					else{
+						return "ERROR"
+					}
+				}
+
+				getYoutubeLink().then((result)=>{
+					if (result != "ERROR"){
+						youtubeVideo.src = result
+						youtubeVideoContainer.style.display="block"
+					}
+					else{
+						console.log("not happy")
+						errorContainer.style.display="block"
+					}
+					overlay.style.display="none"
+					sectionsContainer.style.display="none"
+				})
+			}
 		)
 	</script>
 	<script type="module" src="/common/scripts/canvas.js"></script>

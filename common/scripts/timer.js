@@ -3,7 +3,7 @@ var timer = document.getElementById("timer")
 let releaseDate = undefined
 
 let releaseDateFetchURL = undefined
-let youtubeLinkFetchURL = undefined
+let timerEnterHandler = (event)=>{console.warn("timerEnterHandler undefined \n Please define ")}
 
 async function getReleaseDate(){
     const releaseDateResponse = await fetch(releaseDateFetchURL)
@@ -105,51 +105,18 @@ function replaceTimerTextAnimation(newText, currentIndex){
 
         timer.style.pointerEvents= "visibleFill"
         timer.style.cursor = "pointer"
-        timer.addEventListener("pointerdown",enterButtonPointerDownEventHandler)
+        timer.addEventListener("pointerdown",timerEnterHandler)
     }
 }
 
-function enterButtonPointerDownEventHandler(event){
-    var overlay = document.getElementById("overlay")
-    var sectionsContainer = document.getElementById("sections-container")
-    var youtubeVideoContainer = document.getElementById("youtube-video-container")
-    var youtubeVideo = document.getElementById("youtube-video")
-    var errorContainer = document.getElementById("error-container")
-    
-    async function getYoutubeLink(){
-        const youtubeLinkResponse = await fetch(youtubeLinkFetchURL)
-        if (youtubeLinkResponse.ok){
-            const result = await youtubeLinkResponse.json()
-            console.log(result.youtubeLink)
-            return result.youtubeLink
-        }
-        else{
-            return "ERROR"
-        }
-    }
-
-    getYoutubeLink().then((result)=>{
-        if (result != "ERROR"){
-            youtubeVideo.src = result
-            youtubeVideoContainer.style.display="block"
-        }
-        else{
-            console.log("not happy")
-            errorContainer.style.display="block"
-        }
-        overlay.style.display="none"
-        sectionsContainer.style.display="none"
-    })
-}
-
-export function initalizeTimer(timer, youtube){
-    if (timer == undefined || youtube == undefined){
-        console.error("You didn't give a timer and/or youtube link fetch URL")
+export function initalizeTimer(timer, enterHandler){
+    if (timer == undefined || enterHandler == undefined){
+        console.error("You didn't give a timer URL and/or enter handler for when the timer finishes")
         return new Error("undefined parameter(s)")
     }
 
     releaseDateFetchURL = timer
-    youtubeLinkFetchURL = youtube
+    timerEnterHandler = enterHandler
 
     getReleaseDate().then((result)=>{
         releaseDate = result
