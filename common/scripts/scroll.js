@@ -1,8 +1,9 @@
-const sections = Array.from(document.getElementsByClassName("section"))
+var sections = undefined
 var currentSection = 0 
-var scrollInitalized = false
+// -----------------------------------------------------------------
+//// SECTION MANIPULATION ////
 
-
+//// Singular section manipulation
 function toTheTop(index){
     sections[index].style.top="-100%"
 }
@@ -15,6 +16,8 @@ function toTheBottom(index){
     sections[index].style.top="100%"
 }
 
+
+//// Group section manipulation
 function chunkToTheTop(start, end){
     sections.slice(start,end).forEach((element, index) => {
         toTheTop(start+index)
@@ -33,8 +36,16 @@ function chunkToTheBottom(start, end){
     });
 }
 
+
+//// SECTION SCROLL HANDLING ////
+// Function to handle what sections appear at which scroll index
+//  - This function is defined by user when calling initalizeScroll()
 var scrollSwitchCase = (section) =>{}
 
+// Helper function to scroll to handle scrolling
+//  - Used as a wrapper to scrollSwitchCase()
+//      - Done so that logic for scroll to a specific section index (rather than the global value for currentSection) is common for all scrollSwitchCase()
+//          - aka, don't need to redefine the (albeit) simple logic for each scrollSwitchCase() definiton
 function scrollHandler(forcedSection){
     if (forcedSection!= null){
         currentSection = forcedSection
@@ -43,6 +54,8 @@ function scrollHandler(forcedSection){
     scrollSwitchCase(currentSection)
 }
 
+//// Helper functions used when scrolling
+////    - Used to limit manipulation on the currentSection value, so it won't go out of range
 function scrollUp(){
     if (currentSection >0){
         currentSection--
@@ -57,76 +70,84 @@ function scrollDown(){
     scrollHandler()
 }
 
+// -----------------------------------------------------------------
+//// SCROLL EVENT DEFINITIONS ////
+// Scroll Wheel Event (Throttle function)
+var scrolledDate = 0
+function scrollWheelEvent (event){
+    const date = new Date().getTime()
+    if ((date - scrolledDate) > 500){
+        if (event.deltaY > 0){
+            scrollDown()
+        }
+        else if (event.deltaY < 0){
+            scrollUp()
+        }
+        scrolledDate = new Date().getTime()
+    }
+}
+
+// Click and Drag Event (For mobile devices)
+function scrollPointerDownEvent(event){
+    event.preventDefault()
+    var pointerDownPosition = event.offsetY
+    var pointerMovePosition = 0
+
+
+    function pointerMove (event) {
+        event.preventDefault()
+
+        pointerMovePosition = event.offsetY - pointerDownPosition
+    }
+    document.addEventListener("pointermove", pointerMove)
+
+    document.addEventListener("pointerup", (event)=>{
+        event.preventDefault()
+        if (pointerMovePosition > 0){
+            scrollUp()	
+
+        }
+        else if (pointerMovePosition < 0){
+            scrollDown()
+
+        }
+
+        document.removeEventListener("pointermove", pointerMove)
+    },{once:true})
+}
+
+// Key Down Event (For keyboard based scrolling)
+function scrollKeyDownEvent(event){
+    const upPressed = (event.key == "ArrowUp") || (event.key == "PageUp") || (event.key == "Home") || ((event.key == " " && event.shiftKey))
+    const downPressed = (event.key == "ArrowDown") || (event.key == "PageDown") || (event.key == "End") || ((event.key == " " && !event.shiftKey))
+
+    if (upPressed){
+        scrollUp()
+    }
+    else if (downPressed){
+        scrollDown()
+    }
+}
+
+// -----------------------------------------------------------------
+//// INITALIZE FUNCTION /////
 function initalizeScroll(newSwitchCase){
-    if (newSwitchCase != undefined && !scrollInitalized){
-        scrollInitalized = true
+
+    if (newSwitchCase != undefined){
+        scrolledDate = 0
+        document.removeEventListener("wheel", scrollWheelEvent)
+        document.removeEventListener("pointerdown", scrollPointerDownEvent)
+        document.removeEventListener("keydown", scrollKeyDownEvent)
+
+        sections = Array.from(document.getElementsByClassName("section"))
         scrollSwitchCase = newSwitchCase
 
-        // Throttle function
-        var scrolledDate = 0
-        document.addEventListener("wheel", (event)=>{
-            const date = new Date().getTime()
-            if ((date - scrolledDate) > 500){
-                if (event.deltaY > 0){
-                    scrollDown()
-                }
-                else if (event.deltaY < 0){
-                    scrollUp()
-                }
-                scrolledDate = new Date().getTime()
-            }
-
-        })
-
-        document.addEventListener("pointerdown", (event)=>{
-            event.preventDefault()
-            var pointerDownPosition = event.offsetY
-            var pointerMovePosition = 0
-
-
-            function pointerMove (event) {
-                event.preventDefault()
-
-                pointerMovePosition = event.offsetY - pointerDownPosition
-            }
-            document.addEventListener("pointermove", pointerMove)
-
-            document.addEventListener("pointerup", (event)=>{
-                event.preventDefault()
-                if (pointerMovePosition > 0){
-                    scrollUp()	
-
-                }
-                else if (pointerMovePosition < 0){
-                    scrollDown()
-
-                }
-
-                document.removeEventListener("pointermove", pointerMove)
-            },{once:true})
-
-        })
-
-        document.addEventListener("keydown", (event)=>{
-            const upPressed = (event.key == "ArrowUp") || (event.key == "PageUp") || (event.key == "Home") || ((event.key == " " && event.shiftKey))
-            const downPressed = (event.key == "ArrowDown") || (event.key == "PageDown") || (event.key == "End") || ((event.key == " " && !event.shiftKey))
-
-            if (upPressed){
-                scrollUp()
-            }
-            else if (downPressed){
-                scrollDown()
-            }
-
-        })
+        document.addEventListener("wheel", scrollWheelEvent)
+        document.addEventListener("pointerdown", scrollPointerDownEvent)
+        document.addEventListener("keydown", scrollKeyDownEvent)
     }
     else{
-        if (scrollInitalized){
-            console.error(
-                "Scroll already has been initalized! Won't be initalized"
-            )
-        }
-        else if (newSwitchCase == undefined){
+        if (newSwitchCase == undefined){
             console.error(
                 "scrollSwitchCase() not defined \n",
                 "Pass function as sole function parameter \n",
@@ -137,6 +158,9 @@ function initalizeScroll(newSwitchCase){
 
 }
 
+
+// -----------------------------------------------------------------
+//// FUNCTION EXPORTS ////
 export {initalizeScroll}
 export {toTheTop, toTheCenter, toTheBottom}
 export {chunkToTheTop, chunkToTheCenter, chunkToTheBottom}
