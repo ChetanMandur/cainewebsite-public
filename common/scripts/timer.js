@@ -23,6 +23,8 @@ async function getReleaseDate(){
     }
 }
 
+// ----------------------------------------------------------------------------------------------
+
 let timerUpdateAnimationID = null
 function updateTimerAnimation(){
     var distance = releaseDate - (new Date().getTime());
@@ -69,6 +71,7 @@ function updateTimerAnimation(){
 }
 
 let timerDeleteAnimationID = null
+const deleteTimerTextAnimationSpeed = 200
 function deleteTimerTextAnimation(timerSize){
     if (timerSize >= 0){
         timer.textContent = timer.textContent.slice(0,timerSize)
@@ -77,7 +80,7 @@ function deleteTimerTextAnimation(timerSize){
            timerDeleteAnimationID = requestAnimationFrame(()=>{
                 deleteTimerTextAnimation(timerSize)
            })
-        },200)
+        },deleteTimerTextAnimationSpeed)
         
     }
     else{
@@ -89,6 +92,7 @@ function deleteTimerTextAnimation(timerSize){
 }
 
 let timerReplaceAnimationID = null
+const replaceTimerTextAnimationSpeed = 500
 function replaceTimerTextAnimation(newText, currentIndex){
     if (currentIndex <= newText.length){
         timer.textContent = newText.slice(0,currentIndex)
@@ -98,7 +102,7 @@ function replaceTimerTextAnimation(newText, currentIndex){
            timerReplaceAnimationID = requestAnimationFrame(()=>{
                 replaceTimerTextAnimation(newText, currentIndex)
            })
-        },500)
+        },replaceTimerTextAnimationSpeed)
     }
     else{
         cancelAnimationFrame(timerReplaceAnimationID)
@@ -108,6 +112,9 @@ function replaceTimerTextAnimation(newText, currentIndex){
         timer.addEventListener("pointerdown",timerEnterHandler)
     }
 }
+
+// ----------------------------------------------------------------------------------------------
+
 
 export function initalizeTimer(timer, enterHandler){
     if (timer == undefined || enterHandler == undefined){
