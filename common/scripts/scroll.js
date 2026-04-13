@@ -42,6 +42,12 @@ function chunkToTheBottom(start, end){
 //  - This function is defined by user when calling initalizeScroll()
 var scrollSwitchCase = (section) =>{}
 
+var scrollSwitchDefaultCase = (section) =>{
+    chunkToTheTop(0,section)
+    chunkToTheCenter(section, section+1)
+    chunkToTheBottom(section+1)
+}
+
 // Helper function to scroll to handle scrolling
 //  - Used as a wrapper to scrollSwitchCase()
 //      - Done so that logic for scroll to a specific section index (rather than the global value for currentSection) is common for all scrollSwitchCase()
@@ -132,29 +138,36 @@ function scrollKeyDownEvent(event){
 // -----------------------------------------------------------------
 //// INITALIZE FUNCTION /////
 function initalizeScroll(newSwitchCase){
+    scrolledDate = 0
+    currentSection = 0
+    document.removeEventListener("wheel", scrollWheelEvent)
+    document.removeEventListener("pointerdown", scrollPointerDownEvent)
+    document.removeEventListener("keydown", scrollKeyDownEvent)
 
-    if (newSwitchCase != undefined){
-        scrolledDate = 0
-        document.removeEventListener("wheel", scrollWheelEvent)
-        document.removeEventListener("pointerdown", scrollPointerDownEvent)
-        document.removeEventListener("keydown", scrollKeyDownEvent)
-
-        sections = Array.from(document.getElementsByClassName("section"))
-        scrollSwitchCase = newSwitchCase
-
-        document.addEventListener("wheel", scrollWheelEvent)
-        document.addEventListener("pointerdown", scrollPointerDownEvent)
-        document.addEventListener("keydown", scrollKeyDownEvent)
-    }
-    else{
-        if (newSwitchCase == undefined){
-            console.error(
-                "scrollSwitchCase() not defined \n",
-                "Pass function as sole function parameter \n",
-                "Use function signature (section)=>{void}"
-            )
+    sections = Array.from(document.getElementsByClassName("section"))
+    if (newSwitchCase == undefined){
+         console.warn(
+            "scrollSwitchCase() not defined \n",
+            "- Pass function as sole function parameter with function signature (section)=>{void} \n",
+            "Using default switch case..."
+        )
+        scrollSwitchCase = (section)=>{
+            switch (section) {
+                default:
+                    scrollSwitchDefaultCase(section)
+                    break;
+            }
         }
     }
+    else{
+        scrollSwitchCase = newSwitchCase
+    }
+
+    scrollHandler(0)
+
+    document.addEventListener("wheel", scrollWheelEvent)
+    document.addEventListener("pointerdown", scrollPointerDownEvent)
+    document.addEventListener("keydown", scrollKeyDownEvent)
 
 }
 
@@ -164,5 +177,5 @@ function initalizeScroll(newSwitchCase){
 export {initalizeScroll}
 export {toTheTop, toTheCenter, toTheBottom}
 export {chunkToTheTop, chunkToTheCenter, chunkToTheBottom}
-export {scrollHandler}
+export {scrollHandler, scrollSwitchDefaultCase}
 
