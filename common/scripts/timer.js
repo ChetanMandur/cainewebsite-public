@@ -1,4 +1,4 @@
-var timer = document.getElementById("timer")
+let timerElement = undefined
 
 let releaseDate = undefined
 
@@ -56,14 +56,14 @@ function updateTimerAnimation(){
         milliseconds = "0" + milliseconds
     }
 
-    timer.textContent = days + ":" + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
+    timerElement.textContent = days + ":" + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
 
     if (distance <= 0){
         // console.log("STOP!", distance)
-        timer.textContent = "00" + ":" + "00" + ":" + "00" + ":" + "00" + ":" + "000";
+        timerElement.textContent = "00" + ":" + "00" + ":" + "00" + ":" + "00" + ":" + "000";
         cancelAnimationFrame(timerUpdateAnimationID)
 
-        timerDeleteAnimationID=requestAnimationFrame(()=>{deleteTimerTextAnimation(timer.textContent.length)})
+        timerDeleteAnimationID=requestAnimationFrame(()=>{deleteTimerTextAnimation(timerElement.textContent.length)})
     }
     else{
         timerUpdateAnimationID = requestAnimationFrame(()=>{updateTimerAnimation()})
@@ -74,7 +74,7 @@ let timerDeleteAnimationID = null
 const deleteTimerTextAnimationSpeed = 200
 function deleteTimerTextAnimation(timerSize){
     if (timerSize >= 0){
-        timer.textContent = timer.textContent.slice(0,timerSize)
+        timerElement.textContent = timerElement.textContent.slice(0,timerSize)
         timerSize--
         setTimeout(()=>{
            timerDeleteAnimationID = requestAnimationFrame(()=>{
@@ -95,7 +95,7 @@ let timerReplaceAnimationID = null
 const replaceTimerTextAnimationSpeed = 500
 function replaceTimerTextAnimation(newText, currentIndex){
     if (currentIndex <= newText.length){
-        timer.textContent = newText.slice(0,currentIndex)
+        timerElement.textContent = newText.slice(0,currentIndex)
         currentIndex++
 
         setTimeout(()=>{
@@ -107,20 +107,22 @@ function replaceTimerTextAnimation(newText, currentIndex){
     else{
         cancelAnimationFrame(timerReplaceAnimationID)
 
-        timer.style.pointerEvents= "visibleFill"
-        timer.style.cursor = "pointer"
-        timer.addEventListener("pointerdown",timerEnterHandler)
+        timerElement.style.pointerEvents= "visibleFill"
+        timerElement.style.cursor = "pointer"
+        timerElement.addEventListener("pointerdown",timerEnterHandler)
     }
 }
 
 // ----------------------------------------------------------------------------------------------
 
 
-export function initalizeTimer(timer, enterHandler){
+export default function initalizeTimer(timer, enterHandler){
     if (timer == undefined || enterHandler == undefined){
         console.error("You didn't give a timer URL and/or enter handler for when the timer finishes")
         return new Error("undefined parameter(s)")
     }
+
+    timerElement = document.getElementById("timer")
 
     releaseDateFetchURL = timer
     timerEnterHandler = enterHandler

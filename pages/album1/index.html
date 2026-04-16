@@ -143,9 +143,9 @@
 		})
 	</script>
 	<script type="module">
-		import * as timer from "/common/scripts/timer.js"
+		import initalizeTimer from "/common/scripts/timer.js"
 
-		timer.initalizeTimer(
+		initalizeTimer(
 			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
 			(event)=>{
 				var overlay = document.getElementById("overlay")
