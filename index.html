@@ -6,9 +6,9 @@
 	<body>
 		<!-- Dynamic HTML loading -->
 		<script type="module">
-			import * as pageInject from "/common/scripts/pageInject.js"
+			import pageInject from "/common/scripts/pageInject.js"
 			document.addEventListener("DOMContentLoaded", async ()=>{
-				await pageInject.pageInject("./pages/test1", false,false)
+				await pageInject("./pages/test1", false,false)
 			})
 		</script>
 	</body>

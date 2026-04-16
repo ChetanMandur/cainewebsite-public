@@ -81,4 +81,4 @@ async function pageInject(page, overwriteHead, overwriteBody){
     tagInjector(pageDom, "body",overwriteBody)
 }
 
-export {pageInject}
+export default pageInject
