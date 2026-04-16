@@ -3,30 +3,54 @@
     <meta charset="UTF-8">
     <title>test1</title>
     <link rel="stylesheet" href="/common/styles/base.css">
+    <link rel="stylesheet" href="/common/styles/overlay.css">
     <link rel="stylesheet" href="/common/styles/section.css">
     <link rel="stylesheet" href="/common/styles/links.css">
+	<style>
+		a{
+			--link-hover-colour: red
+		}
+	</style>
 </head>
 <body>
-<div class="sections-container" id="sections-container">
-	<div class="section"> 
-	<!-- <div class="section first-section"> -->
-		<div class="section-link-tree">
-			<div class="section-link-tree-header">
-				test 1 page 1
-			</div>
-        </div>
+	<div class="overlay">
+		<h1 class="timer" id="timer"></h1>
 	</div>
-    <div class="section">
-		<div class="section-link-tree">
-			<div class="section-link-tree-header">
-				test 1 page 2
+	<div class="sections-container" id="sections-container">
+		<div class="section"> 
+		<!-- <div class="section first-section"> -->
+			<div class="section-link-tree">
+				<div class="section-link-tree-header">
+					test 1 page 1
+				</div>
 			</div>
-        </div>
+		</div>
+		<div class="section">
+			<div class="section-link-tree">
+				<div class="section-link-tree-header">
+					test 1 page 2
+				</div>
+				<div class="section-link-tree-links">
+					<a id="wazup-button">wazzzupppp</a>
+				</div>
+			</div>
+		</div>
 	</div>
-</div>
-<script type="module">
-    import * as scroll from "/common/scripts/scroll.js"
-    scroll.initalizeScroll()
-</script>
+	<script type="module">
+		import initalizeTimer from "/common/scripts/timer.js"
+		initalizeTimer("https://broken-fire-bf4e.chetanmandur45.workers.dev/test/get/releaseDate",()=>{
+			console.log("hi")
+		})
+	</script>
+	<script type="module">
+		import * as scroll from "/common/scripts/scroll.js"
+		scroll.initalizeScroll()
+	</script>
+	<script type="module">
+		import pageInject from "/common/scripts/pageInject.js"
+		document.getElementById("wazup-button").addEventListener("pointerdown",(event)=>{
+			pageInject("/pages/album1", true, true)
+		})
+	</script>
 </body>
 </html>
