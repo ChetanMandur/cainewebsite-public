@@ -85,8 +85,9 @@
 	</div>
 
 	<script type="module">
-		import * as scroll from "/common/scripts/scroll.js"
-		scroll.initalizeScroll((section)=>{
+		import SlideScroll from "/common/scripts/slideScroll.js"
+		const scroll = new SlideScroll()
+		scroll.setScrollFunction((section)=>{
 			switch (section) {
 				case 0:
 					scroll.chunkToTheCenter(0,1)
@@ -95,7 +96,6 @@
 				case 1:
 					scroll.chunkToTheCenter(0,2)
 					scroll.chunkToTheBottom(2)
-
 					break;
 				
 				case 2:
@@ -121,7 +121,6 @@
 				case 5:
 					scroll.chunkToTheTop(0,4)
 					scroll.toTheCenter(1)
-
 					scroll.chunkToTheCenter(4,7)
 					scroll.chunkToTheBottom(6)
 					break;

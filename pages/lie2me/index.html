@@ -84,30 +84,6 @@
 <audio id="EASTEREGGSONG" hidden></audio>
 
 
-<script type="module">
-	import * as scroll from "/common/scripts/scroll.js"
-	const l2m_button = document.getElementById("l2m-mv-button")
-	const l2m_youtube = document.getElementById("l2m-mv-youtube")
-
-	const l2m_footer = document.getElementById("l2m-mv-footer")
-	const l2m_footer_button = document.getElementById("l2m-mv-footer-button")
-
-
-	l2m_button.addEventListener("pointerdown",()=>{
-		l2m_button.style.display = "none"
-		l2m_footer.style.display = "none"
-		l2m_footer_button.style.display = "none"
-
-		l2m_youtube.style.display = "block"
-	})
-
-	l2m_footer_button.addEventListener("pointerdown",(event)=>{
-		console.log("hiiii")
-		event.preventDefault()
-		scroll.scrollHandler(1)
-	})
-
-</script>
 
 <script>
 	const KONAMI_CODE= [
@@ -162,17 +138,15 @@
 				document.getElementById("EASTEREGG").style.display = "block"
 				easterEggSong.play()
 			})
-
-			
-
 		}
 	})
 </script>
 
 <!-- Scroll script -->
 <script type="module">
-	import * as scroll from "/common/scripts/scroll.js"
-	scroll.initalizeScroll((section)=>{
+	import SlideScroll from "/common/scripts/slideScroll.js"
+	const scroll = new SlideScroll()
+	scroll.setScrollFunction((section)=>{
 		switch (section) {
 			case 0:
 				scroll.toTheCenter(0)
@@ -188,12 +162,32 @@
 				scroll.scrollHandler(1)
 				break;
 			default:
-				scroll.chunkToTheTop(0,section)
-				scroll.chunkToTheCenter(section, section+1)
-				scroll.chunkToTheBottom(section+1)
+				scroll.scrollSwitchDefaultCase(section)
 				break;
 		}
 	})
+
+	const l2m_button = document.getElementById("l2m-mv-button")
+	const l2m_youtube = document.getElementById("l2m-mv-youtube")
+
+	const l2m_footer = document.getElementById("l2m-mv-footer")
+	const l2m_footer_button = document.getElementById("l2m-mv-footer-button")
+
+
+	l2m_button.addEventListener("pointerdown",()=>{
+		l2m_button.style.display = "none"
+		l2m_footer.style.display = "none"
+		l2m_footer_button.style.display = "none"
+
+		l2m_youtube.style.display = "block"
+	})
+
+	l2m_footer_button.addEventListener("pointerdown",(event)=>{
+		console.log("hiiii")
+		event.preventDefault()
+		scroll.scrollHandler(1)
+	})
+
 </script>
 
 

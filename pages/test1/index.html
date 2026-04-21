@@ -43,13 +43,26 @@
 		})
 	</script>
 	<script type="module">
-		import * as scroll from "/common/scripts/scroll.js"
-		scroll.initalizeScroll()
+		import SlideScroll from "/common/scripts/slideScroll.js"
+		const scroll = new SlideScroll("test1")
+		scroll.setScrollFunction((section)=>{
+			switch (section) {
+				case 0:
+					console.log("YO MAMA")
+					scroll.toTheCenter(0)
+					scroll.toTheBottom(1)
+					break;
+				
+				default:
+					scroll.scrollSwitchDefaultCase(section)
+					break;
+			}
+		})
 	</script>
 	<script type="module">
 		import pageInject from "/common/scripts/pageInject.js"
 		document.getElementById("wazup-button").addEventListener("pointerdown",(event)=>{
-			pageInject("/pages/album1", true, true)
+			pageInject("/pages/lie2me", true, true)
 		})
 	</script>
 </body>
