@@ -20,7 +20,7 @@ export default class SlideScroll {
             document.removeEventListener("keydown", this)
         }).bind(this))
 
-        console.log("WTHIDLN!!!", this, name)
+        // console.log("WTHIDLN!!!", this, name)
 
     }
 

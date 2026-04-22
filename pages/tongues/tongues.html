@@ -30,12 +30,11 @@
 				TONGUES
 			</div>
 			<div class="section-link-tree-links">
-				<a href="">SPOTIFY</a>
+				OUT NOW
+				<!-- <a href="">SPOTIFY</a>
 				<a href="">APPLE MUSIC</a>
 				<a href="">YOUTUBE MUSIC</a>
-				<a href="">SOUNDCLOUD</a>
-				<a href="">test33333</a>
-
+				<a href="">SOUNDCLOUD</a> -->
 			</div>
 		</div>
 		<div class="section-footer">
@@ -83,8 +82,11 @@
 			const canvasContext = canvas.getContext("2d")
 			video.play()
 
-			video.width = canvas.width = window.innerWidth
-       		video.height = canvas.height = window.innerHeight
+			// video.width = canvas.width = window.innerWidth
+       		// video.height = canvas.height = window.innerHeight
+
+			video.width = canvas.width = 1440
+        	video.height = canvas.height = 1080
 
 			function paintCanvas(video,canvas){
 				canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
