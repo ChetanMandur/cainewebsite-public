@@ -34,7 +34,27 @@
 		initalizeTimer(
 			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
 			async (event)=>{
-				await pageInject("./pages/tongues/tongues.html", true,true)
+				
+				async function getTimerResult(){
+					const timerResultResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/timerResult")
+					if (timerResultResponse.ok){
+						const result = await timerResultResponse.json()
+						console.log(result.timerResult)
+						return result.timerResult
+					}
+					else{
+						return "ERROR"
+					}
+				}
+
+				getTimerResult().then(async (result)=>{
+					if (result != "ERROR"){
+						await pageInject(result, true,true)
+					}
+					else{
+						console.log("not happy")
+					}
+				})
 			}
 		)
 	</script>
