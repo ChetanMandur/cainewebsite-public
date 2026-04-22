@@ -3,6 +3,8 @@
 
 <head>
 	<title>TONGUES</title>
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+
 	<link rel="stylesheet" href="/common/styles/base.css">
 	<link rel="stylesheet" href="/common/styles/overlay.css">
 	<link rel="stylesheet" href="/common/styles/section.css">
@@ -21,7 +23,7 @@
 <div class="sections-container" id="sections-container">
 	<div id="firstSection" class="section first-section">
 		<video src="/pages/tongues/assets/videos/tonguesClippedLoop.mp4"  autoplay hidden muted loop playsinline></video>
-		<canvas></canvas>
+		<canvas class="mobile-contain desktop-fill"></canvas>
 	</div>
 
 	<div class="section transparent-background first-section">
@@ -69,38 +71,8 @@
 
 
 <!-- Canvas Script -->
-<script>
-	var videos = Array.from(document.getElementsByTagName("video"))
-	var canvases = Array.from(document.getElementsByTagName("canvas"))
+<script type="module" src="/common/scripts/canvas.js"></script>
 
-	
-
-	if (videos.length == canvases.length){
-		for (var i=0; i<videos.length;i++){
-			const video = videos[i]
-			const canvas = canvases[i]
-			const canvasContext = canvas.getContext("2d")
-			video.play()
-
-			// video.width = canvas.width = window.innerWidth
-       		// video.height = canvas.height = window.innerHeight
-
-			video.width = canvas.width = 1440
-        	video.height = canvas.height = 1080
-
-			function paintCanvas(video,canvas){
-				canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
-				requestAnimationFrame(()=>paintCanvas(video,canvas))
-			}
-
-			requestAnimationFrame(()=>{paintCanvas(video, canvas)})
-		}
-	}
-	else{
-		console.log("woahwoahwoah....woah")
-	}
-
-</script>
 
 </body>
 
