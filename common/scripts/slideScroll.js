@@ -12,9 +12,9 @@ export default class SlideScroll {
         document.addEventListener("wheel", this)
         document.addEventListener("pointerdown", this)
         document.addEventListener("keydown", this)
-
+        this.scrollHandler(0)
         document.addEventListener("DOMContentChanged", (()=>{
-            console.log(name,"... goodbye son")
+            // console.log(name,"... goodbye son")
             document.removeEventListener("wheel", this)
             document.removeEventListener("pointerdown", this)
             document.removeEventListener("keydown", this)

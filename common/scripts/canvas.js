@@ -8,6 +8,18 @@ if (videos.length == canvases.length){
         const canvasContext = canvas.getContext("2d")
         video.play()
 
+        video.width = canvas.width = window.innerWidth
+        video.height = canvas.height = window.innerHeight
+
+        // canvas.width = window.innerWidth
+        // canvas.height = window.innerHeight
+        // canvas.width = 1440
+        // canvas.height = 1080
+
+        // video.width = canvas.width = 1440
+        // video.height = canvas.height = 1080
+
+
         function paintCanvas(video,canvas){
             canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
             requestAnimationFrame(()=>paintCanvas(video,canvas))

@@ -1,0 +1,44 @@
+<head>
+	<meta charset="UTF-8">
+	<title>CAINE NOT CORSO</title>
+	
+	<link rel="stylesheet" href="/common/styles/base.css">
+	<link rel="stylesheet" href="/common/styles/overlay.css">
+	<link rel="stylesheet" href="/common/styles/section.css">
+	<link rel="stylesheet" href="/common/styles/error.css">
+	<link rel="stylesheet" href="/pages/album1/styles.css">
+</head>
+<body>
+	<div class="overlay" id="overlay">
+		<h1 class="timer" id="timer"></h1>
+	</div>
+
+	<div class="sections-container" id="sections-container">
+		<div id="firstSection" class="section first-section">
+			<video src="/pages/tongues/assets/videos/tonguesClippedLoop.mp4"  autoplay hidden muted loop playsinline></video>
+			<canvas style="object-fit: fill;"></canvas>
+		</div>
+	</div>
+
+
+	<div class="error-container" id="error-container">
+		you shouldn't be here
+	</div>
+
+	<script type="module">
+		import SlideScroll from "/common/scripts/slideScroll.js"
+		import initalizeTimer from "/common/scripts/timer.js"
+		import pageInject from "/common/scripts/pageInject.js"
+
+		const scroll = new SlideScroll()
+		initalizeTimer(
+			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
+			async (event)=>{
+				await pageInject("./pages/tongues/tongues.html", true,true)
+			}
+		)
+	</script>
+	<script type="module" src="/common/scripts/canvas.js"></script>
+	<script src="/pages/album1/animations.js"></script>
+
+</body>

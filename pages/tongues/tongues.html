@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+
+<head>
+	<title>TONGUES</title>
+	<link rel="stylesheet" href="/common/styles/base.css">
+	<link rel="stylesheet" href="/common/styles/overlay.css">
+	<link rel="stylesheet" href="/common/styles/section.css">
+	<link rel="stylesheet" href="/common/styles/links.css">
+	<style>
+		a{
+			--link-hover-colour:red
+			/* --link-colour:red */
+		}
+	</style>
+</head>
+
+
+<body>
+
+<div class="sections-container" id="sections-container">
+	<div id="firstSection" class="section first-section">
+		<video src="/pages/tongues/assets/videos/tonguesClippedLoop.mp4"  autoplay hidden muted loop playsinline></video>
+		<canvas style="object-fit: fill;"></canvas>
+	</div>
+
+	<div class="section transparent-background first-section">
+		<div class="section-link-tree">
+			<div class="section-link-tree-header">
+				TONGUES
+			</div>
+			<div class="section-link-tree-links">
+				<a href="">SPOTIFY</a>
+				<a href="">APPLE MUSIC</a>
+				<a href="">YOUTUBE MUSIC</a>
+				<a href="">SOUNDCLOUD</a>
+
+			</div>
+		</div>
+		<div class="section-footer">
+			<a href="https://www.instagram.com/cainenotcorso/">instagram</a>
+			<a href="https://www.tiktok.com/@securityofg0d">tiktok</a>
+		</div>
+	</div>
+
+	
+</div>
+
+<!-- Scroll script -->
+<script type="module">
+	import SlideScroll from "/common/scripts/slideScroll.js"
+	const scroll = new SlideScroll()
+	scroll.setScrollFunction((section)=>{
+		switch (section) {
+			case 0:
+				scroll.toTheCenter(0)
+				scroll.toTheCenter(1)
+				break;
+			case 1:
+				scroll.scrollHandler(0)
+				break;
+			default:
+				scroll.scrollSwitchDefaultCase(section)
+				break;
+		}
+	})
+
+</script>
+
+
+<!-- Canvas Script -->
+<script>
+	var videos = Array.from(document.getElementsByTagName("video"))
+	var canvases = Array.from(document.getElementsByTagName("canvas"))
+
+	
+
+	if (videos.length == canvases.length){
+		for (var i=0; i<videos.length;i++){
+			const video = videos[i]
+			const canvas = canvases[i]
+			const canvasContext = canvas.getContext("2d")
+			video.play()
+
+			video.width = canvas.width = window.innerWidth
+       		video.height = canvas.height = window.innerHeight
+
+			function paintCanvas(video,canvas){
+				canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
+				requestAnimationFrame(()=>paintCanvas(video,canvas))
+			}
+
+			requestAnimationFrame(()=>{paintCanvas(video, canvas)})
+		}
+	}
+	else{
+		console.log("woahwoahwoah....woah")
+	}
+
+</script>
+
+</body>
+
+
+</html>
