@@ -1,12 +1,11 @@
 <head>
 	<meta charset="UTF-8">
-	<title>CAINE NOT CORSO</title>
+	<title>TONGUES</title>
 	
 	<link rel="stylesheet" href="/common/styles/base.css">
 	<link rel="stylesheet" href="/common/styles/overlay.css">
 	<link rel="stylesheet" href="/common/styles/section.css">
 	<link rel="stylesheet" href="/common/styles/error.css">
-	<link rel="stylesheet" href="/pages/album1/styles.css">
 </head>
 <body>
 	<div class="overlay" id="overlay">
@@ -15,8 +14,8 @@
 
 	<div class="sections-container" id="sections-container">
 		<div id="firstSection" class="section first-section">
-			<video src="/pages/tongues/assets/videos/tonguesClippedLoop.mp4"  autoplay hidden muted loop playsinline></video>
-			<canvas></canvas>
+			<video class="video-canvas" src="/pages/tongues/assets/videos/tonguesClippedLoop.mp4"></video>
+			<canvas class="video-canvas mobile-contain desktop-fill"></canvas>
 		</div>
 	</div>
 
@@ -58,6 +57,10 @@
 			}
 		)
 	</script>
-	<script type="module" src="/common/scripts/canvas.js"></script>
+	<script type="module">
+		import VideoCanvas from "/common/scripts/videoCanvas.js"
+		const videoCanvas = new VideoCanvas()
+		videoCanvas.start()
+	</script>
 
 </body>
