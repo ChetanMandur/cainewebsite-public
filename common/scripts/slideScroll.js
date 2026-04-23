@@ -1,5 +1,8 @@
 export default class SlideScroll {
+    /**@type {HTMLDivElement[]} */
     #sections = undefined
+
+    /**@type {number} */
     #currentSection = 0 
 
     // -----------------------------------------------------------------
@@ -28,32 +31,38 @@ export default class SlideScroll {
     //// SECTION MANIPULATION ////
 
     //// Singular section manipulation
+    /** @param {number} index */
     toTheTop(index){
         this.sections[index].style.top="-100%"
     }
 
+    /** @param {number} index */
     toTheCenter(index){
         this.sections[index].style.top="0%"
     }
 
+    /** @param {number} index */
     toTheBottom(index){
         this.sections[index].style.top="100%"
     }
 
 
     //// Group section manipulation
+    /** @param {number} start @param {number} end */
     chunkToTheTop(start, end){
         this.sections.slice(start,end).forEach((element, index) => {
             this.toTheTop(start+index)
         });
     }
 
+    /** @param {number} start @param {number} end */
     chunkToTheCenter(start, end){
         this.sections.slice(start,end).forEach((element, index)=>{
             this.toTheCenter(start+index)
         })
     }
 
+    /** @param {number} start @param {number} end */
     chunkToTheBottom(start, end){
         this.sections.slice(start,end).forEach((element, index) => {
             this.toTheBottom(start+index)
@@ -64,7 +73,9 @@ export default class SlideScroll {
     //// SECTION SCROLL HANDLING ////
     // Function to handle what sections appear at which scroll index
     //  - This function is defined by user when calling initalizeScroll()
-    #scrollSwitchCase = (section)=>{
+
+    
+    #scrollSwitchCase = (/**@type {number}*/section)=>{
         switch (section) {
             default:
                 this.scrollSwitchDefaultCase(section)
@@ -72,7 +83,7 @@ export default class SlideScroll {
         }
     }
 
-    scrollSwitchDefaultCase = (section) =>{
+    scrollSwitchDefaultCase = (/**@type {number}*/section) =>{
         this.chunkToTheTop(0,section)
         this.chunkToTheCenter(section, section+1)
         this.chunkToTheBottom(section+1)
@@ -82,6 +93,11 @@ export default class SlideScroll {
     //  - Used as a wrapper to scrollSwitchCase()
     //      - Done so that logic for scroll to a specific section index (rather than the global value for currentSection) is common for all scrollSwitchCase()
     //          - aka, don't need to redefine the (albeit) simple logic for each scrollSwitchCase() definiton
+
+    /**
+     * 
+     * @param {number} forcedSection 
+     */
     scrollHandler(forcedSection){
         if (forcedSection!= null){
             this.currentSection = forcedSection
@@ -90,6 +106,10 @@ export default class SlideScroll {
         this.#scrollSwitchCase(this.currentSection)
     }
 
+    /**
+     * 
+     * @param {number} newSwitchCase 
+     */
     setScrollFunction(newSwitchCase){
         if (newSwitchCase){
             this.#scrollSwitchCase = newSwitchCase
@@ -99,6 +119,7 @@ export default class SlideScroll {
 
     //// Helper functions used when scrolling
     ////    - Used to limit manipulation on the currentSection value, so it won't go out of range
+    
     #scrollUp(){
         if (this.currentSection >0){
             this.currentSection--
@@ -115,6 +136,7 @@ export default class SlideScroll {
 
     // -----------------------------------------------------------------
     //// SCROLL EVENT DEFINITIONS ////
+    /**@param {number} event  */
     handleEvent(event){
         switch (event.type) {
             case "wheel":
@@ -132,7 +154,10 @@ export default class SlideScroll {
     }
     
     // Scroll Wheel Event (Throttle function)
+    /**@type {number} */
     #scrolledDate = 0
+
+    /**@param {WheelEvent} event  */
     #scrollWheelEvent (event){
         const date = new Date().getTime()
         if ((date - this.#scrolledDate) > 500){
@@ -147,6 +172,7 @@ export default class SlideScroll {
     }
 
     // Click and Drag Event (For mobile devices)
+    /**@param {PointerEvent} event  */
     #scrollPointerDownEvent(event){
         event.preventDefault()
         var pointerDownPosition = event.offsetY
@@ -176,6 +202,7 @@ export default class SlideScroll {
     }
 
     // Key Down Event (For keyboard based scrolling)
+    /**@param {KeyboardEvent} event  */
     #scrollKeyDownEvent(event){
         const upPressed = (event.key == "ArrowUp") || (event.key == "PageUp") || (event.key == "Home") || ((event.key == " " && event.shiftKey))
         const downPressed = (event.key == "ArrowDown") || (event.key == "PageDown") || (event.key == "End") || ((event.key == " " && !event.shiftKey))
