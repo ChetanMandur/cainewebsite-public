@@ -1,135 +1,191 @@
-let timerElement = undefined
+export default class Timer {
+    /**@type {HTMLDivElement} */
+    #timerElement = undefined
 
-let releaseDate = undefined
+    /**@type {string} */
+    #dateURL = undefined
 
-let releaseDateFetchURL = undefined
-let timerEnterHandler = (event)=>{console.warn("timerEnterHandler undefined \n Please define ")}
+    /**@type {number} */
+    #date = undefined
 
-async function getReleaseDate(){
-    const releaseDateResponse = await fetch(releaseDateFetchURL)
-    if (releaseDateResponse.ok){
-        const result = await releaseDateResponse.json()
-        console.log(result)
-        return (new Date(
-            new Date(
-                result.year, result.month, result.day, result.hours, result.minutes, result.seconds
-            ).toLocaleString(
-                "en-US", {timeZone: "America/New_York"}
-            )
-        )).getTime()
-    }
-    else{
-        return (new Date ("April 21, 2040 00:00:00")).getTime()
-    }
-}
+    /**@type {string} */
+    #resultURL = undefined
 
-// ----------------------------------------------------------------------------------------------
+    #result = undefined
 
-let timerUpdateAnimationID = null
-function updateTimerAnimation(){
-    var distance = releaseDate - (new Date().getTime());
+    #enterHandler = undefined//( /**@type {PointerEvent}*/ event)=>{console.warn("timerEnterHandler undefined \n Please define ")}
 
-    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    var milliseconds = Math.floor((distance % (1000)));
-    
-    if (days < 10){
-        days = "0" + days
-    }
-    
-    if (hours < 10){
-        hours = "0" + hours
-    }
-    if (minutes < 10){
-        minutes = "0" + minutes
-    }
-    if (seconds < 10){
-        seconds = "0" + seconds
+    /**@type {number[]} */
+    #animationIDs = [0,0,0]
+
+    /**
+     * 
+     * @param {string} dateURL
+     * @param {string} resultURL 
+     */
+    constructor(dateURL, resultURL){
+        this.#dateURL = dateURL
+        this.#resultURL = resultURL
+
+        this.#timerElement = document.getElementById("timer")
     }
 
-    if (milliseconds < 10){
-        milliseconds = "0"+ "0" + milliseconds
-    }
-    else if (milliseconds < 100){
-        milliseconds = "0" + milliseconds
+    /**
+     * @param {(event:PointerEvent)=>void} enterHandler 
+     */
+    set enterHandler(enterHandler){
+        this.#enterHandler = enterHandler
     }
 
-    timerElement.textContent = days + ":" + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
-
-    if (distance <= 0){
-        // console.log("STOP!", distance)
-        timerElement.textContent = "00" + ":" + "00" + ":" + "00" + ":" + "00" + ":" + "000";
-        cancelAnimationFrame(timerUpdateAnimationID)
-
-        timerDeleteAnimationID=requestAnimationFrame(()=>{deleteTimerTextAnimation(timerElement.textContent.length)})
+    start(){
+        this.#getDate().then((date)=>{
+            this.#date = date
+        }).finally(()=>{
+            this.#animationIDs[0] = requestAnimationFrame(()=>{this.#countAnimation()})
+        })
     }
-    else{
-        timerUpdateAnimationID = requestAnimationFrame(()=>{updateTimerAnimation()})
-    }
-}
 
-let timerDeleteAnimationID = null
-const deleteTimerTextAnimationSpeed = 200
-function deleteTimerTextAnimation(timerSize){
-    if (timerSize >= 0){
-        timerElement.textContent = timerElement.textContent.slice(0,timerSize)
-        timerSize--
-        setTimeout(()=>{
-           timerDeleteAnimationID = requestAnimationFrame(()=>{
-                deleteTimerTextAnimation(timerSize)
-           })
-        },deleteTimerTextAnimationSpeed)
+// ======================================================================================================
+    async getResult(){
+        // console.log("getResult hit!")
+        if (this.#result == undefined){
+            // console.log("log undefined! fetching data!");
+            const response = await fetch(this.#resultURL)
+            if (response.ok){
+                // console.log("response ok! getting data");
+                const data = await response.json()
+                // console.log("data:", data)
+                this.#result = data
+            }
+            else{
+                console.error("ERROR GETTING RESULT DATA!")
+            }
+        }
+        return this.#result
+
+    }
+
+    /**
+     * @returns {number} Release Date in milliseconds (-1 if error)
+     */
+    async #getDate(){
+        const response = await fetch(this.#dateURL)
+
+        if (response.ok){
+            const result = await response.json()
+            // console.log(result)
+            return (new Date(
+                new Date(
+                    result.year, result.month, result.day, result.hours, result.minutes, result.seconds
+                ).toLocaleString(
+                    "en-US", {timeZone: "America/New_York"}
+                )
+            )).getTime()
+        }
+        else{
+            // return (new Date ("April 21, 2040 00:00:00")).getTime()
+            return -1
+        }
+    }
+
+// ======================================================================================================
+
+    #countAnimation(){
+        const distance = this.#date - (new Date().getTime());
+
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        var milliseconds = Math.floor((distance % (1000)));
+
+        if (days < 10){
+            days = "0" + days
+        }
         
-    }
-    else{
-        cancelAnimationFrame(timerDeleteAnimationID)
+        if (hours < 10){
+            hours = "0" + hours
+        }
+        if (minutes < 10){
+            minutes = "0" + minutes
+        }
+        if (seconds < 10){
+            seconds = "0" + seconds
+        }
 
-        timerReplaceAnimationID=requestAnimationFrame(()=>{replaceTimerTextAnimation("ENTER",0)})
+        if (milliseconds < 10){
+            milliseconds = "0"+ "0" + milliseconds
+        }
+        else if (milliseconds < 100){
+            milliseconds = "0" + milliseconds
+        }
 
-    }
-}
+        this.#timerElement.textContent = days + ":" + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
 
-let timerReplaceAnimationID = null
-const replaceTimerTextAnimationSpeed = 500
-function replaceTimerTextAnimation(newText, currentIndex){
-    if (currentIndex <= newText.length){
-        timerElement.textContent = newText.slice(0,currentIndex)
-        currentIndex++
+        if (distance <= 0){
+            // console.log("STOP!", distance)
+            this.#timerElement.textContent = "00" + ":" + "00" + ":" + "00" + ":" + "00" + ":" + "000";
+            cancelAnimationFrame(this.#animationIDs[0])
 
-        setTimeout(()=>{
-           timerReplaceAnimationID = requestAnimationFrame(()=>{
-                replaceTimerTextAnimation(newText, currentIndex)
-           })
-        },replaceTimerTextAnimationSpeed)
-    }
-    else{
-        cancelAnimationFrame(timerReplaceAnimationID)
-
-        timerElement.style.pointerEvents= "visibleFill"
-        timerElement.style.cursor = "pointer"
-        timerElement.addEventListener("pointerdown",timerEnterHandler)
-    }
-}
-
-// ----------------------------------------------------------------------------------------------
-
-
-export default function initalizeTimer(timer, enterHandler){
-    if (timer == undefined || enterHandler == undefined){
-        console.error("You didn't give a timer URL and/or enter handler for when the timer finishes")
-        return new Error("undefined parameter(s)")
+            this.#animationIDs[1]=requestAnimationFrame(()=>{this.#deleteAnimation(this.#timerElement.textContent.length, 200)})
+        }
+        else{
+            this.#animationIDs[0] = requestAnimationFrame(()=>{this.#countAnimation()})
+        }
     }
 
-    timerElement = document.getElementById("timer")
+    /**
+     * 
+     * @param {number} timerSize 
+     * @param {number} animationSpeed 
+     */
+    #deleteAnimation(timerSize, animationSpeed){
+        if (timerSize >= 0){
+            this.#timerElement.textContent = this.#timerElement.textContent.slice(0,timerSize)
+            timerSize--
+            setTimeout(()=>{
+                this.#animationIDs[1] = requestAnimationFrame(()=>{
+                        this.#deleteAnimation(timerSize,animationSpeed)
+                })
+            },animationSpeed)
+            
+        }
+        else{
+            cancelAnimationFrame(this.#animationIDs[1])
+            this.#animationIDs[2]=requestAnimationFrame(()=>{this.#replaceAnimation("ENTER",0,500)})
 
-    releaseDateFetchURL = timer
-    timerEnterHandler = enterHandler
+        }
+    }
 
-    getReleaseDate().then((result)=>{
-        releaseDate = result
-    }).finally(()=>{
-        timerUpdateAnimationID = requestAnimationFrame(()=>{updateTimerAnimation()})
-    })
+    /**
+     * 
+     * @param {string} newText 
+     * @param {number} currentIndex 
+     * @param {number} animationSpeed 
+     */
+    #replaceAnimation(newText, currentIndex, animationSpeed){
+        if (currentIndex <= newText.length){
+            this.#timerElement.textContent = newText.slice(0,currentIndex)
+            currentIndex++
+
+            setTimeout(()=>{
+                this.#animationIDs[2] = requestAnimationFrame(()=>{
+                        this.#replaceAnimation(newText, currentIndex, animationSpeed)
+                })
+            },animationSpeed)
+        }
+
+        else{
+            cancelAnimationFrame(this.#animationIDs[2])
+
+            this.#timerElement.style.pointerEvents= "visibleFill"
+            this.#timerElement.style.cursor = "pointer"
+            if (this.#enterHandler == undefined){
+                this.#timerElement.addEventListener("pointerdown", ()=>{console.error(".eventHandler not defined!")})
+            }
+            else{
+                this.#timerElement.addEventListener("pointerdown",this.#enterHandler)
+            }
+        }
+    }
 }

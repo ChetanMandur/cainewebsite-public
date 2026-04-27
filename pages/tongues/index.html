@@ -26,36 +26,29 @@
 
 	<script type="module">
 		import SlideScroll from "/common/scripts/slideScroll.js"
-		import initalizeTimer from "/common/scripts/timer.js"
+		import Timer from "/common/scripts/timer.js"
 		import pageInject from "/common/scripts/pageInject.js"
 
 		const scroll = new SlideScroll()
-		initalizeTimer(
-			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
-			async (event)=>{
-				
-				async function getTimerResult(){
-					const timerResultResponse = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/timerResult")
-					if (timerResultResponse.ok){
-						const result = await timerResultResponse.json()
-						console.log(result.timerResult)
-						return result.timerResult
-					}
-					else{
-						return "ERROR"
-					}
-				}
 
-				getTimerResult().then(async (result)=>{
-					if (result != "ERROR"){
-						await pageInject(result, true,true)
-					}
-					else{
-						console.log("not happy")
-					}
-				})
-			}
+
+		const timer = new Timer(
+			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
+			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/timerResult"
 		)
+
+		timer.enterHandler = (async (event)=>{
+			const result = await timer.getResult()
+			if (result != undefined){
+				await pageInject(result.timerResult , true, true )
+			}
+			else{
+				console.log("bruh")
+			}
+		})
+
+		timer.start()
+
 	</script>
 	<script type="module">
 		import VideoCanvas from "/common/scripts/videoCanvas.js"
