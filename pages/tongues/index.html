@@ -31,9 +31,10 @@
 
 		const scroll = new SlideScroll()
 
-
+		const TENSECONDSINTHEFUTURE = new Date((new Date()).getTime() + 11000)
 		const timer = new Timer(
-			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
+			TENSECONDSINTHEFUTURE,
+			// "https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
 			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/timerResult"
 		)
 

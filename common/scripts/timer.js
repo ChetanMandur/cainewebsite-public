@@ -5,6 +5,9 @@ export default class Timer {
     /**@type {string} */
     #dateURL = undefined
 
+    /**@type {Date} */
+    #dateObject = undefined
+
     /**@type {number} */
     #date = undefined
 
@@ -23,8 +26,14 @@ export default class Timer {
      * @param {string} dateURL
      * @param {string} resultURL 
      */
-    constructor(dateURL, resultURL){
-        this.#dateURL = dateURL
+    constructor(date, resultURL){
+        if (typeof date == "string"){
+            this.#dateURL = date
+        }
+        if (date instanceof Date){
+            this.#dateObject = date
+        }
+
         this.#resultURL = resultURL
 
         this.#timerElement = document.getElementById("timer")
@@ -69,23 +78,29 @@ export default class Timer {
      * @returns {number} Release Date in milliseconds (-1 if error)
      */
     async #getDate(){
-        const response = await fetch(this.#dateURL)
+        if (this.#dateURL != undefined){
+            const response = await fetch(this.#dateURL)
 
-        if (response.ok){
-            const result = await response.json()
-            // console.log(result)
-            return (new Date(
-                new Date(
-                    result.year, result.month, result.day, result.hours, result.minutes, result.seconds
-                ).toLocaleString(
-                    "en-US", {timeZone: "America/New_York"}
-                )
-            )).getTime()
+            if (response.ok){
+                const result = await response.json()
+                // console.log(result)
+                return (new Date(
+                    new Date(
+                        result.year, result.month, result.day, result.hours, result.minutes, result.seconds
+                    ).toLocaleString(
+                        "en-US", {timeZone: "America/New_York"}
+                    )
+                )).getTime()
+            }
+            else{
+                // return (new Date ("April 21, 2040 00:00:00")).getTime()
+                return -1
+            }
         }
-        else{
-            // return (new Date ("April 21, 2040 00:00:00")).getTime()
-            return -1
+        else if (this.#dateObject != undefined){
+            return this.#dateObject.getTime()
         }
+        
     }
 
 // ======================================================================================================
