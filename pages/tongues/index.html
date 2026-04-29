@@ -33,14 +33,15 @@
 
 		const timer = new Timer(
 			Timer.TenSeconds,
-			// "https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
-			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/timerResult"
+			// "https://api.securityofgod.com/get/releaseDate/tongues",
+			"https://api.securityofgod.com/get/timerResult/tongues"
 		)
 
 		timer.enterHandler = (async (event)=>{
+			/**@type {Response}*/
 			const result = await timer.getResult()
 			if (result != undefined){
-				await pageInject(result.timerResult , true, true )
+				await pageInject(await result.text() , true, true )
 			}
 			else{
 				console.log("bruh")

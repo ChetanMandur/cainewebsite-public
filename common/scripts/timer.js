@@ -60,15 +60,10 @@ export default class Timer {
 
 // ======================================================================================================
     async getResult(){
-        // console.log("getResult hit!")
         if (this.#result == undefined){
-            // console.log("log undefined! fetching data!");
             const response = await fetch(this.#resultURL)
             if (response.ok){
-                // console.log("response ok! getting data");
-                const data = await response.json()
-                // console.log("data:", data)
-                this.#result = data
+                this.#result = response
             }
             else{
                 console.error("ERROR GETTING RESULT DATA!")
