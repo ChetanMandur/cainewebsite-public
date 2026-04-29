@@ -21,6 +21,10 @@ export default class Timer {
     /**@type {number[]} */
     #animationIDs = [0,0,0]
 
+    static TenSeconds = new Date((new Date()).getTime() + 11000)
+    static FiveSeconds = new Date((new Date()).getTime() + 6000)
+
+
     /**
      * 
      * @param {string} dateURL

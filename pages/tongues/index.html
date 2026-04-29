@@ -14,7 +14,7 @@
 
 	<div class="sections-container" id="sections-container">
 		<div id="firstSection" class="section first-section">
-			<video class="video-canvas" src="/pages/tongues/assets/videos/tonguesClippedLoop.mp4"></video>
+			<video class="video-canvas" src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4"></video>
 			<canvas class="video-canvas mobile-contain desktop-fill"></canvas>
 		</div>
 	</div>
@@ -31,9 +31,8 @@
 
 		const scroll = new SlideScroll()
 
-		const TENSECONDSINTHEFUTURE = new Date((new Date()).getTime() + 11000)
 		const timer = new Timer(
-			TENSECONDSINTHEFUTURE,
+			Timer.TenSeconds,
 			// "https://broken-fire-bf4e.chetanmandur45.workers.dev/get/releaseDate",
 			"https://broken-fire-bf4e.chetanmandur45.workers.dev/get/timerResult"
 		)
