@@ -89,8 +89,16 @@ function headInjector(newDom){
         var isDupe = false
         Array.from(currentHead.children).forEach((currentChild)=>{
             if (incomingChild.tagName == currentChild.tagName){
-                if ((incomingChild.isEqualNode(currentChild))){
-                    isDupe = true
+                // console.log("wtf", incomingChild.tagName)
+                switch (incomingChild.tagName){
+                    case "LINK":
+                        console.log("link")
+                        if ((incomingChild.isEqualNode(currentChild))){
+                            isDupe = true
+                        }
+                        break;
+                    default:
+                        break
                 }
             }
         })
