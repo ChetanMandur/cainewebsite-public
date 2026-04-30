@@ -75,9 +75,42 @@ function tagInjector(newDom, tag, overwrite){
     scriptAppender(mainDomTag,newDomTagScripts)
 }
 
+/**
+ * 
+ * @param {Document} newDom 
+ */
+function headInjector(newDom){
+    const currentHead = document.getElementsByTagName("head")[0]
+    const incomingHead = newDom.getElementsByTagName("head")[0]
+
+    var newUniqueChildren = []
+
+    Array.from(incomingHead.children).forEach((incomingChild)=>{
+        var isDupe = false
+        Array.from(currentHead.children).forEach((currentChild)=>{
+            if (incomingChild.tagName == currentChild.tagName){
+                if ((incomingChild.isEqualNode(currentChild))){
+                    isDupe = true
+                }
+            }
+        })
+
+        if (!isDupe){
+            newUniqueChildren.push(incomingChild)
+        }
+    })
+
+
+    newUniqueChildren.forEach((newChild)=>{
+        currentHead.appendChild(newChild)
+    })
+}
+
 async function pageInject(page, overwriteHead, overwriteBody){
     const pageDom = await pageFetch(page)
-    tagInjector(pageDom, "head",overwriteHead)
+    headInjector(pageDom)
+
+    // tagInjector(pageDom, "head",overwriteHead)
     tagInjector(pageDom, "body",overwriteBody)
 }
 
