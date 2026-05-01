@@ -86,24 +86,41 @@ function headInjector(newDom){
     var newUniqueChildren = []
 
     Array.from(incomingHead.children).forEach((incomingChild)=>{
-        var isDupe = false
+        var toAppend = true
+
         Array.from(currentHead.children).forEach((currentChild)=>{
             if (incomingChild.tagName == currentChild.tagName){
-                // console.log("wtf", incomingChild.tagName)
                 switch (incomingChild.tagName){
-                    case "LINK":
-                        console.log("link")
-                        if ((incomingChild.isEqualNode(currentChild))){
-                            isDupe = true
+                    case "TITLE":
+                        currentChild.innerHTML = incomingChild.innerHTML
+                        toAppend = false
+                        break;
+
+                    case "META":
+                        if (incomingChild.isEqualNode(currentChild)){
+                            toAppend = false
                         }
                         break;
+
+                    case "LINK":
+                        /**@type {string[]} */
+                        const rel  = incomingChild.rel.split(" ")
+
+                        if (rel.includes("stylesheet")){
+                            if (incomingChild.isEqualNode(currentChild)){
+                                toAppend = false
+                            }
+                        }
+                        break;
+                        
                     default:
+                        console.log("default", incomingChild.tagName)
                         break
                 }
             }
         })
 
-        if (!isDupe){
+        if (toAppend){
             newUniqueChildren.push(incomingChild)
         }
     })
