@@ -83,6 +83,9 @@ function headInjector(newDom){
     const currentHead = document.getElementsByTagName("head")[0]
     const incomingHead = newDom.getElementsByTagName("head")[0]
 
+    scriptExtractor(currentHead)
+    const incomingScripts = scriptExtractor(incomingHead)
+
     var newUniqueChildren = []
 
     Array.from(incomingHead.children).forEach((incomingChild)=>{
@@ -129,14 +132,138 @@ function headInjector(newDom){
     newUniqueChildren.forEach((newChild)=>{
         currentHead.appendChild(newChild)
     })
+
+    scriptAppender(currentHead,incomingScripts)
+
+}
+
+/**
+ * 
+ * @param {Element} element1 
+ * @param {Element} element2 
+ * @returns 
+ */
+function deepCompare(element1, element2){
+    console.log("COMPARING", element1, element2)
+
+    if (element1.tagName != element2.tagName){
+        console.log("TAG NAME NOT THE SAME", element1.tagName, element2.tagName)
+        return false
+    }
+
+    const element1Attributes = Array.from(element1.attributes)
+    const element2Attributes = Array.from(element2.attributes)
+
+    console.log(element1Attributes, element2Attributes)
+
+    // if (element1Attributes.length != element2Attributes.length){
+    //     console.log("ATTRIBUTES LENGTH NOT THE SAME", element1Attributes.length, element2Attributes.length)
+    //     return false
+    // }
+
+    // for (const i=0; i< element1Attributes.length; i++){
+    //     if (element1Attributes[i] != element2Attributes[i]){
+    //         return false
+    //     }
+    // }
+
+    // var attributesSame = true
+    // element1Attributes.forEach((a1)=>{
+    //     if (!(element2Attributes.includes(a1))){
+    //         console.log("MISSING ATTRIBUTE", a1)
+    //         attributesSame = false
+    //     } 
+    // })
+
+    // if (!attributesSame){
+    //     return false
+    // }
+
+    if (element1.textContent != element2.textContent){
+        console.log("MISSING TEXT CONTEXT", element1.textContent, element2.textContent)
+        return false
+    }
+
+    const element1Children = Array.from(element1.children)
+    const element2Children = Array.from(element2.children)
+
+    if (element1Children.length != element2Children.length){
+        console.log("CHILDREN LENGTH NOT THE SAME", element1Children.length, element2Children.length)
+        return false
+    }
+
+    for (var i=0; i< element1Children.length; i++){
+        console.log("RUNNING DEEP COMPARE ON CHILDREN:", element1Children[i], element2Children[i])
+        return deepCompare(element1Children[i], element2Children[i])
+    }
+
+    console.log("THEY ARE THE SAME")
+    return true
+}
+
+
+/**
+ * 
+ * @param {Document} newDom 
+ */
+function bodyInjector(newDom){
+    const currentBody = document.getElementsByTagName("body")[0]
+    const incomingBody = newDom.getElementsByTagName("body")[0]
+
+    const currentSectionsContainer = currentBody.getElementsByClassName("sections-container")[0]
+    const incomingSectionsContainer = incomingBody.getElementsByClassName("sections-container")[0]
+
+    scriptExtractor(currentBody)
+    const incomingScripts = scriptExtractor(incomingBody)
+
+    const newSections = document.createElement("div")
+
+    newSections.className = "sections-container"
+
+    if (incomingSectionsContainer != undefined){
+        Array.from(incomingSectionsContainer.children).forEach((incomingChild)=>{
+            var dupeFound = false
+            if (currentSectionsContainer != undefined){
+                Array.from(currentSectionsContainer.children).forEach((currentChild)=>{
+                    if (deepCompare(incomingChild, currentChild)){
+                        newSections.appendChild(currentChild)
+                        dupeFound = true
+                    }
+                })
+                
+            }
+            if (!dupeFound){
+                newSections.appendChild(incomingChild)
+            }
+        })
+    }
+
+    if (currentSectionsContainer == undefined){
+        currentBody.appendChild(newSections)
+    }
+    else{
+        currentSectionsContainer.replaceWith(newSections)
+    }
+
+    if (currentBody.getElementsByClassName("overlay")[0] == undefined){
+        currentBody.appendChild(incomingBody.getElementsByClassName("overlay")[0])
+    }
+    else{
+        currentSectionsContainer.replaceWith(incomingBody.getElementsByClassName("overlay")[0])
+    }
+    
+    scriptAppender(currentBody,incomingScripts)
+
 }
 
 async function pageInject(page, overwriteHead, overwriteBody){
     const pageDom = await pageFetch(page)
     headInjector(pageDom)
 
+    bodyInjector(pageDom)
+
     // tagInjector(pageDom, "head",overwriteHead)
-    tagInjector(pageDom, "body",overwriteBody)
+    // tagInjector(pageDom, "body",overwriteBody)
 }
 
 export default pageInject
