@@ -11,7 +11,13 @@ export default class VideoCanvas {
     /**@type {boolean} */
     #validConfig = false
 
-    constructor (){
+    /**@type {string} */
+    #vcID
+
+    constructor (vcID){
+        console.log("STARTING:", vcID)
+        this.#vcID = vcID
+
         this.#videoElements = Array.from(document.getElementsByTagName("video")).filter(
             (video)=>{
                 if (video.classList.contains("video-canvas")){
@@ -48,6 +54,8 @@ export default class VideoCanvas {
                 this.#animationIDs.forEach((id)=>{
                     cancelAnimationFrame(id)
                 })
+
+                console.log("KILLING:", this.#vcID)
             },{once:true})
         }
     }
@@ -80,6 +88,7 @@ export default class VideoCanvas {
      * @param {number} index 
      */
     #paintCanvas(video,canvas, index){
+        console.log(this.#vcID, "IS PLAYING")
         const canvasContext = canvas.getContext("2d")
         canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
         this.#animationIDs[index] = requestAnimationFrame(()=>this.#paintCanvas(video,canvas,index))
