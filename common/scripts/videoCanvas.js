@@ -15,7 +15,7 @@ export default class VideoCanvas {
     #vcID
 
     constructor (vcID){
-        console.log("STARTING:", vcID)
+        // console.log("STARTING:", vcID)
         this.#vcID = vcID
 
         this.#videoElements = Array.from(document.getElementsByTagName("video")).filter(
@@ -49,17 +49,7 @@ export default class VideoCanvas {
             console.error("Mis-match in video and canvas elements!\nThere are not equal amounts video and canvas elements!\nOr, there are no elements to hook onto!")
         }
 
-        else{
-            document.addEventListener("DOMContentChanged", ()=>{
-                // this.#animationIDs.forEach((id)=>{
-                //     cancelAnimationFrame(id)
-                // })
-
-                // console.log("KILLING:", this.#vcID)
-            },{once:true})
-        }
-
-        console.log(this.#vcID, "INITALIZED!", this.#videoElements, this.#canvasElements,this.#validConfig)
+        // console.log(this.#vcID, "INITALIZED!", this.#videoElements, this.#canvasElements,this.#validConfig)
     }
 
     play(){
@@ -70,15 +60,14 @@ export default class VideoCanvas {
         if (this.#validConfig){
             this.#videoElements.forEach((video, index)=>{
                 const canvas = this.#canvasElements[index]
-                console.log("BEGINNING VIDEOS FOR", this.#vcID,":",video,canvas, index)
+                // console.log("BEGINNING VIDEOS FOR", this.#vcID,":",video,canvas, index)
                 
                 video.addEventListener("loadedmetadata",()=>{
-                    console.log("METADATA LOADED!", this.#vcID)
+                    // console.log("METADATA LOADED!", this.#vcID)
                     canvas.width = video.videoWidth
                     canvas.height = video.videoHeight
                     video.play()
-                    this.#animationIDs[index] = requestAnimationFrame(()=>{this.#paintCanvas(video, canvas,index)})
-
+                    this.#animationIDs[index] = requestAnimationFrame(()=>{this.#paintCanvas(index)})
                 })
 
             })
@@ -91,14 +80,41 @@ export default class VideoCanvas {
      * @param {HTMLCanvasElement} canvas
      * @param {number} index 
      */
-    #paintCanvas(video,canvas, index){
-        console.log(this.#vcID, "IS PLAYING")
+    #paintCanvas(index){
+        // console.log(this.#vcID, "IS PLAYING")
         
-        const canvasContext = canvas.getContext("2d")
-        canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
-        this.#animationIDs[index] = requestAnimationFrame(()=>this.#paintCanvas(video,canvas,index))
+        const video = this.#videoElements[index]
+        const canvas = this.#canvasElements[index]
+
+        if (video.isConnected && canvas.isConnected){
+            const canvasContext = canvas.getContext("2d")
+            canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
+            this.#animationIDs[index] = requestAnimationFrame(()=>this.#paintCanvas(index))
+        }
+        else{
+            this.#videoElements[index] = undefined
+            this.#canvasElements[index] = undefined
+            this.#animationIDs[index] = undefined
+            this.#isAlive()
+        }   
     }
 
 
+    #isAlive(){
+        var isAlive = false
+        for (const value of this.#videoElements){
+            if (value != undefined){
+                isAlive = true
+                break;
+            }
+        }
 
+        if (!isAlive){
+            this.#videoElements = undefined
+            this.#canvasElements = undefined
+            this.#animationIDs = undefined
+            this.#validConfig = undefined
+            this.#vcID = undefined
+        }
+    }
 }
