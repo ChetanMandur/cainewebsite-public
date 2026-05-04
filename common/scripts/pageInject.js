@@ -151,10 +151,10 @@ function deepCompare(element1, element2){
         return false
     }
 
-    const element1Attributes = Array.from(element1.attributes)
-    const element2Attributes = Array.from(element2.attributes)
+    // const element1Attributes = Array.from(element1.attributes)
+    // const element2Attributes = Array.from(element2.attributes)
 
-    console.log(element1Attributes, element2Attributes)
+    // console.log(element1Attributes, element2Attributes)
 
     // if (element1Attributes.length != element2Attributes.length){
     //     console.log("ATTRIBUTES LENGTH NOT THE SAME", element1Attributes.length, element2Attributes.length)
@@ -193,11 +193,13 @@ function deepCompare(element1, element2){
     }
 
     for (var i=0; i< element1Children.length; i++){
-        console.log("RUNNING DEEP COMPARE ON CHILDREN:", element1Children[i], element2Children[i])
-        return deepCompare(element1Children[i], element2Children[i])
+        console.log("RUNNING DEEP COMPARE ON CHILDREN:")
+        if ((deepCompare(element1Children[i], element2Children[i])) == false){
+            return false
+        }
     }
 
-    console.log("THEY ARE THE SAME")
+    console.log("THEY ARE THE SAME", element1, element2)
     return true
 }
 
@@ -213,30 +215,39 @@ function bodyInjector(newDom){
     const currentSectionsContainer = currentBody.getElementsByClassName("sections-container")[0]
     const incomingSectionsContainer = incomingBody.getElementsByClassName("sections-container")[0]
 
-    scriptExtractor(currentBody)
+    const currentOverlay = currentBody.getElementsByClassName("overlay")[0]
+    const incomingOverlay = incomingBody.getElementsByClassName("overlay")[0]
+
+    const currentScripts = scriptExtractor(currentBody)    
     const incomingScripts = scriptExtractor(incomingBody)
 
     const newSections = document.createElement("div")
-
     newSections.className = "sections-container"
 
+
+    var incomingSections = []
+    var currentSections = []
     if (incomingSectionsContainer != undefined){
-        Array.from(incomingSectionsContainer.children).forEach((incomingChild)=>{
-            var dupeFound = false
-            if (currentSectionsContainer != undefined){
-                Array.from(currentSectionsContainer.children).forEach((currentChild)=>{
-                    if (deepCompare(incomingChild, currentChild)){
-                        newSections.appendChild(currentChild)
-                        dupeFound = true
-                    }
-                })
-                
-            }
-            if (!dupeFound){
-                newSections.appendChild(incomingChild)
+        incomingSections = Array.from(incomingSectionsContainer.children)
+    }
+
+    if (currentSectionsContainer != undefined){
+        currentSections = Array.from(currentSectionsContainer.children)
+    }
+
+    incomingSections.forEach((incoming)=>{
+        let dupeFound = false
+        currentSections.forEach((current)=>{
+            if (deepCompare(incoming, current)){
+                dupeFound = true
+                newSections.appendChild(current)
             }
         })
-    }
+
+        if (!dupeFound){
+            newSections.appendChild(incoming)
+        }
+    })
 
     if (currentSectionsContainer == undefined){
         currentBody.appendChild(newSections)
@@ -245,11 +256,18 @@ function bodyInjector(newDom){
         currentSectionsContainer.replaceWith(newSections)
     }
 
-    if (currentBody.getElementsByClassName("overlay")[0] == undefined){
-        currentBody.appendChild(incomingBody.getElementsByClassName("overlay")[0])
+    if (currentOverlay == undefined){
+        if (incomingOverlay != undefined){
+            currentBody.appendChild(incomingOverlay)
+        }
     }
     else{
-        currentSectionsContainer.replaceWith(incomingBody.getElementsByClassName("overlay")[0])
+        if (incomingOverlay != undefined){
+            currentBody.appendChild(incomingOverlay)
+        }
+        else{
+            currentOverlay.remove()
+        }
     }
     
     scriptAppender(currentBody,incomingScripts)
