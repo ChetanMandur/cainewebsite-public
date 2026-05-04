@@ -51,13 +51,15 @@ export default class VideoCanvas {
 
         else{
             document.addEventListener("DOMContentChanged", ()=>{
-                this.#animationIDs.forEach((id)=>{
-                    cancelAnimationFrame(id)
-                })
+                // this.#animationIDs.forEach((id)=>{
+                //     cancelAnimationFrame(id)
+                // })
 
-                console.log("KILLING:", this.#vcID)
+                // console.log("KILLING:", this.#vcID)
             },{once:true})
         }
+
+        console.log(this.#vcID, "INITALIZED!", this.#videoElements, this.#canvasElements,this.#validConfig)
     }
 
     play(){
@@ -68,8 +70,10 @@ export default class VideoCanvas {
         if (this.#validConfig){
             this.#videoElements.forEach((video, index)=>{
                 const canvas = this.#canvasElements[index]
+                console.log("BEGINNING VIDEOS FOR", this.#vcID,":",video,canvas, index)
                 
                 video.addEventListener("loadedmetadata",()=>{
+                    console.log("METADATA LOADED!", this.#vcID)
                     canvas.width = video.videoWidth
                     canvas.height = video.videoHeight
                     video.play()
@@ -89,6 +93,7 @@ export default class VideoCanvas {
      */
     #paintCanvas(video,canvas, index){
         console.log(this.#vcID, "IS PLAYING")
+        
         const canvasContext = canvas.getContext("2d")
         canvasContext.drawImage(video, 0,0, canvas.width,canvas.height)
         this.#animationIDs[index] = requestAnimationFrame(()=>this.#paintCanvas(video,canvas,index))
