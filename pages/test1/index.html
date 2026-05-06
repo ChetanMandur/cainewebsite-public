@@ -37,10 +37,26 @@
 		</div>
 	</div>
 	<script type="module">
-		import initalizeTimer from "/common/scripts/timer.js"
-		initalizeTimer("https://broken-fire-bf4e.chetanmandur45.workers.dev/test/get/releaseDate",()=>{
-			console.log("hi")
+
+		import Timer from "/common/scripts/timer.js"
+		const timer = new Timer(
+			// Timer.TenSeconds,
+			"https://api.securityofgod.com/get/releaseDate/test",
+			"https://api.securityofgod.com/get/timerResult/test"
+		)
+		
+		timer.enterHandler = (async (event)=>{
+			/**@type {Response}*/
+			const result = await timer.getResult()
+			if (result != undefined){
+				console.log(await result.text())
+			}
+			else{
+				console.log("bruh")
+			}
 		})
+
+		timer.start()
 	</script>
 	<script type="module">
 		import SlideScroll from "/common/scripts/slideScroll.js"

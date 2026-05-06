@@ -67,9 +67,10 @@ export default class Timer {
             }
             else{
                 console.error("ERROR GETTING RESULT DATA!")
+                return undefined
             }
         }
-        return this.#result
+        return (this.#result).clone()
 
     }
 
