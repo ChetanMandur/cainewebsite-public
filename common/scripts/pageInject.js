@@ -117,7 +117,7 @@ function headInjector(newDom){
                         break;
                         
                     default:
-                        console.log("default", incomingChild.tagName)
+                        // console.log("default", incomingChild.tagName)
                         break
                 }
             }
@@ -144,43 +144,29 @@ function headInjector(newDom){
  * @returns 
  */
 function deepCompare(element1, element2){
-    console.log("COMPARING", element1, element2)
+    // console.log("COMPARING", element1, element2)
 
     if (element1.tagName != element2.tagName){
-        console.log("TAG NAME NOT THE SAME", element1.tagName, element2.tagName)
+        // console.log("TAG NAME NOT THE SAME", element1.tagName, element2.tagName)
         return false
     }
 
-    // const element1Attributes = Array.from(element1.attributes)
-    // const element2Attributes = Array.from(element2.attributes)
 
-    // console.log(element1Attributes, element2Attributes)
+    // console.log("Attributes:",element1.attributes, element2.attributes)
 
-    // if (element1Attributes.length != element2Attributes.length){
-    //     console.log("ATTRIBUTES LENGTH NOT THE SAME", element1Attributes.length, element2Attributes.length)
-    //     return false
-    // }
-
-    // for (const i=0; i< element1Attributes.length; i++){
-    //     if (element1Attributes[i] != element2Attributes[i]){
-    //         return false
-    //     }
-    // }
-
-    // var attributesSame = true
-    // element1Attributes.forEach((a1)=>{
-    //     if (!(element2Attributes.includes(a1))){
-    //         console.log("MISSING ATTRIBUTE", a1)
-    //         attributesSame = false
-    //     } 
-    // })
-
-    // if (!attributesSame){
-    //     return false
-    // }
+    if (element1.attributes.class.value != element2.attributes.class.value){return false}
+    switch(element1.tagName){
+        case("VIDEO"):
+            if (
+                element1.attributes.src.value != element2.attributes.src.value
+            ){return false}
+            break
+        
+        default: break
+    }
 
     if (element1.textContent != element2.textContent){
-        console.log("MISSING TEXT CONTEXT", element1.textContent, element2.textContent)
+        // console.log("MISSING TEXT CONTEXT", element1.textContent, element2.textContent)
         return false
     }
 
@@ -188,18 +174,18 @@ function deepCompare(element1, element2){
     const element2Children = Array.from(element2.children)
 
     if (element1Children.length != element2Children.length){
-        console.log("CHILDREN LENGTH NOT THE SAME", element1Children.length, element2Children.length)
+        // console.log("CHILDREN LENGTH NOT THE SAME", element1Children.length, element2Children.length)
         return false
     }
 
     for (var i=0; i< element1Children.length; i++){
-        console.log("RUNNING DEEP COMPARE ON CHILDREN:")
+        // console.log("RUNNING DEEP COMPARE ON CHILDREN:")
         if ((deepCompare(element1Children[i], element2Children[i])) == false){
             return false
         }
     }
 
-    console.log("THEY ARE THE SAME", element1, element2)
+    // console.log("THEY ARE THE SAME", element1, element2)
     return true
 }
 
