@@ -198,6 +198,9 @@ function bodyInjector(newDom){
     const currentBody = document.getElementsByTagName("body")[0]
     const incomingBody = newDom.getElementsByTagName("body")[0]
 
+    const currentChildren = Array.from(currentBody.children)
+    const incomingChildren = Array.from(incomingBody.children)
+
     const currentSectionsContainer = currentBody.getElementsByClassName("sections-container")[0]
     const incomingSectionsContainer = incomingBody.getElementsByClassName("sections-container")[0]
 
@@ -255,6 +258,20 @@ function bodyInjector(newDom){
             currentOverlay.remove()
         }
     }
+
+    currentChildren.forEach((current)=>{
+        if (!(current.classList.contains("sections-container")) && !(current.classList.contains("overlay")) && (current.tagName != "SCRIPT") ){
+            // console.log("remove current", current)
+            current.remove()
+        }
+    })
+
+    incomingChildren.forEach((incoming)=>{
+        if (!(incoming.classList.contains("sections-container")) && !(incoming.classList.contains("overlay")) && (incoming.tagName != "SCRIPT")){
+            // console.log("add incoming", incoming)
+            currentBody.appendChild(incoming)
+        }
+    })
     
     scriptAppender(currentBody,incomingScripts)
 
