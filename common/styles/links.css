@@ -1,0 +1,26 @@
+a {
+    --link-colour: #ffffff;
+    --link-hover-colour: #03f0fc
+}
+
+
+a:link{
+    color: var(--link-colour);
+    text-decoration: none;
+}
+
+a:hover{
+    color: var(--link-hover-colour);
+    text-decoration: none;
+
+}
+
+a:visited{
+    color:var(--link-colour);
+    text-decoration: none;
+}
+
+a:visited:hover{
+    color: var(--link-hover-colour);
+    text-decoration: none;
+}

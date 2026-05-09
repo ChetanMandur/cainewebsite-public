@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+
+<head>
+	<title>SECURITY OF GOD</title>
+	<link rel="shortcut icon" href="public/angel_logo.png" type="image/x-icon">
+	<meta name="description" content="SECURITY OF GOD // CAINE NOT CORSO // 2026">
+	<meta name="author" content="CAINE NOT CORSO">
+	<meta name="keywords" content="MUSIC, ARTIST, ART, GOTHIC">
+
+	<!-- OPEN GRAPH PROTOCOL -->
+	<meta property="og:title" content="SECURITY OF GOD"/>
+	<meta property="og:type" content="website" />
+	<meta property="og:description " content="SECURITY OF GOD // CAINE NOT CORSO // 2026" />
+
+	<meta property="og:locale" content="en_CA" />
+	<meta property="og:site_name" content="SECURITY OF GOD"/>
+
+	<meta property="og:url" content="https://securityofgod.mov/"/>
+	<meta property="og:image" content="https://securityofgod.mov/public/angel_logo.png"/>
+	
+	<link rel="stylesheet" href="/common/styles/base.css">
+	<link rel="stylesheet" href="/common/styles/overlay.css">
+	<link rel="stylesheet" href="/common/styles/section.css">
+	<link rel="stylesheet" href="/common/styles/links.css">
+	<style>
+		a{
+			--link-hover-colour:red
+			/* --link-colour:red */
+		}
+	</style>
+	
+</head>
+
+
+<body>
+
+<div class="sections-container" id="sections-container">
+	<div id="firstSection" class="section first-section">
+		<video class="video-canvas" src="/pages/lie2me/assets/videos/l2m_mute.mp4"></video>
+		<canvas class="video-canvas mobile-contain desktop-fill"></canvas>
+	</div>
+
+	<div class="section transparent-background first-section" >
+		<a id="l2m-mv-button" style="font-size: xx-large;">WATCH MUSIC VIDEO</a>
+		<div id="l2m-mv-footer" class="section-footer">
+			<a id="l2m-mv-footer-button" href="">(scroll down)</a>
+		</div>
+		<iframe style="display:none; width: 100%; height:100%" id="l2m-mv-youtube" width="1280px" height="720px" src="https://www.youtube.com/embed/lcvr7kuV850" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+	</div>
+
+	<div class="section transparent-background">
+		<div class="section-link-tree">
+			<div class="section-link-tree-header">
+				WON'T YOU (Demos)
+			</div>
+			<div class="section-link-tree-links">
+				<a href="https://open.spotify.com/album/5RKSVE6DEmMObOKr8WZuel">SPOTIFY</a>
+				<a href="https://music.apple.com/ca/album/wont-you-demos-single/1887316246">APPLE MUSIC</a>
+				<a href="https://www.youtube.com/watch?v=Dnz8dMEKA_c&list=OLAK5uy_nLiZeN7bzLBrLdRx7OmLlWIXWzFUTXB40&index=3">YOUTUBE MUSIC</a>
+				<a href="https://soundcloud.com/cainenotcorso/sets/wont-you-demos">SOUNDCLOUD</a>
+
+			</div>
+		</div>
+		<div class="section-footer">
+			<a href="https://www.instagram.com/cainenotcorso/">instagram</a>
+			<a href="https://www.tiktok.com/@securityofg0d">tiktok</a>
+		</div>
+	</div>
+
+	
+</div>
+<div id="EASTEREGG" class="imageContainer" style="display: none;position: absolute; top:0%; left:0%; width:100%; height:100%">
+	<img id="EASTEREGGIMAGE" alt="" style="width:100%;height:100%">
+</div>
+<audio id="EASTEREGGSONG" hidden></audio>
+
+
+
+<script>
+	const KONAMI_CODE= [
+		"ArrowUp",
+		"ArrowUp",
+		"ArrowDown",
+		"ArrowDown",
+		"ArrowLeft",
+		"ArrowRight",
+		"ArrowLeft",
+		"ArrowRight",
+		"b",
+		"a",
+		"Enter",
+	]
+
+	let currentSpot = 0
+	document.addEventListener("keydown", (event)=>{
+		console.log(event.key)
+		if (event.key == KONAMI_CODE[currentSpot]){
+			currentSpot++
+		}
+		else{
+			currentSpot = 0
+		}
+
+		if (currentSpot == KONAMI_CODE.length){
+			console.log("HIT")
+			document.getElementById("sections-container").style.display = "none"
+
+			const easterEggImage = document.getElementById("EASTEREGGIMAGE")
+			const easterEggSong = document.getElementById("EASTEREGGSONG")
+
+			async function getSecretEasterEgg() {
+				const response = await fetch("https://broken-fire-bf4e.chetanmandur45.workers.dev/get/wontyou/easteregg")
+				
+				if (response.ok){
+					const result = await response.json()
+					return {"image":result.image, "song":result.song}
+				}
+				else{
+					console.log("UHHHHHHH")
+				}
+			}
+
+			getSecretEasterEgg().then((value)=>{
+				console.log(value)
+				easterEggImage.src = value.image
+				easterEggSong.src = value.song
+
+			}).finally(()=>{
+				document.getElementById("EASTEREGG").style.display = "block"
+				easterEggSong.play()
+			})
+		}
+	})
+</script>
+
+<!-- Scroll script -->
+<script type="module">
+	import SlideScroll from "/common/scripts/slideScroll.js"
+	const scroll = new SlideScroll()
+	scroll.setScrollFunction((section)=>{
+		switch (section) {
+			case 0:
+				scroll.toTheCenter(0)
+				scroll.toTheCenter(1)
+				scroll.toTheBottom(2)
+				break;
+			case 1:
+				scroll.toTheCenter(0)
+				scroll.toTheTop(1)
+				scroll.toTheCenter(2)
+				break;
+			case 2:
+				scroll.scrollHandler(1)
+				break;
+			default:
+				scroll.scrollSwitchDefaultCase(section)
+				break;
+		}
+	})
+
+	const l2m_button = document.getElementById("l2m-mv-button")
+	const l2m_youtube = document.getElementById("l2m-mv-youtube")
+
+	const l2m_footer = document.getElementById("l2m-mv-footer")
+	const l2m_footer_button = document.getElementById("l2m-mv-footer-button")
+
+
+	l2m_button.addEventListener("pointerdown",()=>{
+		l2m_button.style.display = "none"
+		l2m_footer.style.display = "none"
+		l2m_footer_button.style.display = "none"
+
+		l2m_youtube.style.display = "block"
+	})
+
+	l2m_footer_button.addEventListener("pointerdown",(event)=>{
+		console.log("hiiii")
+		event.preventDefault()
+		scroll.scrollHandler(1)
+	})
+
+</script>
+
+
+<!-- Canvas Script -->
+<script type="module">
+	import VideoCanvas from "/common/scripts/videoCanvas.js"
+	const videoCanvas = new VideoCanvas("LIE2ME")
+	videoCanvas.play()
+</script>
+
+</body>
+
+
+</html>

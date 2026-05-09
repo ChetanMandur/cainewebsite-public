@@ -1,0 +1,21 @@
+.second-section{
+    z-index: 999;
+}
+
+.second-section > *{
+    opacity: 40%;
+}
+
+.final-section {
+    background-image: url("/common/assets/images/cainelogo.png");
+    background-position: top;
+}
+
+.youtube-video-container{
+    position: absolute;
+    width:100%;
+    height:100%;
+    background-color: black;
+    color:white;
+    display: none;
+}

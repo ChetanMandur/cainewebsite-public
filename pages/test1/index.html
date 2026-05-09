@@ -1,0 +1,85 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test1</title>
+    <link rel="stylesheet" href="/common/styles/base.css">
+    <link rel="stylesheet" href="/common/styles/overlay.css">
+    <link rel="stylesheet" href="/common/styles/section.css">
+    <link rel="stylesheet" href="/common/styles/links.css">
+	<style>
+		a{
+			--link-hover-colour: red
+		}
+	</style>
+</head>
+<body>
+	<div class="overlay">
+		<h1 class="timer" id="timer"></h1>
+	</div>
+	<div class="sections-container" id="sections-container">
+		<div class="section"> 
+			<!-- <div class="section first-section"> -->
+			<div class="section-link-tree">
+				<div class="section-link-tree-header">
+					test 1 page 1
+				</div>
+			</div>
+		</div>
+		<div class="section">
+			<div class="section-link-tree">
+				<div class="section-link-tree-header">
+					test 1 page 2
+				</div>
+				<div class="section-link-tree-links">
+					<a id="wazup-button">wazzzupppp</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="module">
+
+		import Timer from "/common/scripts/timer.js"
+		const timer = new Timer(
+			// Timer.TenSeconds,
+			"https://api.securityofgod.com/get/releaseDate/test",
+			"https://api.securityofgod.com/get/timerResult/test"
+		)
+		
+		timer.enterHandler = (async (event)=>{
+			/**@type {Response}*/
+			const result = await timer.getResult()
+			if (result != undefined){
+				console.log(await result.text())
+			}
+			else{
+				console.log("bruh")
+			}
+		})
+
+		timer.start()
+	</script>
+	<script type="module">
+		import SlideScroll from "/common/scripts/slideScroll.js"
+		const scroll = new SlideScroll("test1")
+		scroll.setScrollFunction((section)=>{
+			switch (section) {
+				case 0:
+					console.log("YO MAMA")
+					scroll.toTheCenter(0)
+					scroll.toTheBottom(1)
+					break;
+				
+				default:
+					scroll.scrollSwitchDefaultCase(section)
+					break;
+			}
+		})
+	</script>
+	<script type="module">
+		import pageInject from "/common/scripts/pageInject.js"
+		document.getElementById("wazup-button").addEventListener("pointerdown",(event)=>{
+			pageInject("/pages/lie2me", true, true)
+		})
+	</script>
+</body>
+</html>

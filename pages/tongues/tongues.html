@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+
+<head>
+	<title>TONGUES</title>
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+
+	<link rel="stylesheet" href="/common/styles/base.css">
+	<link rel="stylesheet" href="/common/styles/overlay.css">
+	<link rel="stylesheet" href="/common/styles/section.css">
+	<link rel="stylesheet" href="/common/styles/links.css">
+	<style>
+		a{
+			--link-hover-colour:red
+			/* --link-colour:red */
+		}
+	</style>
+</head>
+
+
+<body>
+	<div class="sections-container" id="sections-container">
+		<div class="section first-section">
+			<video class="video-canvas" src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4"></video>
+			<canvas class="video-canvas mobile-contain desktop-fill"></canvas>
+		</div>
+
+		<div class="section transparent-background first-section">
+			<div class="section-link-tree">
+				<div class="section-link-tree-header">
+					TONGUES
+				</div>
+				<div class="section-link-tree-links">
+					<!-- OUT NOW -->
+					<a href="https://open.spotify.com/album/2IJBortFHOpFMxYy6qcpip">SPOTIFY</a>
+					<a href="https://music.apple.com/ca/album/tongues-single/1894965970">APPLE MUSIC</a>
+					<a href="https://youtu.be/A8g7BGzkFnA">YOUTUBE MUSIC</a>
+					<a href="https://soundcloud.com/cainenotcorso/tongues">SOUNDCLOUD</a>
+				</div>
+			</div>
+			<div class="section-footer">
+				<a href="https://www.instagram.com/cainenotcorso/">instagram</a>
+				<a href="https://www.tiktok.com/@securityofg0d">tiktok</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Scroll script -->
+	<script type="module">
+		import SlideScroll from "/common/scripts/slideScroll.js"
+		const scroll = new SlideScroll()
+		scroll.setScrollFunction((section)=>{
+			switch (section) {
+				case 0:
+					scroll.toTheCenter(0)
+					scroll.toTheCenter(1)
+					break;
+				case 1:
+					scroll.scrollHandler(0)
+					break;
+				default:
+					scroll.scrollSwitchDefaultCase(section)
+					break;
+			}
+		})
+
+	</script>
+
+
+	<!-- Canvas Script -->
+	<script type="module">
+		import VideoCanvas from "/common/scripts/videoCanvas.js"
+		const videoCanvas = new VideoCanvas("TONGUES")
+		videoCanvas.play()
+	</script>
+
+</body>
+</html>

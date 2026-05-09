@@ -1,0 +1,67 @@
+<head>
+	<meta charset="UTF-8">
+	<title>TONGUES</title>
+	
+	<link rel="stylesheet" href="/common/styles/base.css">
+	<link rel="stylesheet" href="/common/styles/overlay.css">
+	<link rel="stylesheet" href="/common/styles/section.css">
+	<link rel="stylesheet" href="/common/styles/error.css">
+	<link rel="stylesheet" href="/common/styles/links.css">
+	<style>
+		a{
+			--link-hover-colour:red
+			/* --link-colour:red */
+		}
+	</style>
+</head>
+<body>
+	<div class="overlay" id="overlay">
+		<h1 class="timer" id="timer"></h1>
+	</div>
+
+	<div class="sections-container" id="sections-container">
+		<div class="section first-section">
+			<video class="video-canvas" src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4"></video>
+			<canvas class="video-canvas mobile-contain desktop-fill"></canvas>
+		</div>
+	</div>
+
+
+	<div class="error-container" id="error-container">
+		you shouldn't be here
+	</div>
+
+	<script type="module">
+		import SlideScroll from "/common/scripts/slideScroll.js"
+		import Timer from "/common/scripts/timer.js"
+		import pageInject from "/common/scripts/pageInject.js"
+
+		const scroll = new SlideScroll()
+
+		const timer = new Timer(
+			Timer.TenSeconds,
+			// "https://api.securityofgod.com/get/releaseDate/tongues",
+			"https://api.securityofgod.com/get/timerResult/tongues"
+		)
+
+		timer.enterHandler = (async (event)=>{
+			/**@type {Response}*/
+			const result = await timer.getResult()
+			if (result != undefined){
+				await pageInject(await result.text() , true, true )
+			}
+			else{
+				console.log("bruh")
+			}
+		})
+
+		timer.start()
+
+	</script>
+	<script type="module">
+		import VideoCanvas from "/common/scripts/videoCanvas.js"
+		const videoCanvas = new VideoCanvas("INDEX")
+		videoCanvas.start()
+	</script>
+
+</body>

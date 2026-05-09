@@ -1,0 +1,125 @@
+/* Section Styles */
+.sections-container{
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.section{
+    width:100%;
+    height:100%;
+    display: flex;
+    position: absolute;
+    background-color: black;
+    overflow: hidden;
+    transition: 0.5s;
+    top:100%;
+    justify-content: center;
+	align-items: center;
+}
+
+/* SECTION COMMON STYLES */
+.first-section {
+    top:0%
+}
+
+.transparent-background{
+    background-color: transparent;
+}
+
+/* SECTION COMMON CHILDREN */
+.section > * { 
+    position: absolute;
+    -webkit-user-drag: none;
+    font-family: monospace;
+    white-space: nowrap;
+    user-select: none;
+    color: white;
+}
+
+.section > canvas{
+    width: 100%;
+    height: 100%;
+
+    @media screen and (width <= 1000px) {
+        &.mobile-fill {
+            object-fit:fill;
+        }
+        
+        &.mobile-contain {
+            object-fit:contain;
+        }
+
+        &.mobile-cover {
+            object-fit:cover;
+        }
+    }
+
+    @media screen and (width > 1000px) {
+        &.desktop-fill {
+            object-fit:fill;
+        }
+
+        &.desktop-contain {
+            object-fit:contain;
+        }
+
+        &.desktop-cover {
+            object-fit:cover;
+        }
+    }
+}
+
+.section > .mute-button{
+    right:0;
+    bottom:0;
+    opacity: 50%;
+    color: white;
+    user-select: none;
+}
+
+
+/* FOOTER */
+.section > .section-footer{
+    display: flex;
+    position: absolute;
+    bottom:0%;
+    left:0%;
+    height:5%;
+    width: 100%;
+
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    column-gap: 2%;
+}
+
+
+
+/* LINK TREE */
+.section > .section-link-tree{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.section > .section-link-tree > .section-link-tree-header{
+    font-size: xxx-large;
+    text-align: center;
+    padding: 0% 2vw;
+    width: 100%;
+    box-sizing: border-box;
+
+}
+
+.section > .section-link-tree > .section-link-tree-links{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size:xx-large;
+    row-gap: 20px;
+    margin-top: 5%;
+    margin-bottom: 10%;
+    text-decoration: none;
+}

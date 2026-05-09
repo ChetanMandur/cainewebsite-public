@@ -1,0 +1,189 @@
+<head>
+	<meta charset="UTF-8">
+	<title>CAINE NOT CORSO</title>
+	
+	<link rel="stylesheet" href="/common/styles/base.css">
+	<link rel="stylesheet" href="/common/styles/overlay.css">
+	<link rel="stylesheet" href="/common/styles/section.css">
+	<link rel="stylesheet" href="/common/styles/error.css">
+	<link rel="stylesheet" href="/pages/album1/styles.css">
+
+	<link id="site-icon" rel="icon" type="image/x-icon" href="/pages/album1/assets/images/doodle4.png">
+	<script>
+		setInterval(()=>{
+			const siteIcon = document.getElementById("site-icon")
+			siteIcon.href = "/pages/album1/assets/images/doodle4part2.png"
+			setTimeout(()=>{
+				siteIcon.href = "/pages/album1/assets/images/doodle4.png"
+			},600)
+		},3000)
+	</script>
+
+	<meta property="og:title" content="SECURITY OF GOD"/>
+	<meta property="og:type" content="website" />
+	<meta property="og:description " content="SECURITY OF GOD // CAINE NOT CORSO // 2026" />
+
+	<meta property="og:locale" content="en_CA" />
+	<meta property="og:site_name" content="SECURITY OF GOD"/>
+
+	<meta property="og:url" content="https://securityofgod.com/"/>
+	<meta property="og:image" content="https://securityofgod.com/public/angel_logo.png"/>
+</head>
+<body>
+	<div class="overlay" id="overlay">
+		<h1 class="timer" id="timer"></h1>
+	</div>
+
+	<div class="sections-container" id="sections-container">
+		<div id="firstSection" class="section first-section">
+			<video class="video-canvas" src="/pages/album1/assets/videos/test.webm"></video>
+			<canvas class="video-canvas mobile-cover desktop-cover"></canvas>
+		</div>
+
+		<div id="secondSection" class="section transparent-background second-section"></div>
+
+		<div class="section">
+			<video class="video-canvas" src="/pages/album1/assets/videos/wc1.webm"></video>
+			<canvas class="video-canvas mobile-cover desktop-cover"></canvas>
+		</div>
+
+		<div class="section">
+			<video class="video-canvas" src="/pages/album1/assets/videos/wc2.webm"></video>
+			<canvas class="video-canvas mobile-cover desktop-cover"></canvas>
+		</div>
+
+		<div class="section">
+			<video class="video-canvas" src="/pages/album1/assets/videos/wc3.webm"></video>
+			<canvas class="video-canvas mobile-cover desktop-cover"></canvas>
+			<h1 style = "top:40%; left:20%; z-index: 1000; background-color: red; font-size: xxx-large;">LIE</h1>
+		</div>
+
+		<div class="section">
+			<video class="video-canvas" src="https://upload.wikimedia.org/wikipedia/commons/transcoded/1/19/%E3%80%90%E5%85%AC%E5%BC%8F%E3%80%91%E3%82%B6%E3%83%BB%E3%83%96%E3%83%AB%E3%83%BC%E3%83%8F%E3%83%BC%E3%83%84%E3%80%8C%E3%82%AD%E3%82%B9%E3%81%97%E3%81%A6%E3%81%BB%E3%81%97%E3%81%84%EF%BC%88%E3%83%88%E3%82%A5%E3%83%BC%E3%83%BB%E3%83%88%E3%82%A5%E3%83%BC%E3%83%BB%E3%83%88%E3%82%A5%E3%83%BC%EF%BC%89%E3%80%8D%E3%80%902nd%E3%82%B7%E3%83%B3%E3%82%B0%E3%83%AB%281987-11-21%29%E3%80%91THE_BLUE_HEARTS_-_Kiss_Shitehoshii.webm/%E3%80%90%E5%85%AC%E5%BC%8F%E3%80%91%E3%82%B6%E3%83%BB%E3%83%96%E3%83%AB%E3%83%BC%E3%83%8F%E3%83%BC%E3%83%84%E3%80%8C%E3%82%AD%E3%82%B9%E3%81%97%E3%81%A6%E3%81%BB%E3%81%97%E3%81%84%EF%BC%88%E3%83%88%E3%82%A5%E3%83%BC%E3%83%BB%E3%83%88%E3%82%A5%E3%83%BC%E3%83%BB%E3%83%88%E3%82%A5%E3%83%BC%EF%BC%89%E3%80%8D%E3%80%902nd%E3%82%B7%E3%83%B3%E3%82%B0%E3%83%AB%281987-11-21%29%E3%80%91THE_BLUE_HEARTS_-_Kiss_Shitehoshii.webm.480p.vp9.webm"></video>
+			<canvas class="video-canvas mobile-cover desktop-cover"></canvas>
+			<div style="width: 100%; height:100%;top:0;left:0;background-color: black;opacity: 0.4;"></div>
+			<h1 style = "top:60%; left:50%; z-index: 1000; background-color: red; font-size: xxx-large;">2</h1>
+		</div>
+
+		<div class="section">
+			<video class="video-canvas" src="/pages/lie2me/assets/videos/l2m_mute.mp4"></video>
+			<canvas class="video-canvas mobile-cover desktop-cover"></canvas>
+			<h1 style = "top:40%; left:70%; z-index: 1000; background-color: red; font-size: xxx-large;">ME</h1>
+		</div>
+
+		<div class="section final-section" >
+		</div>
+
+	</div>
+
+	<div class="youtube-video-container" id="youtube-video-container" >
+		<iframe id="youtube-video" width="100%" height="100%" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+	</div>
+
+	<div class="error-container" id="error-container">
+		you shouldn't be here
+	</div>
+
+	<script type="module">
+		import SlideScroll from "/common/scripts/slideScroll.js"
+		const scroll = new SlideScroll()
+		scroll.setScrollFunction((section)=>{
+			switch (section) {
+				case 0:
+					scroll.chunkToTheCenter(0,1)
+					scroll.chunkToTheBottom(1)
+					break;
+				case 1:
+					scroll.chunkToTheCenter(0,2)
+					scroll.chunkToTheBottom(2)
+					break;
+				
+				case 2:
+					scroll.chunkToTheTop(0,1)
+					scroll.chunkToTheCenter(1,3)
+					scroll.chunkToTheBottom(3)
+					break;
+
+				case 3:
+					scroll.chunkToTheTop(0,3)
+					scroll.toTheCenter(1)
+					scroll.toTheCenter(3)
+					scroll.chunkToTheBottom(4)
+					break;
+				
+				case 4:
+					scroll.chunkToTheTop(0,4)
+					scroll.toTheCenter(1)
+					scroll.chunkToTheCenter(4,5)
+					scroll.chunkToTheBottom(5)
+					break;
+
+				case 5:
+					scroll.chunkToTheTop(0,4)
+					scroll.toTheCenter(1)
+					scroll.chunkToTheCenter(4,7)
+					scroll.chunkToTheBottom(6)
+					break;
+
+				case 6:
+					scroll.chunkToTheTop(0,4)
+					scroll.toTheCenter(1)
+					scroll.chunkToTheCenter(4,7)
+					scroll.chunkToTheBottom(7)
+					break;
+
+
+				default:
+					scroll.chunkToTheTop(0,section)
+					scroll.chunkToTheCenter(section, section+1)
+					scroll.chunkToTheBottom(section+1)
+					break;
+			}
+		})
+	</script>
+	<script type="module">
+		import Timer from "/common/scripts/timer.js"
+
+		const timer = new Timer(
+			"https://api.securityofgod.com/get/releaseDate/album1",
+			"https://api.securityofgod.com/get/timerResult/album1"
+		)
+		
+		timer.enterHandler = (async (event) => {
+			const overlay = document.getElementById("overlay")
+			const sectionsContainer = document.getElementsByClassName("sections-container")[0]
+			const youtubeVideoContainer = document.getElementById("youtube-video-container")
+			const youtubeVideo = document.getElementById("youtube-video")
+			const errorContainer = document.getElementById("error-container")
+
+			/**@type {Response}*/
+			const result = await timer.getResult()
+
+			if (result != undefined){
+				// console.log(document.getElementById("youtube-video"), result)
+
+				youtubeVideo.src = await result.text()
+				youtubeVideoContainer.style.display="block"
+			}
+			else{
+				console.log("not happy")
+				errorContainer.style.display="block"
+			}
+			overlay.style.display="none"
+			sectionsContainer.style.display="none"
+
+		})
+
+		timer.start()
+	</script>
+	<script type="module">
+		import VideoCanvas from "/common/scripts/videoCanvas.js"
+
+		const videoCanvas = new VideoCanvas("album1")
+
+		videoCanvas.play()
+
+	</script>
+	<script src="/pages/album1/animations.js"></script>
+
+</body>
