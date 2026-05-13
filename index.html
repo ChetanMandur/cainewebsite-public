@@ -27,8 +27,69 @@
 		<!-- Dynamic HTML loading -->
 		<script type="module">
 			import pageInject from "/common/scripts/pageInject.js"
+
+			/** @param {HTMLLinkElement} element */
+			async function stylesheetLoadedPromise(element, oldDom) {
+
+				// console.log(oldDom.querySelector(`link[href="${(new URL(element.href)).pathname}"]`))
+				if (oldDom.querySelector(`link[href="${(new URL(element.href)).pathname}"]`)){
+					return (new Promise((resolve)=>{resolve("loaded")}))
+				}
+
+				return (new Promise((resolve)=>{
+					element.onload = ()=>{
+						resolve("loaded")
+					}
+				}))
+			}
+
+			document.addEventListener("PageInjected", async (event)=>{
+				console.log("yo", event.before)
+				const body = document.getElementsByTagName("body")[0]
+
+				if (event.before){
+					body.style.display = "none"
+				}
+				else{
+					const head = document.getElementsByTagName("head")[0]
+					const stylesheets = Array.from(head.getElementsByTagName("link")).filter((element)=>{
+						return (element.rel == "stylesheet")
+					})
+					const stylesheetPromises = []
+
+					Array.from(stylesheets).forEach(async (element,index) => {
+						console.log("grabbing",element, index)
+						stylesheetPromises[index] = stylesheetLoadedPromise(element, event.oldDom)
+						console.log(stylesheetPromises[index])
+					});
+
+					console.log(stylesheetPromises)
+
+					Promise.allSettled(stylesheetPromises).then((results)=>{
+						var allGood = true
+						results.forEach((result)=>{
+							console.log(result.value)
+							if (result.value != "loaded"){
+								allGood = false
+							}
+						})
+						if (allGood){
+							body.style.display = "block"
+						}
+						else{
+							console.log("something went wrong with the stylesheets")
+						}
+					})
+
+				}
+				console.log((new Date()).getTime())
+
+			})
+			
 			document.addEventListener("DOMContentLoaded", async ()=>{
+				// await pageInject("./pages/test1", false,false)
 				await pageInject("./pages/tongues/tongues.html", false,false)
+
 			})
 		</script>
 	</body>
