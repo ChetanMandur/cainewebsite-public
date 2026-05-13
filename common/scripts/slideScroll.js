@@ -16,8 +16,9 @@ export default class SlideScroll {
         document.addEventListener("pointerdown", this)
         document.addEventListener("keydown", this)
         this.scrollHandler(0)
-        document.addEventListener("DOMContentChanged", (()=>{
+        document.addEventListener("PageInjected", ((event)=>{
             // console.log(name,"... goodbye son")
+            console.log(event.before, (new Date()).getTime())
             document.removeEventListener("wheel", this)
             document.removeEventListener("pointerdown", this)
             document.removeEventListener("keydown", this)

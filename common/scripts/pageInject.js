@@ -1,3 +1,35 @@
+class PageInjectEvent extends Event{
+    #before
+    #oldDom
+    #newDom
+
+    /**
+     * 
+     * @param {boolean} before 
+     * @param {Document} oldDom
+     * @param {Document} newDom 
+     * 
+     */
+    constructor(before,oldDom, newDom){
+        super("PageInjected")
+        this.#before = before
+        this.#oldDom = oldDom
+        this.#newDom = newDom
+    }
+
+    get before(){
+        return this.#before
+    }
+
+    get oldDom(){
+        return this.#oldDom
+    }
+
+    get newDom(){
+        return this.#newDom
+    }
+}
+
 // Given a source element, find all child <script> tags and return a list of recreated script tags
     //  Essentially, this is removing <script> tags from the source and adding them to an array which is returned
         //  The new tags are not a full copy, but contain all key data
@@ -278,10 +310,14 @@ function bodyInjector(newDom){
 }
 
 async function pageInject(page, overwriteHead, overwriteBody){
+    const oldDom = document.cloneNode(document)
+    document.dispatchEvent((new PageInjectEvent(true, oldDom, undefined)))
+    
     const pageDom = await pageFetch(page)
     headInjector(pageDom)
 
     bodyInjector(pageDom)
+    document.dispatchEvent((new PageInjectEvent(false, oldDom, pageDom)))
 
     // tagInjector(pageDom, "head",overwriteHead)
     // tagInjector(pageDom, "body",overwriteBody)
