@@ -119,6 +119,10 @@ function headInjector(newDom){
     const incomingScripts = scriptExtractor(incomingHead)
 
     var newUniqueChildren = []
+    var newUniqueStylesheetPromises = []
+
+    const currentBody = document.getElementsByTagName("body")[0]
+    currentBody.style.display = "none"
 
     Array.from(incomingHead.children).forEach((incomingChild)=>{
         var toAppend = true
@@ -157,6 +161,36 @@ function headInjector(newDom){
 
         if (toAppend){
             newUniqueChildren.push(incomingChild)
+            if (incomingChild.tagName == "LINK"){
+                const rel = incomingChild.rel.split(" ")
+                if (rel.includes("stylesheet")){
+                    newUniqueStylesheetPromises.push(
+                        new Promise(
+                            (resolve)=>{
+                                incomingChild.onload = () =>{
+                                    resolve("loaded")
+                                }
+                            }
+                        )
+                    )
+                }
+            }
+        }
+    })
+
+    Promise.allSettled(newUniqueStylesheetPromises).then((results)=>{
+        var allGood = true
+        results.forEach((result)=>{
+            console.log(result.value)
+            if (result.value != "loaded"){
+                allGood = false
+            }
+        })
+        if (allGood){
+            currentBody.style.display = "block"
+        }
+        else{
+            console.log("something went wrong with the stylesheets")
         }
     })
 
