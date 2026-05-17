@@ -140,15 +140,26 @@ function headInjector(newDom){
                         if (incomingChild.isEqualNode(currentChild)){
                             toAppend = false
                         }
-                        
+
                         break;
 
                     case "LINK":
                         /**@type {string[]} */
-                        const rel  = incomingChild.rel.split(" ")
+                        const incomingRel  = incomingChild.rel.split(" ")
+                        const currentRel  = currentChild.rel.split(" ")
 
-                        if (rel.includes("stylesheet")){
+
+                        if (incomingRel.includes("stylesheet") && currentRel.includes("stylesheet")){
                             if (incomingChild.isEqualNode(currentChild)){
+                                toAppend = false
+                            }
+                        }
+
+                        else if (incomingRel.includes("shortcut") && incomingRel.includes("icon")){
+                            if (currentRel.includes("shortcut") && currentRel.includes("icon")){
+                                if (!(incomingChild.isEqualNode(currentChild))){
+                                    currentChild.href = incomingChild.href
+                                }
                                 toAppend = false
                             }
                         }
