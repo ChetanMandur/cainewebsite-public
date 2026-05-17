@@ -123,9 +123,24 @@ function headInjector(newDom){
                         break;
 
                     case "META":
+                        const incomingProperty = incomingChild.getAttribute("property")
+                        const currentProperty = currentChild.getAttribute("property")
+
+                        if ((incomingProperty == currentProperty) && (incomingProperty != null) && (currentProperty != null)){
+                            const incomingContent = incomingChild.getAttribute("content")
+                            const currentContent = currentChild.getAttribute("content")
+
+                            if (incomingContent != currentContent){
+                                currentChild.setAttribute("content", incomingChild.getAttribute("content"))
+                            }
+
+                            toAppend = false
+                        }
+
                         if (incomingChild.isEqualNode(currentChild)){
                             toAppend = false
                         }
+                        
                         break;
 
                     case "LINK":
