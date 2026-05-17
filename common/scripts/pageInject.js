@@ -148,7 +148,6 @@ function headInjector(newDom){
                         const incomingRel  = incomingChild.rel.split(" ")
                         const currentRel  = currentChild.rel.split(" ")
 
-
                         if (incomingRel.includes("stylesheet") && currentRel.includes("stylesheet")){
                             if (incomingChild.isEqualNode(currentChild)){
                                 toAppend = false
@@ -167,6 +166,9 @@ function headInjector(newDom){
                         
                     default:
                         // console.log("default", incomingChild.tagName)
+                        if (incomingChild.isEqualNode(currentChild)){
+                            toAppend = false
+                        }
                         break
                 }
             }
