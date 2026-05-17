@@ -6,27 +6,14 @@ class PageInjectEvent extends Event{
     /**
      * 
      * @param {boolean} before 
-     * @param {Document} oldDom
-     * @param {Document} newDom 
-     * 
      */
-    constructor(before,oldDom, newDom){
+    constructor(before){
         super("PageInjected")
         this.#before = before
-        this.#oldDom = oldDom
-        this.#newDom = newDom
     }
 
     get before(){
         return this.#before
-    }
-
-    get oldDom(){
-        return this.#oldDom
-    }
-
-    get newDom(){
-        return this.#newDom
     }
 }
 
@@ -344,14 +331,13 @@ function bodyInjector(newDom){
 }
 
 async function pageInject(page, overwriteHead, overwriteBody){
-    const oldDom = document.cloneNode(document)
-    document.dispatchEvent((new PageInjectEvent(true, oldDom, undefined)))
+    document.dispatchEvent((new PageInjectEvent(true)))
     
     const pageDom = await pageFetch(page)
     headInjector(pageDom)
 
     bodyInjector(pageDom)
-    document.dispatchEvent((new PageInjectEvent(false, oldDom, pageDom)))
+    document.dispatchEvent((new PageInjectEvent(false)))
 
     // tagInjector(pageDom, "head",overwriteHead)
     // tagInjector(pageDom, "body",overwriteBody)
