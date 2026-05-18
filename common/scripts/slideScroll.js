@@ -109,7 +109,7 @@ export default class SlideScroll {
 
     /**
      * 
-     * @param {number} newSwitchCase 
+     * @param {(number)=>void} newSwitchCase 
      */
     setScrollFunction(newSwitchCase){
         if (newSwitchCase){
