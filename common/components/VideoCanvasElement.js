@@ -89,33 +89,8 @@ class VideoCanvasElement extends HTMLElement{
             this.#canvas = document.createElement("canvas")
 
 
-            switch (this.#mobileFit) {
-                case "contain":
-                    this.#canvas.classList.add("mobile-contain")
-                    break;
-                case "cover":
-                    this.#canvas.classList.add("mobile-cover")
-                    break
-                case "fit":
-                    this.#canvas.classList.add("mobile-fill")
-                    break
-                default:
-                    break;
-            }
-
-            switch (this.#desktopFit) {
-                case "contain":
-                    this.#canvas.classList.add("desktop-contain")
-                    break;
-                case "cover":
-                    this.#canvas.classList.add("desktop-cover")
-                    break
-                case "fill":
-                    this.#canvas.classList.add("desktop-fill")
-                    break
-                default:
-                    break;
-            }
+            this.#canvas.classList.add(`mobile-${this.#mobileFit}`)
+            this.#canvas.classList.add(`desktop-${this.#desktopFit}`)
 
             this.#shadow.appendChild(this.#video)
             this.#shadow.appendChild(this.#canvas)
@@ -168,12 +143,32 @@ class VideoCanvasElement extends HTMLElement{
 
     disconnectedCallback(){
         // console.log("VideoElement removed")
-        // removed 
+        cancelAnimationFrame(this.#animationID)
     }
 
     attributeChangedCallback(name, oldValue, newValue){
         // attribute changed
-        // console.log("VideoElement attribute", name, "changed from", oldValue, "to", newValue)
+        console.log("VideoElement attribute", name, "changed from", oldValue, "to", newValue)
+        if ((oldValue != undefined) && (oldValue != null)){
+            switch (name){
+                case "src":
+                    this.#src = newValue
+                    break;
+
+                case "mobile-fit":
+                    this.#mobileFit = newValue
+                    this.#canvas.classList.replace(`mobile-${oldValue}`,`mobile-${newValue}` )
+                    break;
+
+                case "desktop-fit":
+                    this.#desktopFit = newValue
+                    this.#canvas.classList.replace(`desktop-${oldValue}`,`desktop-${newValue}` )
+                    break;
+                
+                default:
+                    break;
+            }
+        }
     }
 }
 
