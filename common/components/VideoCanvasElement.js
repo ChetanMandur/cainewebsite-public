@@ -37,7 +37,47 @@ class VideoCanvasElement extends HTMLElement{
         this.style.height = "100%"
         this.style.width = "100%"
 
+        const stylesheet = new CSSStyleSheet()
+
+        stylesheet.replaceSync(
+            `
+                canvas {
+                    width: 100%;
+                    height: 100%;
+
+                    @media screen and (width <= 1000px) {
+                        &.mobile-fill {
+                            object-fit:fill;
+                        }
+                        
+                        &.mobile-contain {
+                            object-fit:contain;
+                        }
+
+                        &.mobile-cover {
+                            object-fit:cover;
+                        }
+                    }
+
+                    @media screen and (width > 1000px) {
+                        &.desktop-fill {
+                            object-fit:fill;
+                        }
+
+                        &.desktop-contain {
+                            object-fit:contain;
+                        }
+
+                        &.desktop-cover {
+                            object-fit:cover;
+                        }
+                    }
+                }
+            `
+        )
+
         this.#shadow = this.attachShadow({mode:"open"})
+        this.#shadow.adoptedStyleSheets = [stylesheet]
 
         this.#video = document.createElement("video")
         this.#video.autoplay = true
@@ -46,11 +86,9 @@ class VideoCanvasElement extends HTMLElement{
         this.#video.loop = true
         this.#video.playsInline = true
         this.#video.src = this.#src
-        // this.#video.setAttribute("src", this.#src)
 
         this.#canvas = document.createElement("canvas")
-        this.#canvas.style.height = "100%"
-        this.#canvas.style.width = "100%"
+
 
         switch (this.#mobileFit) {
             case "contain":
@@ -60,7 +98,7 @@ class VideoCanvasElement extends HTMLElement{
                 this.#canvas.classList.add("mobile-cover")
                 break
             case "fit":
-                this.#canvas.classList.add("mobile-fit")
+                this.#canvas.classList.add("mobile-fill")
                 break
             default:
                 break;
@@ -68,16 +106,13 @@ class VideoCanvasElement extends HTMLElement{
 
         switch (this.#desktopFit) {
             case "contain":
-                // this.#canvas.classList.add("desktop-contain")
-                this.#canvas.style.objectFit = "contain"
+                this.#canvas.classList.add("desktop-contain")
                 break;
             case "cover":
-                // this.#canvas.classList.add("desktop-cover")
-                this.#canvas.style.objectFit = "cover"
+                this.#canvas.classList.add("desktop-cover")
                 break
             case "fill":
-                // this.#canvas.classList.add("desktop-fit")
-                this.#canvas.style.objectFit = "fill"
+                this.#canvas.classList.add("desktop-fill")
                 break
             default:
                 break;
