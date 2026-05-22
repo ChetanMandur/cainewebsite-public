@@ -1,5 +1,7 @@
 class VideoCanvasElement extends HTMLElement{
-    static observedAttributes = ["src", "mobile-fit", "desktop-fit"]
+    
+    // Attributes
+    static observedAttributes = ["src", "mobile-fit", "desktop-fit","quality"]
 
     /**@type {string} */
     #src = undefined
@@ -10,6 +12,10 @@ class VideoCanvasElement extends HTMLElement{
     /**@type {"contain"|"cover"|"fit"} */
     #desktopFit = undefined
 
+    /**@type {"high"|"low"} */
+    #quality = undefined
+
+    // Private Variables
     /**@type {boolean} */
     #validConfig = false
 
@@ -30,6 +36,7 @@ class VideoCanvasElement extends HTMLElement{
         this.#src = this.getAttribute("src")
         this.#mobileFit = this.getAttribute("mobile-fit")
         this.#desktopFit = this.getAttribute("desktop-fit")
+        this.#quality = this.getAttribute("quality") ?? "high"
 
         if (this.#validConfigCheck()){
             
@@ -107,7 +114,8 @@ class VideoCanvasElement extends HTMLElement{
         this.#validConfig = (
             ((this.#src != null) && (this.#src !=undefined)) && 
             ((this.#mobileFit != null) && (this.#mobileFit !=undefined)) && 
-            ((this.#desktopFit != null) && (this.#desktopFit !=undefined))
+            ((this.#desktopFit != null) && (this.#desktopFit !=undefined)) &&
+            ((this.#quality == "high") || (this.#quality == "low")) 
         )
 
         return this.#validConfig
@@ -127,8 +135,10 @@ class VideoCanvasElement extends HTMLElement{
 
     #play(){
         this.#video.addEventListener("loadedmetadata",()=>{
-            this.#canvas.width = this.#video.videoWidth
-            this.#canvas.height = this.#video.videoHeight
+            if (this.#quality == "high"){
+                this.#canvas.width = this.#video.videoWidth
+                this.#canvas.height = this.#video.videoHeight
+            }
 
             this.#video.play()
             this.#animationID = this.#animate()
