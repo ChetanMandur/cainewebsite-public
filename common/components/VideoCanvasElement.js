@@ -1,45 +1,47 @@
-class VideoCanvasElement extends HTMLElement{
-    
-    // Attributes
+class VideoCanvasElement extends HTMLElement{    
+    //// Attributes
     static observedAttributes = ["src", "mobile-fit", "desktop-fit","quality"]
 
-    /**@type {string} */
+    /**Video source URL. Set using the `src` attribute  @type {string}*/
     #src = undefined
 
-    /**@type {"contain"|"cover"|"fit"} */
+    /**Object fit type for mobile displays. Set using the `mobile-fit` attribute @type {"contain"|"cover"|"fit"} */
     #mobileFit = undefined
 
-    /**@type {"contain"|"cover"|"fit"} */
+    /**Object fit type for desktop displays. Set using the `desktop-fit` attribute @type {"contain"|"cover"|"fit"} */
     #desktopFit = undefined
 
-    /**@type {"high"|"low"} */
+    /**Video quality (in reality: canvas pixel sizing). Set using the `quality` attribute @type {"high"|"low"} */
     #quality = undefined
 
-    // Private Variables
-    /**@type {boolean} */
+    //// Private Variables
+    /**Whether or not the instance is valid. Ie, the element contains all required attributes to display video (`src` and `mobile/desktop-fit`) @type {boolean} */
     #validConfig = false
 
-    /**@type {number} */
+    /**The current ID of the `requestAnimationFrame()` function @type {number} */
     #animationID
 
-    /**@type {ShadowRoot} */
+    /**The shadow DOM for the element @type {ShadowRoot} */
     #shadow
 
-    /**@type {HTMLVideoElement} */
+    /**The `<video>` tag for the element @type {HTMLVideoElement} */
     #video
 
-    /**@type {HTMLCanvasElement} */
+    /**The `<canvas>` tag for the element @type {HTMLCanvasElement} */
     #canvas
 
     constructor(){
         super()
+
+        // Grabbing Attributes
         this.#src = this.getAttribute("src")
         this.#mobileFit = this.getAttribute("mobile-fit")
         this.#desktopFit = this.getAttribute("desktop-fit")
         this.#quality = this.getAttribute("quality") ?? "high"
 
+        // Checks if valid
         if (this.#validConfigCheck()){
-            
+            // Begin styling component
             this.style.height = "100%"
             this.style.width = "100%"
 
@@ -82,9 +84,11 @@ class VideoCanvasElement extends HTMLElement{
                 `
             )
 
+            // Create Shadow DOM and attach stylesheet
             this.#shadow = this.attachShadow({mode:"open"})
             this.#shadow.adoptedStyleSheets = [stylesheet]
 
+            // Create `<video>` tag and set attributes
             this.#video = document.createElement("video")
             this.#video.autoplay = true
             this.#video.hidden = true
@@ -93,15 +97,16 @@ class VideoCanvasElement extends HTMLElement{
             this.#video.playsInline = true
             this.#video.src = this.#src
 
+            // Create `<canvas>` tag and set attributes
             this.#canvas = document.createElement("canvas")
-
-
             this.#canvas.classList.add(`mobile-${this.#mobileFit}`)
             this.#canvas.classList.add(`desktop-${this.#desktopFit}`)
-
+            
+            // Add tags to Shadow DOM
             this.#shadow.appendChild(this.#video)
             this.#shadow.appendChild(this.#canvas)
 
+            // Begin playing the video/starting the animation loop
             this.#play()
 
         }
@@ -110,6 +115,10 @@ class VideoCanvasElement extends HTMLElement{
         }
     }
 
+    /**
+     * Goes through checks to see if required attributes are present and of valid values
+     * @returns {boolean} - Calculated value for `validConfig`
+     */
     #validConfigCheck(){
         this.#validConfig = (
             ((this.#src != null) && (this.#src !=undefined)) && 
@@ -121,10 +130,17 @@ class VideoCanvasElement extends HTMLElement{
         return this.#validConfig
     }
 
+    /**
+     * Wrapper function for `requestAnimationFrame()`
+     * @returns 
+     */
     #animate(){
         return (requestAnimationFrame(()=>{this.#paintCanvas()}))
     }
 
+    /**
+     * Function used to handle drawing video frame to canvas
+     */
     #paintCanvas(){
         if (this.#video.isConnected && this.#canvas.isConnected){
             const canvasContext = this.#canvas.getContext("2d")
@@ -133,6 +149,9 @@ class VideoCanvasElement extends HTMLElement{
         }
     }
 
+    /**
+     * Function used to begin playing the video and the animation loop of drawing the video frames to the canvas
+     */
     #play(){
         this.#video.addEventListener("loadedmetadata",()=>{
             if (this.#quality == "high"){
@@ -146,16 +165,34 @@ class VideoCanvasElement extends HTMLElement{
         })
     }
 
+    /**
+     * Called when the element is added into DOM
+     * 
+     * (Unused)
+     */
     connectedCallback(){
         // first add
         // console.log("VideoElement added")
     }
 
+    /**
+     * Called when the element is removed from DOM
+     * 
+     * Cancels the current animation frame (and thus, the animation loop)
+     */
     disconnectedCallback(){
         // console.log("VideoElement removed")
         cancelAnimationFrame(this.#animationID)
     }
 
+    /**
+     * Called when the element's attributes are modified. Called both at start and during lifecycle
+     * 
+     * Gracefully updates element's private variables based on the new given attributes
+     * @param {string} name 
+     * @param {string} oldValue 
+     * @param {string} newValue 
+     */
     attributeChangedCallback(name, oldValue, newValue){
         // attribute changed
         console.log("VideoElement attribute", name, "changed from", oldValue, "to", newValue)
