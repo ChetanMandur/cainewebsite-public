@@ -15,6 +15,7 @@ export default class VideoCanvas {
     #vcID
 
     constructor (vcID){
+        console.warn("VIDEOCANVAS CLASS IS DEPRECATED")
         // console.log("STARTING:", vcID)
         this.#vcID = vcID
 

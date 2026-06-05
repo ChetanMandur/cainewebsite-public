@@ -37,8 +37,8 @@ class VideoCanvasElement extends HTMLElement{
 
         // Grabbing Attributes
         this.#src = this.getAttribute("src")
-        this.#mobileFit = this.getAttribute("mobile-fit")
-        this.#desktopFit = this.getAttribute("desktop-fit")
+        this.#mobileFit = this.getAttribute("mobile-fit") ?? "cover"
+        this.#desktopFit = this.getAttribute("desktop-fit") ?? "cover"
         this.#quality = this.getAttribute("quality") ?? "high"
 
         // Checks if valid
