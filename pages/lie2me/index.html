@@ -36,8 +36,7 @@
 
 <div class="sections-container" id="sections-container">
 	<div id="firstSection" class="section first-section">
-		<video class="video-canvas" src="/pages/lie2me/assets/videos/l2m_mute.mp4"></video>
-		<canvas class="video-canvas mobile-contain desktop-fill"></canvas>
+		<video-canvas src="/pages/lie2me/assets/videos/l2m_mute.mp4" quality="high" mobile-fit="fill" desktop-fit="fill"></video-canvas>
 	</div>
 
 	<div class="section transparent-background first-section" >
@@ -178,15 +177,6 @@
 		event.preventDefault()
 		scroll.scrollHandler(1)
 	})
-
-</script>
-
-
-<!-- Canvas Script -->
-<script type="module">
-	import VideoCanvas from "/common/scripts/videoCanvas.js"
-	const videoCanvas = new VideoCanvas("LIE2ME")
-	videoCanvas.play()
 </script>
 
 </body>
