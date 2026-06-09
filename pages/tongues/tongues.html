@@ -21,8 +21,7 @@
 <body>
 	<div class="sections-container" id="sections-container">
 		<div class="section first-section">
-			<video class="video-canvas" src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4"></video>
-			<canvas class="video-canvas mobile-contain desktop-fill"></canvas>
+			<video-canvas src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4" mobile-fit="contain" desktop-fit="fill"></video-canvas>
 		</div>
 
 		<div class="section transparent-background first-section">
@@ -64,14 +63,6 @@
 			}
 		})
 
-	</script>
-
-
-	<!-- Canvas Script -->
-	<script type="module">
-		import VideoCanvas from "/common/scripts/videoCanvas.js"
-		const videoCanvas = new VideoCanvas("TONGUES")
-		videoCanvas.play()
 	</script>
 
 </body>

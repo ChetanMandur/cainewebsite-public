@@ -124,8 +124,7 @@ class VideoCanvasElement extends HTMLElement{
             this.#shadow.appendChild(this.#video)
             this.#shadow.appendChild(this.#canvas)
 
-            // Begin playing the video/starting the animation loop
-            this.#play()
+            
         }
     }
 
@@ -207,26 +206,41 @@ class VideoCanvasElement extends HTMLElement{
      * Function used to begin playing the video and the animation loop of drawing the video frames to the canvas
      */
     #play(){
-        this.#video.addEventListener("loadedmetadata",()=>{
+        const videoPlay = () =>{
             if (this.#quality == "high"){
                 this.#canvas.width = this.#video.videoWidth
                 this.#canvas.height = this.#video.videoHeight
             }
+            else{
+                this.#canvas.width = 300
+                this.#canvas.height = 300
+            }
 
             this.#video.play()
             this.#animationID = this.#animate()
+        }
 
-        })
+        if (this.#video.readyState == 0){
+            this.#video.addEventListener("loadedmetadata",()=>{
+                videoPlay()
+
+            })
+        }
+        else if (this.#video.readyState >=1){
+           videoPlay()
+        }
+        
     }
 
     /**
      * Called when the element is added into DOM
      * 
-     * (Unused)
+     * Begins playing the video/starting the animation loop
      */
     connectedCallback(){
         // first add
         // console.log("VideoElement added")
+        this.#play()
     }
 
     /**

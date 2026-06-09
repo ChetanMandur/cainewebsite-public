@@ -196,7 +196,7 @@ function headInjector(newDom){
     Promise.allSettled(newUniqueStylesheetPromises).then((results)=>{
         var allGood = true
         results.forEach((result)=>{
-            console.log(result.value)
+            // console.log(result.value)
             if (result.value != "loaded"){
                 allGood = false
             }
@@ -232,10 +232,6 @@ function deepCompare(element1, element2){
         return false
     }
 
-
-    // console.log("Attributes:",element1.attributes, element2.attributes)
-
-    if (element1.attributes.class.value != element2.attributes.class.value){return false}
     switch(element1.tagName){
         case("VIDEO"):
             if (
@@ -243,8 +239,23 @@ function deepCompare(element1, element2){
             ){return false}
             break
         
+        case ("VIDEO-CANVAS"):
+            if (
+                element1.attributes.src.value != element2.attributes.src.value
+            ){return false}
+            break
         default: break
     }
+
+
+    // console.log("Attributes:",element1.attributes, element2.attributes)
+
+    if (element1.attributes.class != undefined && element2.attributes.class != undefined){
+        if (element1.attributes.class.value != element2.attributes.class.value){return false}
+    }
+    else if (element1.attributes.class != undefined && element2.attributes.class == undefined){return false}
+    else if (element1.attributes.class == undefined && element2.attributes.class != undefined){return false}
+
 
     if (element1.textContent != element2.textContent){
         // console.log("MISSING TEXT CONTEXT", element1.textContent, element2.textContent)

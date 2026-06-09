@@ -21,8 +21,7 @@
 
 	<div class="sections-container" id="sections-container">
 		<div class="section first-section">
-			<video class="video-canvas" src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4"></video>
-			<canvas class="video-canvas mobile-contain desktop-fill"></canvas>
+			<video-canvas src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4" mobile-fit="contain" desktop-fit="fill"></video-canvas>
 		</div>
 	</div>
 
@@ -57,11 +56,6 @@
 
 		timer.start()
 
-	</script>
-	<script type="module">
-		import VideoCanvas from "/common/scripts/videoCanvas.js"
-		const videoCanvas = new VideoCanvas("INDEX")
-		videoCanvas.start()
 	</script>
 
 </body>
