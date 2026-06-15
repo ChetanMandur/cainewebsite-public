@@ -31,7 +31,7 @@ export default class Timer {
      * @param {string} resultURL 
      */
     constructor(date, resultURL){
-        console.warn("THIS CLASS IS DEPRECATED")
+        console.warn("TIMER.JS IS DEPRECATED")
         if (typeof date == "string"){
             this.#dateURL = date
         }
