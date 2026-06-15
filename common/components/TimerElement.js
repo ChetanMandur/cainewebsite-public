@@ -1,4 +1,4 @@
-class TimerEnterEvent extends Event {
+class TimerEnteredEvent extends Event {
     
     /**@type {TimerElement} */
     #timerElement = undefined
@@ -37,7 +37,7 @@ export default class TimerElement extends HTMLElement{
     #result = undefined
 
     /**@type {TimerEnterEvent} */
-    #timerEvent = new TimerEnterEvent(this)
+    #timerEvent = new TimerEnteredEvent(this)
 
     /**@type {number[]} */
     #animationIDs = [0,0,0]
