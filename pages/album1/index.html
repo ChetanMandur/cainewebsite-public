@@ -31,7 +31,7 @@
 </head>
 <body>
 	<div class="overlay" id="overlay">
-		<h1 class="timer" id="timer"></h1>
+		 <countdown-timer date="https://api.securityofgod.com/get/releaseDate/album1" result="https://api.securityofgod.com/get/timerResult/album1"></countdown-timer>
 	</div>
 
 	<div class="sections-container" id="sections-container">
@@ -138,14 +138,7 @@
 		})
 	</script>
 	<script type="module">
-		import Timer from "/common/scripts/timer.js"
-
-		const timer = new Timer(
-			"https://api.securityofgod.com/get/releaseDate/album1",
-			"https://api.securityofgod.com/get/timerResult/album1"
-		)
-		
-		timer.enterHandler = (async (event) => {
+		document.addEventListener("TimerEntered",async (event)=>{
 			const overlay = document.getElementById("overlay")
 			const sectionsContainer = document.getElementsByClassName("sections-container")[0]
 			const youtubeVideoContainer = document.getElementById("youtube-video-container")
@@ -153,11 +146,9 @@
 			const errorContainer = document.getElementById("error-container")
 
 			/**@type {Response}*/
-			const result = await timer.getResult()
+			const result = await event.result
 
 			if (result != undefined){
-				// console.log(document.getElementById("youtube-video"), result)
-
 				youtubeVideo.src = await result.text()
 				youtubeVideoContainer.style.display="block"
 			}
@@ -169,8 +160,6 @@
 			sectionsContainer.style.display="none"
 
 		})
-
-		timer.start()
 	</script>
 	<script src="/pages/album1/animations.js"></script>
 
