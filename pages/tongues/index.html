@@ -16,7 +16,8 @@
 </head>
 <body>
 	<div class="overlay" id="overlay">
-		<h1 class="timer" id="timer"></h1>
+		<!-- <countdown-timer date="https://api.securityofgod.com/get/releaseDate/tongues" result="https://api.securityofgod.com/get/timerResult/tongues"></countdown-timer> -->
+		<countdown-timer date="Timer.TenSeconds" result="https://api.securityofgod.com/get/timerResult/tongues"></countdown-timer>
 	</div>
 
 	<div class="sections-container" id="sections-container">
@@ -32,20 +33,14 @@
 
 	<script type="module">
 		import SlideScroll from "/common/scripts/slideScroll.js"
-		import Timer from "/common/scripts/timer.js"
 		import pageInject from "/common/scripts/pageInject.js"
 
 		const scroll = new SlideScroll()
 
-		const timer = new Timer(
-			Timer.TenSeconds,
-			// "https://api.securityofgod.com/get/releaseDate/tongues",
-			"https://api.securityofgod.com/get/timerResult/tongues"
-		)
 
-		timer.enterHandler = (async (event)=>{
+		document.addEventListener("TimerEntered", async (event)=>{
 			/**@type {Response}*/
-			const result = await timer.getResult()
+			const result = await event.result
 			if (result != undefined){
 				await pageInject(await result.text() , true, true )
 			}
@@ -54,7 +49,6 @@
 			}
 		})
 
-		timer.start()
 
 	</script>
 
