@@ -16,7 +16,7 @@
 	<div class="overlay">
 		<countdown-timer date="https://api.securityofgod.com/get/releaseDate/test" result="https://api.securityofgod.com/get/timerResult/test"></countdown-timer>
 	</div>
-	<div class="sections-container" id="sections-container">
+	<slide-scroll>
 		<div class="section">
 			<video-canvas src="/pages/album1/assets/videos/test.webm" mobile-fit="cover" desktop-fit="scale-down" quality="high"></video-canvas>
 		</div>
@@ -38,7 +38,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</slide-scroll>
 	<script type="module">
 		document.addEventListener("TimerEntered",async (event)=>{
 			console.log("hiiiii", event)
@@ -52,26 +52,23 @@
 		})
 	</script>
 	<script type="module">
-		import SlideScroll from "/common/scripts/slideScroll.js"
-		const scroll = new SlideScroll("test1")
-		scroll.setScrollFunction((section)=>{
-			switch (section) {
-				case 0:
+		const slideScroll = document.getElementsByTagName("slide-scroll")[0]
+
+		slideScroll.setScrollCases({
+			0:{
+				"top":[],
+				"center":[0],
+				"bottom":[1],
+				"function":()=>{
 					console.log("YO MAMA")
-					scroll.toTheCenter(0)
-					scroll.toTheBottom(1)
-					break;
-				
-				default:
-					scroll.scrollSwitchDefaultCase(section)
-					break;
-			}
+				}
+			},
 		})
 	</script>
 	<script type="module">
 		import pageInject from "/common/scripts/pageInject.js"
 		document.getElementById("wazup-button").addEventListener("pointerdown",(event)=>{
-			pageInject("/pages/lie2me", true, true)
+			pageInject("/pages/album1", true, true)
 		})
 	</script>
 </body>

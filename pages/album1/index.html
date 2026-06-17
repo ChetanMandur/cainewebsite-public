@@ -34,7 +34,8 @@
 		 <countdown-timer date="https://api.securityofgod.com/get/releaseDate/album1" result="https://api.securityofgod.com/get/timerResult/album1"></countdown-timer>
 	</div>
 
-	<div class="sections-container" id="sections-container">
+	<!-- <div class="sections-container" id="sections-container"> -->
+	<slide-scroll>
 		<div id="firstSection" class="section first-section">
 			<video-canvas src="/pages/album1/assets/videos/test.webm"></video-canvas>
 		</div>
@@ -69,8 +70,8 @@
 
 		<div class="section final-section" >
 		</div>
-
-	</div>
+	</slide-scroll>
+	<!-- </div> -->
 
 	<div class="youtube-video-container" id="youtube-video-container" >
 		<iframe id="youtube-video" width="100%" height="100%" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -81,60 +82,42 @@
 	</div>
 
 	<script type="module">
-		import SlideScroll from "/common/scripts/slideScroll.js"
-		const scroll = new SlideScroll()
-		scroll.setScrollFunction((section)=>{
-			switch (section) {
-				case 0:
-					scroll.chunkToTheCenter(0,1)
-					scroll.chunkToTheBottom(1)
-					break;
-				case 1:
-					scroll.chunkToTheCenter(0,2)
-					scroll.chunkToTheBottom(2)
-					break;
-				
-				case 2:
-					scroll.chunkToTheTop(0,1)
-					scroll.chunkToTheCenter(1,3)
-					scroll.chunkToTheBottom(3)
-					break;
-
-				case 3:
-					scroll.chunkToTheTop(0,3)
-					scroll.toTheCenter(1)
-					scroll.toTheCenter(3)
-					scroll.chunkToTheBottom(4)
-					break;
-				
-				case 4:
-					scroll.chunkToTheTop(0,4)
-					scroll.toTheCenter(1)
-					scroll.chunkToTheCenter(4,5)
-					scroll.chunkToTheBottom(5)
-					break;
-
-				case 5:
-					scroll.chunkToTheTop(0,4)
-					scroll.toTheCenter(1)
-					scroll.chunkToTheCenter(4,7)
-					scroll.chunkToTheBottom(6)
-					break;
-
-				case 6:
-					scroll.chunkToTheTop(0,4)
-					scroll.toTheCenter(1)
-					scroll.chunkToTheCenter(4,7)
-					scroll.chunkToTheBottom(7)
-					break;
-
-
-				default:
-					scroll.chunkToTheTop(0,section)
-					scroll.chunkToTheCenter(section, section+1)
-					scroll.chunkToTheBottom(section+1)
-					break;
+		const slideScroll = document.getElementsByTagName("slide-scroll")[0]
+		slideScroll.setScrollCases({
+			0:{
+				"center":[0],
+				"bottom":["1+"]
+			},
+			1:{
+				"center":[0,1],
+				"bottom":["2+"]
+			},
+			2:{
+				"top":[0],
+				"center":[1,2],
+				"bottom":["3+"]
+			},
+			3:{
+				"top":[0,2],
+				"center":[1,3],
+				"bottom":["4+"]
+			},
+			4:{
+				"top":[0,2,3],
+				"center":[1,4],
+				"bottom":["5+"]
+			},
+			5:{
+				"top":[0,2,3],
+				"center":[1,4,5],
+				"bottom": ["6+"]
+			},
+			6:{
+				"top":[0,2,3],
+				"center":[1,4,5,6],
+				"bottom":["7+"]
 			}
+
 		})
 	</script>
 	<script type="module">

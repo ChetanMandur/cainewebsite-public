@@ -293,8 +293,8 @@ function bodyInjector(newDom){
     const currentChildren = Array.from(currentBody.children)
     const incomingChildren = Array.from(incomingBody.children)
 
-    const currentSectionsContainer = currentBody.getElementsByClassName("sections-container")[0]
-    const incomingSectionsContainer = incomingBody.getElementsByClassName("sections-container")[0]
+    const currentSectionsContainer = currentBody.getElementsByTagName("slide-scroll")[0]
+    const incomingSectionsContainer = incomingBody.getElementsByTagName("slide-scroll")[0]
 
     const currentOverlay = currentBody.getElementsByClassName("overlay")[0]
     const incomingOverlay = incomingBody.getElementsByClassName("overlay")[0]
@@ -302,9 +302,7 @@ function bodyInjector(newDom){
     const currentScripts = scriptExtractor(currentBody)    
     const incomingScripts = scriptExtractor(incomingBody)
 
-    const newSections = document.createElement("div")
-    newSections.className = "sections-container"
-
+    const newSections = document.createElement("slide-scroll")
 
     var incomingSections = []
     var currentSections = []
@@ -344,7 +342,7 @@ function bodyInjector(newDom){
     }
     else{
         if (incomingOverlay != undefined){
-            currentBody.appendChild(incomingOverlay)
+            currentOverlay.replaceWith(incomingOverlay)
         }
         else{
             currentOverlay.remove()
@@ -352,14 +350,14 @@ function bodyInjector(newDom){
     }
 
     currentChildren.forEach((current)=>{
-        if (!(current.classList.contains("sections-container")) && !(current.classList.contains("overlay")) && (current.tagName != "SCRIPT") ){
+        if ((current.tagName != "SLIDE-SCROLL") && !(current.classList.contains("overlay")) && (current.tagName != "SCRIPT") ){
             // console.log("remove current", current)
             current.remove()
         }
     })
 
     incomingChildren.forEach((incoming)=>{
-        if (!(incoming.classList.contains("sections-container")) && !(incoming.classList.contains("overlay")) && (incoming.tagName != "SCRIPT")){
+        if ((incoming.tagName!= "SLIDE-SCROLL") && !(incoming.classList.contains("overlay")) && (incoming.tagName != "SCRIPT")){
             // console.log("add incoming", incoming)
             currentBody.appendChild(incoming)
         }
