@@ -1,8 +1,11 @@
 class SlideScrollElement extends HTMLElement{
-    static observedAttributes = ["id"]
+    static observedAttributes = ["id", "debug"]
 
     /**@type {string} */
     #id = undefined
+
+    /**@type {string} */
+    #debug = undefined
 
     /**@type {ShadowRoot} */
     #shadow = undefined
@@ -20,17 +23,16 @@ class SlideScrollElement extends HTMLElement{
 
     constructor(){
         super()
+    }
 
+    connectedCallback(){
         this.#id = this.getAttribute("id")
+        this.#debug = this.getAttribute("debug")
 
         document.addEventListener("wheel", this)
         document.addEventListener("pointerdown",this)
         document.addEventListener("keydown", this)
 
-        
-    }
-
-    connectedCallback(){
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
         this.#scrollHandler()

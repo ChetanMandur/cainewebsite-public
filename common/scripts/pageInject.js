@@ -303,6 +303,12 @@ function bodyInjector(newDom){
     const incomingScripts = scriptExtractor(incomingBody)
 
     const newSections = document.createElement("slide-scroll")
+    
+    if (incomingSectionsContainer != undefined){
+        Array.from(incomingSectionsContainer.attributes).forEach(attribute => {
+            newSections.setAttribute(attribute.name, attribute.value)
+        });
+    }
 
     var incomingSections = []
     var currentSections = []
