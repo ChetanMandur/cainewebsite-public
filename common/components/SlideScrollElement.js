@@ -1,3 +1,4 @@
+import debugLog from "../functions/debugLog.js"
 class SlideScrollElement extends HTMLElement{
     static observedAttributes = ["id", "debug"]
 
@@ -28,6 +29,8 @@ class SlideScrollElement extends HTMLElement{
     connectedCallback(){
         this.#id = this.getAttribute("id")
         this.#debug = this.getAttribute("debug")
+
+        debugLog(this.#debug)
 
         document.addEventListener("wheel", this)
         document.addEventListener("pointerdown",this)
