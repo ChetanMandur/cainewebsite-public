@@ -1,6 +1,8 @@
+import Debug from "../functions/Debug.js"
+
 class VideoCanvasElement extends HTMLElement{    
     //// Attributes
-    static observedAttributes = ["src", "mobile-fit", "desktop-fit","quality"]
+    static observedAttributes = ["src", "mobile-fit", "desktop-fit","quality", "debug"]
 
     /**Video source URL. Set using the `src` attribute  @type {string}*/
     #src = undefined
@@ -15,6 +17,9 @@ class VideoCanvasElement extends HTMLElement{
 
     /**Video quality (in reality: canvas pixel sizing). Set using the `quality` attribute @type {"high"|"low"} */
     #quality = undefined
+
+    /**Enable/disbale debug logs @type {Debug} */
+    #debug = undefined
 
     //// Private Variables
     /**Whether or not the instance is valid. Ie, the element contains all required attributes to display video (`src` and `mobile/desktop-fit`) @type {boolean} */
@@ -40,6 +45,17 @@ class VideoCanvasElement extends HTMLElement{
         this.#mobileFit = this.getAttribute("mobile-fit") ?? "cover"
         this.#desktopFit = this.getAttribute("desktop-fit") ?? "cover"
         this.#quality = this.getAttribute("quality") ?? "high"
+        // this.#debug = this.getAttribute("debug")
+        this.#debug = new Debug(this.getAttribute("debug") == undefined ? false : true, "video-canvas") 
+
+        // debugLog(this.#debug)
+
+        this.#debug.log("VIDEO CANVAS ELEMENT:")
+        this.#debug.log("src:", this.#src)
+        this.#debug.log("mobile-fit:", this.#mobileFit)
+        this.#debug.log("desktop-fit:", this.#desktopFit)
+        this.#debug.log("quality:", this.#quality)
+        this.#debug.log("debug:", this.#debug)
 
         // Checks if valid
         if (this.#validConfigCheck()){

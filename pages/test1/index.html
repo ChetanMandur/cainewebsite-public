@@ -14,11 +14,11 @@
 </head>
 <body>
 	<div class="overlay">
-		<countdown-timer date="https://api.securityofgod.com/get/releaseDate/test" result="https://api.securityofgod.com/get/timerResult/test"></countdown-timer>
+		<countdown-timer debug date="https://api.securityofgod.com/get/releaseDate/test" result="https://api.securityofgod.com/get/timerResult/test"></countdown-timer>
 	</div>
 	<slide-scroll id="test1" debug>
 		<div class="section">
-			<video-canvas src="/pages/album1/assets/videos/test.webm" mobile-fit="cover" desktop-fit="scale-down" quality="high"></video-canvas>
+			<video-canvas debug src="/pages/album1/assets/videos/test.webm" mobile-fit="cover" desktop-fit="scale-down" quality="high"></video-canvas>
 		</div>
 		<div class="section"> 
 			<!-- <div class="section first-section"> -->
@@ -41,7 +41,7 @@
 	</slide-scroll>
 	<script type="module">
 		document.addEventListener("TimerEntered",async (event)=>{
-			console.log("hiiiii", event)
+			console.log("(index.html) Event caught!", event)
 			const result = await event.result
 			if (result == undefined){
 				console.log("bruh")

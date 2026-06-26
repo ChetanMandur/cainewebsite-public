@@ -1,11 +1,11 @@
-import debugLog from "../functions/debugLog.js"
+import Debug from "../functions/Debug.js"
 class SlideScrollElement extends HTMLElement{
     static observedAttributes = ["id", "debug"]
 
     /**@type {string} */
     #id = undefined
 
-    /**@type {string} */
+    /**@type {Debug} */
     #debug = undefined
 
     /**@type {ShadowRoot} */
@@ -28,9 +28,7 @@ class SlideScrollElement extends HTMLElement{
 
     connectedCallback(){
         this.#id = this.getAttribute("id")
-        this.#debug = this.getAttribute("debug")
-
-        debugLog(this.#debug)
+        this.#debug = new Debug(this.getAttribute("debug") == undefined ? false : true, this.#id == undefined ? "slide-scroll" : ("slide-scroll: "+ this.#id))
 
         document.addEventListener("wheel", this)
         document.addEventListener("pointerdown",this)
@@ -44,7 +42,7 @@ class SlideScrollElement extends HTMLElement{
     }
 
     disconnectedCallback(){
-        console.log("disconnect me", this.#sections)
+        this.#debug.log("disconnect me", this.#sections)
         document.removeEventListener("wheel", this)
         document.removeEventListener("pointerdown", this)
         document.removeEventListener("keydown", this)
@@ -52,7 +50,7 @@ class SlideScrollElement extends HTMLElement{
 
     /** @param {ScrollCases} newCases */ 
     setScrollCases(newCases){
-        console.log("Set Scroll Cases")
+        this.#debug.log("Set Scroll Cases")
         this.#scrollCases = newCases
 
         this.#currentSection = 0
@@ -90,7 +88,7 @@ class SlideScrollElement extends HTMLElement{
      * @param {string|number} index 
      */
     #scrollHandlerHelper(location, index){
-        console.log(location, index)
+        this.#debug.log(location, index)
         
         if (typeof(index)=="number"){
             this.#toTheLocation(location, index)
@@ -107,7 +105,7 @@ class SlideScrollElement extends HTMLElement{
     }
 
     #scrollHandler(){
-        console.log(this.#currentSection, this.#scrollCases)
+        this.#debug.log(this.#currentSection, this.#scrollCases)
         if (this.#currentSection in this.#scrollCases){
             const cases = this.#scrollCases[this.#currentSection]
 
@@ -141,7 +139,7 @@ class SlideScrollElement extends HTMLElement{
                 this.#scrollHandlerHelper("BOTTOM", i)
             }
         }
-        console.log("------")
+        this.#debug.log("------")
     }
 
     // -----------------------------------------------------------------

@@ -1,3 +1,4 @@
+import Debug from "../functions/Debug.js"
 class TimerEnteredEvent extends Event {
     
     /**@type {TimerElement} */
@@ -21,7 +22,7 @@ class TimerEnteredEvent extends Event {
 
 export default class TimerElement extends HTMLElement{
     // ATTRIBUTES DATA
-    static observedAttributes = ["date", "result"]
+    static observedAttributes = ["date", "result", "debug"]
 
     /**@type {string} */
     #dateAttribute = undefined
@@ -35,6 +36,9 @@ export default class TimerElement extends HTMLElement{
 
     /**@type {Response} */
     #result = undefined
+
+    /**@type {Debug} */
+    #debug = undefined
 
     /**@type {TimerEnterEvent} */
     #timerEvent = new TimerEnteredEvent(this)
@@ -54,6 +58,8 @@ export default class TimerElement extends HTMLElement{
 
         this.#dateAttribute = this.getAttribute("date")
         this.#resultAttribute = this.getAttribute("result")
+
+        this.#debug = new Debug(this.getAttribute("debug") == undefined ? false : true, "timer")
 
         const styleSheet = new CSSStyleSheet()
         styleSheet.replaceSync(
@@ -90,10 +96,12 @@ export default class TimerElement extends HTMLElement{
         if (this.#dateAttribute.slice(0,6) == "Timer."){
             switch (this.#dateAttribute.slice(6)) {
                 case "FiveSeconds":
+                    this.#debug.log("Using built-in date: 5 SECONDS")
                     return (new Date((new Date()).getTime() + 6000))
                     break;
                 
                 case "TenSeconds":
+                    this.#debug.log("Using built-in date: 10 SECONDS")
                     return (new Date((new Date()).getTime() + 11000))
                     break;
 
@@ -103,11 +111,12 @@ export default class TimerElement extends HTMLElement{
             }
         }
         else if (this.#dateAttribute.slice(0,8) == "https://"){
+            this.#debug.log("Fetching Date:",this.#dateAttribute)
             const response = await fetch(this.#dateAttribute)
 
             if (response.ok){
                 const result = await response.json()
-                // console.log(result)
+                this.#debug.log("Date Response:",result)
                 return (new Date(
                     new Date(
                         result.year, result.month, result.day, result.hours, result.minutes, result.seconds
@@ -128,14 +137,20 @@ export default class TimerElement extends HTMLElement{
 
     async getResult(){
         if (this.#result == undefined){
+            this.#debug.log("Fetching Result:",this.#resultAttribute)
             const response = await fetch(this.#resultAttribute)
+
             if (response.ok){
+                this.#debug.log("Result Response:", response)
                 this.#result = response
             }
             else{
                 console.error("ERROR GETTING RESULT DATA!")
                 return undefined
             }
+        }
+        else{
+            this.#debug.log("Result already fetched:", this.#result)
         }
         return (this.#result).clone()
     }
@@ -175,10 +190,11 @@ export default class TimerElement extends HTMLElement{
         this.#timer.textContent = days + ":" + hours + ":" + minutes + ":" + seconds + ":" + milliseconds;
 
         if (distance <= 0){
-            // console.log("STOP!", distance)
+            this.#debug.log("TIMER COUNTDOWN COMPLETE!", distance)
             this.#timer.textContent = "00" + ":" + "00" + ":" + "00" + ":" + "00" + ":" + "000";
             cancelAnimationFrame(this.#animationIDs[0])
 
+            this.#debug.log("Beginning timer delete animation")
             this.#animationIDs[1]=requestAnimationFrame(()=>{this.#deleteAnimation(this.#timer.textContent.length, 200)})
         }
         else{
@@ -203,7 +219,9 @@ export default class TimerElement extends HTMLElement{
             
         }
         else{
+            this.#debug.log("TIMER DELETE COMPLETE!", timerSize)
             cancelAnimationFrame(this.#animationIDs[1])
+            this.#debug.log("Beginning timer text replace animation")
             this.#animationIDs[2]=requestAnimationFrame(()=>{this.#replaceAnimation("ENTER",0,500)})
 
         }
@@ -228,11 +246,14 @@ export default class TimerElement extends HTMLElement{
         }
 
         else{
+            this.#debug.log("TIMER REPLACE ANIMATION COMPLETE!", newText)
+
             cancelAnimationFrame(this.#animationIDs[2])
 
             this.#timer.style.pointerEvents= "visibleFill"
             this.#timer.style.cursor = "pointer"
             this.#timer.addEventListener("pointerdown", ()=>{
+                this.#debug.log("`TimerEnterEvent` dispatched!")
                 document.dispatchEvent(this.#timerEvent)
             })
 
