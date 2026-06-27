@@ -22,7 +22,7 @@ class TimerEnteredEvent extends Event {
 
 export default class TimerElement extends HTMLElement{
     // ATTRIBUTES DATA
-    static observedAttributes = ["date", "result", "debug"]
+    static observedAttributes = ["date", "result","delete-speed","replace-speed","replace-text", "debug"]
 
     /**@type {string} */
     #dateAttribute = undefined
@@ -30,15 +30,24 @@ export default class TimerElement extends HTMLElement{
     /**@type {string} */
     #resultAttribute = undefined
 
+    /**@type {number} */
+    #deleteSpeedAttribute = undefined
+    
+    /**@type {number} */
+    #replaceSpeedAttribute = undefined
+
+    /**@type {string} */
+    #replaceTextAttribute = undefined
+
+    /**@type {Debug} */
+    #debug = undefined
+
     // CLASS DATA
     /**@type {Date} */
     #date = undefined
 
     /**@type {Response} */
     #result = undefined
-
-    /**@type {Debug} */
-    #debug = undefined
 
     /**@type {TimerEnterEvent} */
     #timerEvent = new TimerEnteredEvent(this)
@@ -58,6 +67,9 @@ export default class TimerElement extends HTMLElement{
 
         this.#dateAttribute = this.getAttribute("date")
         this.#resultAttribute = this.getAttribute("result")
+        this.#deleteSpeedAttribute = Number(this.getAttribute("delete-speed") ?? 200) 
+        this.#replaceSpeedAttribute = Number(this.getAttribute("replace-speed") ?? 500) 
+        this.#replaceTextAttribute = this.getAttribute("replace-text") ?? "ENTER"
 
         this.#debug = new Debug(this.getAttribute("debug") == undefined ? false : true, "timer")
 
@@ -195,7 +207,7 @@ export default class TimerElement extends HTMLElement{
             cancelAnimationFrame(this.#animationIDs[0])
 
             this.#debug.log("Beginning timer delete animation")
-            this.#animationIDs[1]=requestAnimationFrame(()=>{this.#deleteAnimation(this.#timer.textContent.length, 200)})
+            this.#animationIDs[1]=requestAnimationFrame(()=>{this.#deleteAnimation(this.#timer.textContent.length, this.#deleteSpeedAttribute)})
         }
         else{
             this.#animationIDs[0] = requestAnimationFrame(()=>{this.#countAnimation()})
@@ -222,7 +234,7 @@ export default class TimerElement extends HTMLElement{
             this.#debug.log("TIMER DELETE COMPLETE!", timerSize)
             cancelAnimationFrame(this.#animationIDs[1])
             this.#debug.log("Beginning timer text replace animation")
-            this.#animationIDs[2]=requestAnimationFrame(()=>{this.#replaceAnimation("ENTER",0,500)})
+            this.#animationIDs[2]=requestAnimationFrame(()=>{this.#replaceAnimation(this.#replaceTextAttribute,this.#replaceSpeedAttribute,0)})
 
         }
     }
@@ -230,17 +242,17 @@ export default class TimerElement extends HTMLElement{
     /**
      * 
      * @param {string} newText 
-     * @param {number} currentIndex 
      * @param {number} animationSpeed 
+     * @param {number} currentIndex 
      */
-    #replaceAnimation(newText, currentIndex, animationSpeed){
+    #replaceAnimation(newText, animationSpeed, currentIndex){
         if (currentIndex <= newText.length){
             this.#timer.textContent = newText.slice(0,currentIndex)
             currentIndex++
 
             setTimeout(()=>{
                 this.#animationIDs[2] = requestAnimationFrame(()=>{
-                        this.#replaceAnimation(newText, currentIndex, animationSpeed)
+                        this.#replaceAnimation(newText, animationSpeed, currentIndex)
                 })
             },animationSpeed)
         }
