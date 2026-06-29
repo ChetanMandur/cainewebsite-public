@@ -46,8 +46,12 @@
 		</div>
 	</slide-scroll>
 	<script type="module">
+		import Debug from "/common/functions/Debug.js"
+
+		const debug = new Debug(true, "test1/index.html")
+
 		document.addEventListener("TimerEntered",async (event)=>{
-			console.log("(index.html) Event caught!", event)
+			debug.log("Event caught!", event)
 			const result = await event.result
 			if (result == undefined){
 				console.log("bruh")
