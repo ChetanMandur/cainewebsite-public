@@ -9,3 +9,12 @@ body{
     color:black;
     overflow-y:hidden;
 }
+
+h1{
+    width:fit-content;
+    height:fit-content;
+    font-family: monospace;
+    opacity: 50%;
+    color: white;
+    background-color: black;
+}

@@ -76,7 +76,7 @@ export default class TimerElement extends HTMLElement{
         const styleSheet = new CSSStyleSheet()
         styleSheet.replaceSync(
             `
-                h1  {
+                .timer {
                     width:fit-content;
                     height:fit-content;
                     /* font-family: 'Courier New', Courier, monospace; */
@@ -92,6 +92,7 @@ export default class TimerElement extends HTMLElement{
         this.#shadow.adoptedStyleSheets = [styleSheet]
 
         this.#timer = document.createElement("h1")
+        this.#timer.classList.add("timer")
 
         this.#shadow.appendChild(this.#timer)
     }
