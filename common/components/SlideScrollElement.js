@@ -36,7 +36,7 @@ class SlideScrollElement extends HTMLElement{
 
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
-        this.#scrollHandler()
+        // this.#scrollHandler()
 
 
     }
