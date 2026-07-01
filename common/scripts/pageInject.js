@@ -302,11 +302,11 @@ function bodyInjector(newDom){
     const currentScripts = scriptExtractor(currentBody)    
     const incomingScripts = scriptExtractor(incomingBody)
 
-    const newSections = document.createElement("slide-scroll")
+    const newSectionsContainer = document.createElement("slide-scroll")
     
     if (incomingSectionsContainer != undefined){
         Array.from(incomingSectionsContainer.attributes).forEach(attribute => {
-            newSections.setAttribute(attribute.name, attribute.value)
+            newSectionsContainer.setAttribute(attribute.name, attribute.value)
         });
     }
 
@@ -325,20 +325,20 @@ function bodyInjector(newDom){
         currentSections.forEach((current)=>{
             if (deepCompare(incoming, current)){
                 dupeFound = true
-                newSections.appendChild(current)
+                newSectionsContainer.appendChild(current)
             }
         })
 
         if (!dupeFound){
-            newSections.appendChild(incoming)
+            newSectionsContainer.appendChild(incoming)
         }
     })
 
     if (currentSectionsContainer == undefined){
-        currentBody.appendChild(newSections)
+        currentBody.appendChild(newSectionsContainer)
     }
     else{
-        currentSectionsContainer.replaceWith(newSections)
+        currentSectionsContainer.replaceWith(newSectionsContainer)
     }
 
     if (currentOverlay == undefined){

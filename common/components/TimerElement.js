@@ -117,6 +117,11 @@ export default class TimerElement extends HTMLElement{
                     this.#debug.log("Using built-in date: 10 SECONDS")
                     return (new Date((new Date()).getTime() + 11000))
                     break;
+                
+                case "ZeroSeconds":
+                    this.#debug.log("Using built-in date: 0 SECONDS")
+                    return (new Date((new Date()).getTime()))
+                    break;
 
                 default:
                     console.error("DATE ATTRIBUTE ERROR")

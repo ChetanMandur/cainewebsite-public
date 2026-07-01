@@ -19,7 +19,7 @@
 
 
 <body>
-	<div class="sections-container" id="sections-container">
+	<slide-scroll>
 		<div class="section first-section">
 			<video-canvas src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4" mobile-fit="contain" desktop-fit="contain"></video-canvas>
 		</div>
@@ -42,26 +42,39 @@
 				<a href="https://www.tiktok.com/@securityofg0d">tiktok</a>
 			</div>
 		</div>
-	</div>
+	</slide-scroll>
 
 	<!-- Scroll script -->
 	<script type="module">
-		import SlideScroll from "/common/scripts/slideScroll.js"
-		const scroll = new SlideScroll()
-		scroll.setScrollFunction((section)=>{
-			switch (section) {
-				case 0:
-					scroll.toTheCenter(0)
-					scroll.toTheCenter(1)
-					break;
-				case 1:
-					scroll.scrollHandler(0)
-					break;
-				default:
-					scroll.scrollSwitchDefaultCase(section)
-					break;
+		const container = document.getElementsByTagName("slide-scroll")[0]
+		container.setScrollCases({
+			0:{
+				"top":[],
+				"center":[0,1],
+				"bottom":[]
+			},
+			1:{
+				"top":[],
+				"center":[0,1],
+				"bottom":[]
 			}
 		})
+		// import SlideScroll from "/common/scripts/slideScroll.js"
+		// const scroll = new SlideScroll()
+		// scroll.setScrollFunction((section)=>{
+		// 	switch (section) {
+		// 		case 0:
+		// 			scroll.toTheCenter(0)
+		// 			scroll.toTheCenter(1)
+		// 			break;
+		// 		case 1:
+		// 			scroll.scrollHandler(0)
+		// 			break;
+		// 		default:
+		// 			scroll.scrollSwitchDefaultCase(section)
+		// 			break;
+		// 	}
+		// })
 
 	</script>
 
