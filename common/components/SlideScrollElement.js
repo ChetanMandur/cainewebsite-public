@@ -17,7 +17,7 @@ class SlideScrollElement extends HTMLElement{
     /**@type {number} */
     #currentSection = 0 
 
-    /**@typedef {{number:{"top":(number|string)[], "center":(number|string)[], "bottom":(number|string)[], "function":()=>{} }}} ScrollCases */
+    /**@typedef {{number:{"top":(number|string)[], "center":(number|string)[], "bottom":(number|string)[], "function":()=>{}, "goTo": number }}} ScrollCases */
 
     /**@type {ScrollCases} */
     #scrollCases = {}
@@ -109,23 +109,31 @@ class SlideScrollElement extends HTMLElement{
         if (this.#currentSection in this.#scrollCases){
             const cases = this.#scrollCases[this.#currentSection]
 
-            if ("function" in cases){
-                cases["function"]()
+            if ("goTo" in cases){
+                this.#debug.log("`goTo` ENACTED. GOING TO SECTION", cases["goTo"])
+                this.#currentSection = cases["goTo"]
+                this.#scrollHandler()
             }
-            if ("top" in cases){
-                for (var index of cases["top"]){
-                    this.#scrollHandlerHelper("TOP", index)
+            else{
+                if ("function" in cases){
+                    cases["function"]()
                 }
-            }
-            if ("center" in cases){
-                for (var index of cases["center"]){
-                    this.#scrollHandlerHelper("CENTER", index)
+                if ("top" in cases){
+                    for (var index of cases["top"]){
+                        this.#scrollHandlerHelper("TOP", index)
+                    }
                 }
-            }
-            if ("bottom" in cases){
-                for (var index of cases["bottom"]){
-                    this.#scrollHandlerHelper("BOTTOM", index)
+                if ("center" in cases){
+                    for (var index of cases["center"]){
+                        this.#scrollHandlerHelper("CENTER", index)
+                    }
                 }
+                if ("bottom" in cases){
+                    for (var index of cases["bottom"]){
+                        this.#scrollHandlerHelper("BOTTOM", index)
+                    }
+                }
+                this.#debug.log("------")
             }
         }
         else{
@@ -138,8 +146,8 @@ class SlideScrollElement extends HTMLElement{
             for (var i=this.#currentSection+1; i < this.#sections.length; i++){
                 this.#scrollHandlerHelper("BOTTOM", i)
             }
+            this.#debug.log("------")
         }
-        this.#debug.log("------")
     }
 
     // -----------------------------------------------------------------
