@@ -36,7 +36,7 @@ class SlideScrollElement extends HTMLElement{
 
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
-        // this.#scrollHandler()
+        // this.scrollHandler()
 
 
     }
@@ -55,7 +55,7 @@ class SlideScrollElement extends HTMLElement{
 
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
-        this.#scrollHandler()
+        this.scrollHandler()
     }
 
     // -----------------------------------------------------------------
@@ -104,15 +104,23 @@ class SlideScrollElement extends HTMLElement{
         }
     }
 
-    #scrollHandler(){
+
+    /**
+     * 
+     * @param {number} forcedSection 
+     */
+    scrollHandler(forcedSection){
+        if (forcedSection != undefined){
+            this.#debug.log("FORCING CURRENT SECTION TO:", forcedSection)
+            this.#currentSection = forcedSection
+        }
         this.#debug.log(this.#currentSection, this.#scrollCases)
         if (this.#currentSection in this.#scrollCases){
             const cases = this.#scrollCases[this.#currentSection]
 
             if ("goTo" in cases){
                 this.#debug.log("`goTo` ENACTED. GOING TO SECTION", cases["goTo"])
-                this.#currentSection = cases["goTo"]
-                this.#scrollHandler()
+                this.scrollHandler(cases["goTo"])
             }
             else{
                 if ("function" in cases){
@@ -158,14 +166,14 @@ class SlideScrollElement extends HTMLElement{
         if (this.#currentSection >0){
             this.#currentSection--
         }
-        this.#scrollHandler()
+        this.scrollHandler()
     }
 
     #scrollDown(){
         if (this.#currentSection < this.#sections.length-1){
             this.#currentSection++
         }
-        this.#scrollHandler()
+        this.scrollHandler()
     }
 
     //// SCROLL EVENT DEFINITIONS ////
