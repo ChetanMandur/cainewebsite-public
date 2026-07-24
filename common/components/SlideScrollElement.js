@@ -1,4 +1,5 @@
 import Debug from "../functions/Debug.js"
+if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
 class SlideScrollElement extends HTMLElement{
     static observedAttributes = ["id", "debug"]
     //// Attributes
@@ -58,6 +59,7 @@ class SlideScrollElement extends HTMLElement{
 
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
+        this.#debug.log("Hello from SlideScroll", this.#id,". We currently have", this.#sections)
         // this.scrollHandler()
 
 

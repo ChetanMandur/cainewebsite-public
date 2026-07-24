@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" href="/common/styles/base.css">
+        <link rel="stylesheet" href="/common/styles/base.css">
+        <link rel="stylesheet" href="/common/styles/overlay.css">
+        <link rel="stylesheet" href="/common/styles/section.css">
+        <link rel="stylesheet" href="/common/styles/links.css">
+
+		<title>SECURITY OF GOD</title>
+		<link rel="shortcut icon" href="/common/assets/images/angel_logo.png" type="image/x-icon">	
+		<meta name="description" content="SECURITY OF GOD // CAINE NOT CORSO // 2026">
+		<meta name="author" content="CAINE NOT CORSO">
+		<meta name="keywords" content="MUSIC, ARTIST, ART, GOTHIC">
+
+
+		<!-- OPEN GRAPH PROTOCOL -->
+		<meta property="og:title" content="SECURITY OF GOD"/>
+		<meta property="og:type" content="website" />
+		<meta property="og:description " content="SECURITY OF GOD // CAINE NOT CORSO // 2026" />
+
+		<meta property="og:locale" content="en_CA" />
+		<meta property="og:site_name" content="SECURITY OF GOD"/>
+
+		<meta property="og:url" content="https://securityofgod.com/"/>
+		<meta property="og:image" content="https://securityofgod.mov/common/assets/images/angel_logo.png"/>
+
+        <!-- IMPORTS -->
+        <script type="module">
+			import "/common/components/SlideScrollElement.js"
+			import "/common/components/VideoCanvasElement.js"
+			import "/common/components/TimerElement.js"
+		</script>
+	</head>
+	<body>
+		<slide-scroll debug>
+            <div class="section first-section">
+			    <video-canvas src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4" mobile-fit="contain" desktop-fit="contain"></video-canvas>
+		    </div>
+            <div class="section transparent-background first-section">
+                <h1 
+                    id="tongues-enter"
+                    class="floating-element clickable-element">
+                        ENTER
+                        <br>(APRIL 21ST 2026)
+                </h1>
+            </div>
+
+            <div class="section">
+                <video-canvas src="/pages/lie2me/assets/videos/l2m_mute.mp4" quality="high" mobile-fit="fill" desktop-fit="fill"></video-canvas>
+            </div>
+
+            <div class="section transparent-background">
+                <h1
+                    id="lie2me-enter"
+                    class="floating-element clickable-element">
+                        ENTER
+                        <br>(APRIL 3RD 2026) 
+                </h1>
+            </div>
+        </slide-scroll>
+	
+        <script type="module">
+			import pageInject from "/common/scripts/pageInject.js"
+
+            document.getElementById("tongues-enter").addEventListener(
+                "pointerdown", (event)=>{
+                    pageInject("/pages/tongues/tongues.html",false,false)
+                }
+            )
+
+            document.getElementById("lie2me-enter").addEventListener(
+                "pointerdown", (event)=>{
+                    pageInject("/pages/lie2me",false,false)
+                }
+            )
+
+        </script>
+
+        <script type="module">
+            const slideScroll = document.getElementsByTagName("slide-scroll")[0]
+            slideScroll.scrollCases = {
+                0:{
+                    "top":[],
+                    "center":[0,1],
+                    "bottom":["2+"]
+                },
+                1:{
+                    "top":[0,1],
+                    "center":[2,3],
+                    "bottom":[]
+                },
+                2:{"goTo":1}
+            }
+        </script>
+	</body>
+</html>
