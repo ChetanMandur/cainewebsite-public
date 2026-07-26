@@ -329,17 +329,51 @@ function deepCompare(element1, element2){
     // Checks on the element's 'class' value
     // If they both exist
     if (element1.attributes.class != undefined && element2.attributes.class != undefined){
-        // if the value of the exisitng attribute are the same
-        if (element1.attributes.class.value != element2.attributes.class.value){return false}
+        // Need to check if all (but the ignored) classes are the same
+
+        // List of classes to ignore
+        const ignoredClasses = ["first-section"]
+
+
+        // Grab the classes of both the elements (don't include the ignored classes)
+        var element1Classes = element1.attributes.class.value.split(" ").filter((currentClass)=>{
+            return !(currentClass in ignoredClasses)
+        }) 
+        var element2Classes = element2.attributes.class.value.split(" ").filter((currentClass)=>{
+            return !(currentClass in ignoredClasses)
+        }) 
+
+
+        // For each of the classes in the first element
+        for (const element1Class of element1Classes){
+            var matchFound = false // Indicates if a match has been found
+
+            // For each of the classes in the second element
+            for (const element2Class of element2Classes){
+                
+                // Only keep going until a match is found
+                if (!matchFound){
+                    // If class names are the same, it's a match
+                    if (element1Class == element2Class){
+                            matchFound = true
+                        }
+                    }
+            }
+            // If all the element2 classes have been iterated through, and no match was found, that means elements are not the same
+            if (matchFound = false){
+                return false
+            }
+        }
     }
     // Checks if only one of the elements contain a 'class' value
     else if (element1.attributes.class != undefined && element2.attributes.class == undefined){return false}
     else if (element1.attributes.class == undefined && element2.attributes.class != undefined){return false}
 
 
-    // Checks the element's `textContext`
-    if (element1.textContent != element2.textContent){
+    // Checks the element's `textContext` (with leading and trailing white spaces removed)
+    if (element1.textContent.trim() != element2.textContent.trim()){
         // console.log("MISSING TEXT CONTEXT", element1.textContent, element2.textContent)
+
         return false
     }
 
