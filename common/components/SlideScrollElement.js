@@ -59,7 +59,7 @@ class SlideScrollElement extends HTMLElement{
 
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
-        this.#debug.log("Hello from SlideScroll", this.#id,". We currently have", this.#sections)
+        this.#debug.log("Hello from SlideScroll", this.#id+"."+" We currently have", this.#sections)
         // this.scrollHandler()
 
 
@@ -67,10 +67,23 @@ class SlideScrollElement extends HTMLElement{
 
     // Logic of removing event listeners when the element disconnects from DOM
     disconnectedCallback(){
-        this.#debug.log("disconnect me", this.#sections)
+        this.#debug.log("Goodbye from SlideScroll", this.#id + "." +" Gone with me are", this.#sections)
         document.removeEventListener("wheel", this)
         document.removeEventListener("pointerdown", this)
         document.removeEventListener("keydown", this)
+
+        // Since the 'pointerdown' event creates some other event listeners, we need to also destroy them
+        // I can use an `AbortController` and do `{signal: controller.signal}`
+        // But instead, I choose to just destroy
+        // Not because it's better, but because I am no better
+        // Consider this function redefinition as grace, as I was originally going to set the function as `undefined` or `null`
+        // but I hated seeing the error in the log
+        // So, goodbye functions. Goodbye element. Enjoy the garbage collecter when it gets to you
+        this.scrollHandler = ()=>{
+            this.#debug.log(
+                '"I am dead, you have kill me. I may still speak, but my powers are stripped. If this is grace, then pity must be hell"'
+            )
+        }
     }
 
     /**
