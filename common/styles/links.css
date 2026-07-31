@@ -1,6 +1,7 @@
 a {
     --link-colour: #ffffff;
-    --link-hover-colour: #03f0fc
+    --link-hover-colour: #03f0fc;
+    user-select: none;
 }
 
 

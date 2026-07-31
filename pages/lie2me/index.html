@@ -42,7 +42,7 @@
 	<div class="section transparent-background first-section" >
 		<a id="l2m-mv-button" style="font-size: xx-large;user-select: none;">WATCH MUSIC VIDEO</a>
 		<div id="l2m-mv-footer" class="section-footer">
-			<a id="l2m-mv-footer-button" href="">(scroll down)</a>
+			<a id="l2m-mv-footer-button">(scroll down)</a>
 		</div>
 		<iframe style="display:none; width: 100%; height:100%" id="l2m-mv-youtube" width="1280px" height="720px" src="https://www.youtube.com/embed/lcvr7kuV850" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 	</div>
@@ -139,7 +139,7 @@
 	container.setScrollCases({
 		0:{
 			"top":[],
-			"center":[1],
+			"center":[0,1],
 			"bottom":[2]
 		},
 		1:{
@@ -166,9 +166,10 @@
 		l2m_youtube.style.display = "block"
 	})
 
-	l2m_footer_button.addEventListener("pointerdown",(event)=>{
-		console.log("hiiii")
+	l2m_footer_button.addEventListener("pointerup",(event)=>{
 		event.preventDefault()
+		event.stopPropagation()
+		// console.log("hiiii")
 		container.scrollHandler(1)
 	})
 </script>
