@@ -7,6 +7,13 @@
         <link rel="stylesheet" href="/common/styles/section.css">
         <link rel="stylesheet" href="/common/styles/links.css">
 
+        <style>
+            a{
+                --link-colour: gray;
+                --link-hover-colour: gray;
+            }
+        </style>
+
 		<title>SECURITY OF GOD</title>
 		<link rel="shortcut icon" href="/common/assets/images/angel_logo.png" type="image/x-icon">	
 		<meta name="description" content="SECURITY OF GOD // CAINE NOT CORSO // 2026">
@@ -44,6 +51,9 @@
                         ENTER
                         <br>(APRIL 21ST 2026)
                 </h1>
+                <div id="first-page-footer" class="section-footer">
+                    <a id="first-page-footer-button">(scroll down)</a>
+                </div>
             </div>
 
             <div class="section">
@@ -92,6 +102,13 @@
                 },
                 2:{"goTo":1}
             }
+
+            const scrollDownButton = document.getElementById("first-page-footer-button")
+            scrollDownButton.addEventListener("pointerup",(event)=>{
+                event.stopPropagation()
+                event.preventDefault()
+                slideScroll.scrollHandler(1)
+            })
         </script>
 	</body>
 </html>

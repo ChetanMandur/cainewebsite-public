@@ -134,6 +134,14 @@ function headInjector(newDom){
     const currentHead = document.getElementsByTagName("head")[0]
     const incomingHead = newDom.getElementsByTagName("head")[0]
 
+    // Remove all custom (ie. page specific) style tags
+    Array.from(currentHead.children).forEach((current)=>{
+        if ((current.tagName == "STYLE")){
+            // console.log("remove current", current)
+            current.remove()
+        }
+    })
+
     // Strip the current head of its scripts
     scriptExtractor(currentHead)
 
