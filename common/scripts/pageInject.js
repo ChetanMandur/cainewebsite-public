@@ -1,13 +1,18 @@
+import Debug from "../functions/Debug.js"
+
 /**
  * 
  * Event that is dispatched before and after `pageInject`
  * 
  * Event name to listen for is `PageInjected`
  */
-class PageInjectEvent extends Event{
+class PageInjectedEvent extends Event{
     /**@type {boolean} */
     #before
     
+    /**@type {Debug} */
+    #debug
+
     /**
      * Need to define whether the event is dispatched before or after `pageInject` 
      * @param {boolean} before 
@@ -15,10 +20,14 @@ class PageInjectEvent extends Event{
     constructor(before){
         super("PageInjected")
         this.#before = before
+        this.#debug = new Debug (false, "PageInjectedEvent")
+        this.#debug.log("CONSTRUCTED 'PageInjected' EVENT")
+
     }
 
     /** Getter function for getting the `before` value */
     get before(){
+        this.#debug.log("GETTER 'before' INVOKED, RETURNING DATA:", this.#before)
         return this.#before
     }
 }
@@ -550,13 +559,13 @@ function bodyInjector(newDom){
  * @param {boolean} overwriteBody - (Unused) Determined whether to merge or overwrite the `<body>` tag
  */
 async function pageInject(page, overwriteHead, overwriteBody){
-    document.dispatchEvent((new PageInjectEvent(true)))
+    document.dispatchEvent((new PageInjectedEvent(true)))
     
     const pageDom = await pageFetch(page)
     headInjector(pageDom)
 
     bodyInjector(pageDom)
-    document.dispatchEvent((new PageInjectEvent(false)))
+    document.dispatchEvent((new PageInjectedEvent(false)))
 
     // tagInjector(pageDom, "head",overwriteHead)
     // tagInjector(pageDom, "body",overwriteBody)
