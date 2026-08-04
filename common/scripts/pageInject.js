@@ -1,5 +1,16 @@
 import Debug from "../functions/Debug.js"
 
+const debug = {
+    scriptExtractor: new Debug (true, "PageInject-ScriptExtractor"),
+    scriptAppender: new Debug (true, "PageInject-ScriptAppender"),
+    pageFetch: new Debug (true, "PageInject-PageFetch"),
+    tagInjector: new Debug (true, "PageInject-TagInjector"),
+    headInjector: new Debug (true, "PageInject-HeadInjector"),
+    deepCompare: new Debug (false, "PageInject-DeepCompare"),
+    bodyInjector: new Debug (false, "PageInject-BodyInjector"),
+    pageInject : new Debug (false, "PageInject-PageInject"),
+}
+
 /**
  * 
  * Event that is dispatched before and after `pageInject`
@@ -40,9 +51,13 @@ class PageInjectedEvent extends Event{
  * @returns {HTMLScriptElement[]} - List of re-created tags
  */
 function scriptExtractor(source){
+    debug.scriptExtractor.log("Starting script extraction on:", source)
+
     // From source, grab all the script tags (as an array) and prepare the final return array
     const scripts = Array.from(source.getElementsByTagName("script"))
     const extractedScripts = []
+    
+    debug.scriptExtractor.log("Grabbed scripts:", scripts)
 
     // For each of the orignal scripts
     scripts.forEach((currentScript)=>{
@@ -58,10 +73,13 @@ function scriptExtractor(source){
         })
         
         // Add the new copy into the return array and remove the original tag from the DOM/source
+        debug.scriptExtractor.log("\t Copied", currentScript, "into", newScript)
         extractedScripts.push(newScript)
         currentScript.remove()
 
     })
+
+    debug.scriptExtractor.log("Finished extracting scripts:", extractedScripts)
     return extractedScripts
 }
 
@@ -72,9 +90,13 @@ function scriptExtractor(source){
  * @returns {HTMLElement} - The final `parent` element, with the scripts appended
  */
 function scriptAppender(parent, scripts){
+    debug.scriptAppender.log("Starting script appending on:", parent, " using the scripts:", scripts)
     scripts.forEach((currentScript)=>{
         parent.appendChild(currentScript)
+        debug.scriptAppender.log("\t Appended:", currentScript)
     })
+
+    debug.scriptAppender.log("Added scripts to parent", parent)
     return parent
 }
 
@@ -87,18 +109,23 @@ function scriptAppender(parent, scripts){
  * @returns {Promise<Document | undefined>} - The file data as a usable DOM
  */
 async function pageFetch(page) {
+    debug.pageFetch.log("Starting page fetch on:", page)
+
     const pageResponse = await fetch(page)
+
+    debug.pageFetch.log("Page fetch response:", pageResponse)
+
     if (pageResponse.ok){
         // Once successful, grab response data
         const pageResult = await pageResponse.text()
-
-        // Grab <head> and <body> from DOM
-        const mainHead = document.getElementsByTagName("head")[0]
-        const mainBody = document.getElementsByTagName("body")[0]
+        debug.pageFetch.log("Page fetch result data:", pageResult)
         
         // Parse and return the processed fetched HTML
         const domParser = new DOMParser()
-        return domParser.parseFromString(pageResult, "text/html")
+        const domDocument = domParser.parseFromString(pageResult, "text/html") 
+    
+        debug.pageFetch.log("Parsed DOM:", domDocument)
+        return domDocument
     }
 }
 
@@ -139,23 +166,29 @@ function tagInjector(newDom, tag, overwrite){
  * @param {Document} newDom - The DOM in which the `<head>` tag is extracted from
  */
 function headInjector(newDom){
+    debug.headInjector.log("Starting head injection using:", newDom)
+
     // Grabbing the current and new DOM's `<head>` tag
     const currentHead = document.getElementsByTagName("head")[0]
     const incomingHead = newDom.getElementsByTagName("head")[0]
+    debug.headInjector.log("Head injection current head:", currentHead, "incoming head:", incomingHead)
 
     // Remove all custom (ie. page specific) style tags
     Array.from(currentHead.children).forEach((current)=>{
         if ((current.tagName == "STYLE")){
-            // console.log("remove current", current)
+            debug.headInjector.log("Removing", current, "from current head")
             current.remove()
         }
     })
 
     // Strip the current head of its scripts
-    scriptExtractor(currentHead)
+    debug.headInjector.log("Removing scripts from current head")
+    const currentScripts = scriptExtractor(currentHead)
 
     // Grab a list of the incoming head's scripts
+    debug.headInjector.log("Removing scripts from incoming head")
     const incomingScripts = scriptExtractor(incomingHead)
+    
 
     // Set up lists of new (and unique) child elements and stylesheet (ie. unique child `<link>` tags)
     var newUniqueChildren = []
@@ -167,102 +200,132 @@ function headInjector(newDom){
 
     // Iterate through all the incoming child tags
     Array.from(incomingHead.children).forEach((incomingChild)=>{
+        debug.headInjector.log("Checking incoming child:", incomingChild)
         
         // Signifies whether or not the child element is to be added to the current DOM
         var toAppend = true
+        var matchFound = false
 
         // Iterate through all the current child tags, looking for a match with the current incoming child
         Array.from(currentHead.children).forEach((currentChild)=>{
-            // Check if tag names between the two children are the same
-            if (incomingChild.tagName == currentChild.tagName){
-                // Based on the tag name, different criteria need to be met for them to be considered the 'equal'
-                // If they are considered the same, the element will not be added to the current DOM (as it would be considered a duplicate)
-                switch (incomingChild.tagName){
-                    // For `<title>`, only the `innerHTML` content needs to be equal
-                    case "TITLE":
-                        currentChild.innerHTML = incomingChild.innerHTML
-                        toAppend = false
-                        break;
+            if (!matchFound){
+                debug.headInjector.log("\t Checking current child:", currentChild)
 
-                    // Since `<meta>` tags have different purposes, depending on the purpose there are different criteria for 'equal'  
-                    case "META":
-                        // Grabs the `property` attribute
-                        const incomingProperty = incomingChild.getAttribute("property")
-                        const currentProperty = currentChild.getAttribute("property")
-
-                        // If the `property` attribute exists for both children, and they are the same, they are `equal`
-                        if ((incomingProperty == currentProperty) && (incomingProperty != null) && (currentProperty != null)){
-                            //  Grabs the `content` attribute
-                            const incomingContent = incomingChild.getAttribute("content")
-                            const currentContent = currentChild.getAttribute("content")
-                            
-                            // Checks the `content` for each child, if they are not the same, update current child with the value of `incoming`
-                            // Although this would technically make them not 'equal', in this case they are equal regardless of this value
-                            if (incomingContent != currentContent){
-                                currentChild.setAttribute("content", incomingChild.getAttribute("content"))
-                            }
-
-                            toAppend = false
-                        }
-
-                        // If the `property` attribute doesn't exist for both children, check equality using built-in `isEqualNode` function
-                        if (incomingChild.isEqualNode(currentChild)){
-                            toAppend = false
-                        }
-
-                        break;
+                // Check if tag names between the two children are the same
+                if (incomingChild.tagName == currentChild.tagName){
+                    debug.headInjector.log("\t\t Tag names match!", incomingChild.tagName)
                     
-                    // Since `<link>` tags have multiple different purposes, depending on the purpose there are different criteria for 'equal'
-                    case "LINK":
-                        // Since the signifier of the different `<link>` purposes are based on it's `rel` tag value
-                        /**@type {string[]} */
-                        const incomingRel  = incomingChild.rel.split(" ")
-                        /**@type {string[]} */
-                        const currentRel  = currentChild.rel.split(" ")
-
-                        // If the value includes 'stylesheet', a normal `.isEqualNode()` check will suffice
-                        if (incomingRel.includes("stylesheet") && currentRel.includes("stylesheet")){
-                            if (incomingChild.isEqualNode(currentChild)){
-                                toAppend = false
-                            }
-                        }
-
-                        // If the value includes 'shortcut' & 'icon' in both children
-                        else if (incomingRel.includes("shortcut") && incomingRel.includes("icon")){
-                            if (currentRel.includes("shortcut") && currentRel.includes("icon")){
-                                // No matter the result of the equality check, never appeand child
-                                // Instead, check equality using `.isEqualNode()` and then update `.href` accordingly
-                                if (!(incomingChild.isEqualNode(currentChild))){
-                                    currentChild.href = incomingChild.href
-                                }
-                                toAppend = false
-                            }
-                        }
-                        break;
-                        
-                    default:
-                        // The default behaviour is to use `isEqualNode()` since it is sufficient enough in nearly all cases
-                        // console.log("default", incomingChild.tagName)
-                        if (incomingChild.isEqualNode(currentChild)){
+                    // Based on the tag name, different criteria need to be met for them to be considered the 'equal'
+                    // If they are considered the same, the element will not be added to the current DOM (as it would be considered a duplicate)
+                    switch (incomingChild.tagName){
+                        // For `<title>`, only the `innerHTML` content needs to be equal
+                        case "TITLE":
+                            debug.headInjector.log("\t\t Don't append")
+                            currentChild.innerHTML = incomingChild.innerHTML
                             toAppend = false
-                        }
-                        break
+                            break;
+
+                        // Since `<meta>` tags have different purposes, depending on the purpose there are different criteria for 'equal'  
+                        case "META":
+                            // Grabs the `property` attribute
+                            const incomingProperty = incomingChild.getAttribute("property")
+                            const currentProperty = currentChild.getAttribute("property")
+
+                            // If the `property` attribute exists for both children, and they are the same, they are `equal`
+                            if ((incomingProperty == currentProperty) && (incomingProperty != null) && (currentProperty != null)){
+                                debug.headInjector.log("\t\t Same 'property' value!")
+
+                                //  Grabs the `content` attribute
+                                const incomingContent = incomingChild.getAttribute("content")
+                                const currentContent = currentChild.getAttribute("content")
+                                
+                                // Checks the `content` for each child, if they are not the same, update current child with the value of `incoming`
+                                // Although this would technically make them not 'equal', in this case they are equal regardless of this value
+                                if (incomingContent != currentContent){
+                                    currentChild.setAttribute("content", incomingChild.getAttribute("content"))
+                                }
+
+                                debug.headInjector.log("\t\t Don't append")
+                                toAppend = false
+                            }
+
+                            // If the `property` attribute doesn't exist for both children, check equality using built-in `isEqualNode` function
+                            else{
+                                if (incomingChild.isEqualNode(currentChild)){
+                                    debug.headInjector.log("\t\t Don't append")
+                                    toAppend = false
+                                }
+                            }
+
+                            break;
+                        
+                        // Since `<link>` tags have multiple different purposes, depending on the purpose there are different criteria for 'equal'
+                        case "LINK":
+                            // Since the signifier of the different `<link>` purposes are based on it's `rel` tag value
+                            /**@type {string[]} */
+                            const incomingRel  = incomingChild.rel.split(" ")
+                            /**@type {string[]} */
+                            const currentRel  = currentChild.rel.split(" ")
+
+                            // If the value includes 'stylesheet', a normal `.isEqualNode()` check will suffice
+                            if (incomingRel.includes("stylesheet") && currentRel.includes("stylesheet")){
+                                debug.headInjector.log("\t\t Are of type 'stylesheet'")
+                                if (incomingChild.isEqualNode(currentChild)){
+                                    debug.headInjector.log("\t\t Don't append")
+                                    toAppend = false
+                                }
+                            }
+
+                            // If the value includes 'shortcut' & 'icon' in both children
+                            else if (incomingRel.includes("shortcut") && incomingRel.includes("icon")){
+                                if (currentRel.includes("shortcut") && currentRel.includes("icon")){
+                                    debug.headInjector.log("\t\t Are of type 'shortcut icon'")
+                                    
+                                    // No matter the result of the equality check, never appeand child
+                                    // Instead, check equality using `.isEqualNode()` and then update `.href` accordingly
+                                    if (!(incomingChild.isEqualNode(currentChild))){
+                                        currentChild.href = incomingChild.href
+                                    }
+                                    debug.headInjector.log("\t\t Don't append")
+                                    toAppend = false
+                                }
+                            }
+                            break;
+                            
+                        default:
+                            // The default behaviour is to use `isEqualNode()` since it is sufficient enough in nearly all cases
+                            // console.log("default", incomingChild.tagName)
+                            if (incomingChild.isEqualNode(currentChild)){
+                                debug.headInjector.log("\t\t Don't append")
+                                toAppend = false
+                            }
+                            break
+                    }
+                }
+                if (toAppend == false){
+                    debug.headInjector.log("\t\t Match found, no more checks")
+                    matchFound = true
                 }
             }
+
         })
 
         // If the incoming child never matches with a current child, add it to a list of elements to add
         if (toAppend){
+            debug.headInjector.log("Appending incoming child:", incomingChild)
+
             newUniqueChildren.push(incomingChild)
             // If the incoming child is a `<link>` element, with a 'stylesheet' `rel`/relationship value
             if (incomingChild.tagName == "LINK"){
                 const rel = incomingChild.rel.split(" ")
                 if (rel.includes("stylesheet")){
+                    debug.headInjector.log("Creating promise....")
                     // Create a new promise, in a list of promises, that resolves once the stylesheet has fully loaded/applied
                     newUniqueStylesheetPromises.push(
                         new Promise(
                             (resolve)=>{
                                 incomingChild.onload = () =>{
+                                    debug.headInjector.log("Resolving promise for:", incomingChild)
                                     resolve("loaded") //Resolve result value to look for, to indicate a successful load
                                 }
                             }
@@ -287,6 +350,7 @@ function headInjector(newDom){
         })
         // If all the promises successfully resolved/ if all the stylesheets successfully loaded
         if (allGood){
+            debug.headInjector.log("All promises resolved correctly!")
             // Set the current body to "block" (ie. make it visable again)
             currentBody.style.display = "block" 
         }
@@ -299,11 +363,13 @@ function headInjector(newDom){
 
     // Finally, for each incoming new child, append them to the current `<head>` tag
     newUniqueChildren.forEach((newChild)=>{
+        debug.headInjector.log("Appending", newChild, "to current head")
         currentHead.appendChild(newChild)
     })
 
     scriptAppender(currentHead,incomingScripts)
 
+    debug.headInjector.log("Finished head injection with", newDom)
 }
 
 /**
