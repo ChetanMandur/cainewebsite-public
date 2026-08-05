@@ -416,18 +416,24 @@ function deepCompare(element1, element2){
     // If they both exist
     if (element1.attributes.class != undefined && element2.attributes.class != undefined){
         // Need to check if all (but the ignored) classes are the same
-
         // List of classes to ignore
         const ignoredClasses = ["first-section"]
 
         // Grab the classes of both the elements (don't include the ignored classes)
+        /**@type {string[]} */
         var element1Classes = element1.attributes.class.value.split(" ").filter((currentClass)=>{
             return !(currentClass in ignoredClasses)
         }) 
+
+        /**@type {string[]} */
         var element2Classes = element2.attributes.class.value.split(" ").filter((currentClass)=>{
             return !(currentClass in ignoredClasses)
         }) 
-
+        
+        if (element1Classes.length != element2Classes.length){
+            debug.deepCompare.log("\t\t CLASSES DO NOT MATCH (different class sizes)")
+            return false
+        }
 
         // For each of the classes in the first element
         for (const element1Class of element1Classes){
