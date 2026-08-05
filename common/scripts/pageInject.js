@@ -1,12 +1,12 @@
 import Debug from "../functions/Debug.js"
 
 const debug = {
-    scriptExtractor: new Debug (true, "PageInject-ScriptExtractor"),
-    scriptAppender: new Debug (true, "PageInject-ScriptAppender"),
-    pageFetch: new Debug (true, "PageInject-PageFetch"),
-    tagInjector: new Debug (true, "PageInject-TagInjector"),
-    headInjector: new Debug (true, "PageInject-HeadInjector"),
-    deepCompare: new Debug (false, "PageInject-DeepCompare"),
+    scriptExtractor: new Debug (false, "PageInject-ScriptExtractor"),
+    scriptAppender: new Debug (false, "PageInject-ScriptAppender"),
+    pageFetch: new Debug (false, "PageInject-PageFetch"),
+    tagInjector: new Debug (false, "PageInject-TagInjector"),
+    headInjector: new Debug (false, "PageInject-HeadInjector"),
+    deepCompare: new Debug (true, "PageInject-DeepCompare"),
     bodyInjector: new Debug (false, "PageInject-BodyInjector"),
     pageInject : new Debug (false, "PageInject-PageInject"),
 }
@@ -381,42 +381,44 @@ function headInjector(newDom){
  * @returns {boolean} - Whether or not the values are determined to be equal or not
  */
 function deepCompare(element1, element2){
-    // console.log("COMPARING", element1, element2)
+    debug.deepCompare.log("COMPARING", element1, element2)
 
-    // If tag names are not equal, then elements are (obviously) not equal
+    //// If tag names are not equal, then elements are (obviously) not equal
+    debug.deepCompare.log("\t Comparing tag names...")
     if (element1.tagName != element2.tagName){
-        // console.log("TAG NAME NOT THE SAME", element1.tagName, element2.tagName)
+        debug.deepCompare.log("\t\tTAG NAME NOT THE SAME", element1.tagName, element2.tagName)
         return false
     }
-
-    // Based on the tag name, do additional specific check on its equality
+    debug.deepCompare.log("\t\t Tag names match!")
+    
+    //// Based on the tag name, do additional specific check on its equality
+    debug.deepCompare.log("\t Comparing tag attributes...")
+    debug.deepCompare.log("\t\t Element 1 Attributes:",element1.attributes,"\n\t\t Element 2 Attributes",element2.attributes)
     switch(element1.tagName){
         // For 'VIDEO' and 'VIDEO-CANVAS' elements, need to check if `src` attribute values are equal
         case("VIDEO"):
             if (
                 element1.attributes.src.value != element2.attributes.src.value
-            ){return false}
+            ){debug.deepCompare.log("\t\tSRC VALUE NOT THE SAME"); return false}
             break
         
         case ("VIDEO-CANVAS"):
             if (
                 element1.attributes.src.value != element2.attributes.src.value
-            ){return false}
+            ){debug.deepCompare.log("\t\tSRC VALUE NOT THE SAME");return false}
             break
         default: break
     }
+    debug.deepCompare.log("\t\t Tag attributes match!")
 
-
-    // console.log("Attributes:",element1.attributes, element2.attributes)
-
-    // Checks on the element's 'class' value
+    //// Checks on the element's 'class' value
+    debug.deepCompare.log("\t Comparing class values...")
     // If they both exist
     if (element1.attributes.class != undefined && element2.attributes.class != undefined){
         // Need to check if all (but the ignored) classes are the same
 
         // List of classes to ignore
         const ignoredClasses = ["first-section"]
-
 
         // Grab the classes of both the elements (don't include the ignored classes)
         var element1Classes = element1.attributes.class.value.split(" ").filter((currentClass)=>{
@@ -429,57 +431,74 @@ function deepCompare(element1, element2){
 
         // For each of the classes in the first element
         for (const element1Class of element1Classes){
+            debug.deepCompare.log("\t\t Checking if '"+ element1Class+ "' from element 1 exists in element 2")
             var matchFound = false // Indicates if a match has been found
 
             // For each of the classes in the second element
             for (const element2Class of element2Classes){
-                
                 // Only keep going until a match is found
                 if (!matchFound){
                     // If class names are the same, it's a match
+                    debug.deepCompare.log("\t\t\t Checking against: '"+ element2Class + "'")
                     if (element1Class == element2Class){
+                            debug.deepCompare.log("\t\t\t\t A match was found!")
                             matchFound = true
                         }
                     }
             }
             // If all the element2 classes have been iterated through, and no match was found, that means elements are not the same
             if (matchFound = false){
+                debug.deepCompare.log("\t\t\t\t No match was found!")
+                debug.deepCompare.log("\t\t CLASSES DO NOT MATCH (missing class)")
                 return false
             }
         }
     }
     // Checks if only one of the elements contain a 'class' value
-    else if (element1.attributes.class != undefined && element2.attributes.class == undefined){return false}
-    else if (element1.attributes.class == undefined && element2.attributes.class != undefined){return false}
-
-
-    // Checks the element's `textContext` (with leading and trailing white spaces removed)
-    if (element1.textContent.trim() != element2.textContent.trim()){
-        // console.log("MISSING TEXT CONTEXT", element1.textContent, element2.textContent)
-
+    else if (element1.attributes.class != undefined && element2.attributes.class == undefined){
+        debug.deepCompare.log("\t\t CLASSES DO NOT MATCH (element2 does not have a class attribute)")    
+        return false
+    }
+    else if (element1.attributes.class == undefined && element2.attributes.class != undefined){
+        debug.deepCompare.log("\t\t CLASSES DO NOT MATCH (element1 does not have a class attribute)")
         return false
     }
 
-    // Obtain a list of both element's children
+    debug.deepCompare.log("\t\t Class values match!")
+
+
+    //// Checks the element's `textContext` (with leading and trailing white spaces removed)
+    debug.deepCompare.log("\t Checking element's `textContext`...")
+    if (element1.textContent.trim() != element2.textContent.trim()){
+        debug.deepCompare.log("\t\t MISSING TEXT CONTEXT", element1.textContent, element2.textContent)
+        return false
+    }
+    debug.deepCompare.log("\t\t `textContext` match!")
+
+    //// Obtain a list of both element's children
     const element1Children = Array.from(element1.children)
     const element2Children = Array.from(element2.children)
+    debug.deepCompare.log("\t Checking element children...")
+    debug.deepCompare.log("\t\t element1 children:", element1Children)
+    debug.deepCompare.log("\t\t element2 children:", element2Children)
 
     // If the length of children are not the same, both elements are not equal
     if (element1Children.length != element2Children.length){
-        // console.log("CHILDREN LENGTH NOT THE SAME", element1Children.length, element2Children.length)
+        debug.deepCompare.log("\t\t\t CHILDREN LENGTHS ARE NOT THE SAME", element1Children.length, element2Children.length)
         return false
     }
 
     // Start recursively checking all the children
     for (var i=0; i< element1Children.length; i++){
-        // console.log("RUNNING DEEP COMPARE ON CHILDREN:")
+        debug.deepCompare.log("\t\t Running Deep Compare on Children:",element1Children[i],"AND", element2Children[i])
         if ((deepCompare(element1Children[i], element2Children[i])) == false){
+            debug.deepCompare.log("\t ELEMENTS "+"(" , element1 , "," , element2 , ")"+" ARE NOT THE SAME")
             return false
         }
     }
 
     // If everything passes, the elements are the same 
-    // console.log("THEY ARE THE SAME", element1, element2)
+    debug.deepCompare.log("\t ELEMENTS "+"(" , element1 , "," , element2 , ")"+" ARE THE SAME")
     return true
 }
 
