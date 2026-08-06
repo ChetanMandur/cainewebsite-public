@@ -1,14 +1,14 @@
 import Debug from "../functions/Debug.js"
 
 const debug = {
-    scriptExtractor: new Debug (true, "PageInject-ScriptExtractor"),
-    scriptAppender: new Debug (true, "PageInject-ScriptAppender"),
-    pageFetch: new Debug (true, "PageInject-PageFetch"),
-    tagInjector: new Debug (true, "PageInject-TagInjector"),
-    headInjector: new Debug (true, "PageInject-HeadInjector"),
-    deepCompare: new Debug (true, "PageInject-DeepCompare"),
-    bodyInjector: new Debug (true, "PageInject-BodyInjector"),
-    pageInject : new Debug (true, "PageInject-PageInject"),
+    scriptExtractor: new Debug (false, "PageInject-ScriptExtractor"),
+    scriptAppender: new Debug (false, "PageInject-ScriptAppender"),
+    pageFetch: new Debug (false, "PageInject-PageFetch"),
+    tagInjector: new Debug (false, "PageInject-TagInjector"),
+    headInjector: new Debug (false, "PageInject-HeadInjector"),
+    deepCompare: new Debug (false, "PageInject-DeepCompare"),
+    bodyInjector: new Debug (false, "PageInject-BodyInjector"),
+    pageInject : new Debug (false, "PageInject-PageInject"),
 }
 
 /**
