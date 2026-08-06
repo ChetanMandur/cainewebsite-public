@@ -422,16 +422,20 @@ function deepCompare(element1, element2){
         // Grab the classes of both the elements (don't include the ignored classes)
         /**@type {string[]} */
         var element1Classes = element1.attributes.class.value.split(" ").filter((currentClass)=>{
-            return !(currentClass in ignoredClasses)
+            return !(ignoredClasses.includes(currentClass))
         }) 
 
         /**@type {string[]} */
         var element2Classes = element2.attributes.class.value.split(" ").filter((currentClass)=>{
-            return !(currentClass in ignoredClasses)
+            return !(ignoredClasses.includes(currentClass))
         }) 
-        
+        debug.deepCompare.log("\t\t Element 1 (Filtered) Classes:", element1Classes)
+        debug.deepCompare.log("\t\t Element 2 (Filtered) Classes:", element2Classes)
+
         if (element1Classes.length != element2Classes.length){
             debug.deepCompare.log("\t\t CLASSES DO NOT MATCH (different class sizes)")
+            debug.deepCompare.log("\t\t\t element1 classes length:", element1Classes)
+            debug.deepCompare.log("\t\t\t element2 classes length:", element2Classes)
             return false
         }
 
