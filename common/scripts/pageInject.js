@@ -5,7 +5,7 @@ const debug = {
     scriptAppender: new Debug (false, "PageInject-ScriptAppender"),
     pageFetch: new Debug (false, "PageInject-PageFetch"),
     tagInjector: new Debug (false, "PageInject-TagInjector"),
-    headInjector: new Debug (false, "PageInject-HeadInjector"),
+    headInjector: new Debug (true, "PageInject-HeadInjector"),
     deepCompare: new Debug (true, "PageInject-DeepCompare"),
     bodyInjector: new Debug (true, "PageInject-BodyInjector"),
     pageInject : new Debug (false, "PageInject-PageInject"),
@@ -199,116 +199,115 @@ function headInjector(newDom){
     currentBody.style.display = "none"
 
     // Iterate through all the incoming child tags
-    Array.from(incomingHead.children).forEach((incomingChild)=>{
+    for (const incomingChild of incomingHead.children){
         debug.headInjector.log("Checking incoming child:", incomingChild)
         
         // Signifies whether or not the child element is to be added to the current DOM
         var toAppend = true
-        var matchFound = false
 
         // Iterate through all the current child tags, looking for a match with the current incoming child
-        Array.from(currentHead.children).forEach((currentChild)=>{
-            if (!matchFound){
-                debug.headInjector.log("\t Checking current child:", currentChild)
+        for (const currentChild of currentHead.children){
+            
+            debug.headInjector.log("\t Checking current child:", currentChild)
 
-                // Check if tag names between the two children are the same
-                if (incomingChild.tagName == currentChild.tagName){
-                    debug.headInjector.log("\t\t Tag names match!", incomingChild.tagName)
-                    
-                    // Based on the tag name, different criteria need to be met for them to be considered the 'equal'
-                    // If they are considered the same, the element will not be added to the current DOM (as it would be considered a duplicate)
-                    switch (incomingChild.tagName){
-                        // For `<title>`, only the `innerHTML` content needs to be equal
-                        case "TITLE":
-                            debug.headInjector.log("\t\t Don't append")
-                            currentChild.innerHTML = incomingChild.innerHTML
-                            toAppend = false
-                            break;
+            // Check if tag names between the two children are the same
+            if (incomingChild.tagName == currentChild.tagName){
+                debug.headInjector.log("\t\t Tag names match!", incomingChild.tagName)
+                
+                // Based on the tag name, different criteria need to be met for them to be considered the 'equal'
+                // If they are considered the same, the element will not be added to the current DOM (as it would be considered a duplicate)
+                switch (incomingChild.tagName){
+                    // For `<title>`, only the `innerHTML` content needs to be equal
+                    case "TITLE":
+                        debug.headInjector.log("\t\t Don't append")
+                        currentChild.innerHTML = incomingChild.innerHTML
+                        toAppend = false
+                        break;
 
-                        // Since `<meta>` tags have different purposes, depending on the purpose there are different criteria for 'equal'  
-                        case "META":
-                            // Grabs the `property` attribute
-                            const incomingProperty = incomingChild.getAttribute("property")
-                            const currentProperty = currentChild.getAttribute("property")
+                    // Since `<meta>` tags have different purposes, depending on the purpose there are different criteria for 'equal'  
+                    case "META":
+                        // Grabs the `property` attribute
+                        const incomingProperty = incomingChild.getAttribute("property")
+                        const currentProperty = currentChild.getAttribute("property")
 
-                            // If the `property` attribute exists for both children, and they are the same, they are `equal`
-                            if ((incomingProperty == currentProperty) && (incomingProperty != null) && (currentProperty != null)){
-                                debug.headInjector.log("\t\t Same 'property' value!")
+                        // If the `property` attribute exists for both children, and they are the same, they are `equal`
+                        if ((incomingProperty == currentProperty) && (incomingProperty != null) && (currentProperty != null)){
+                            debug.headInjector.log("\t\t Same 'property' value!")
 
-                                //  Grabs the `content` attribute
-                                const incomingContent = incomingChild.getAttribute("content")
-                                const currentContent = currentChild.getAttribute("content")
-                                
-                                // Checks the `content` for each child, if they are not the same, update current child with the value of `incoming`
-                                // Although this would technically make them not 'equal', in this case they are equal regardless of this value
-                                if (incomingContent != currentContent){
-                                    currentChild.setAttribute("content", incomingChild.getAttribute("content"))
-                                }
-
-                                debug.headInjector.log("\t\t Don't append")
-                                toAppend = false
-                            }
-
-                            // If the `property` attribute doesn't exist for both children, check equality using built-in `isEqualNode` function
-                            else{
-                                if (incomingChild.isEqualNode(currentChild)){
-                                    debug.headInjector.log("\t\t Don't append")
-                                    toAppend = false
-                                }
-                            }
-
-                            break;
-                        
-                        // Since `<link>` tags have multiple different purposes, depending on the purpose there are different criteria for 'equal'
-                        case "LINK":
-                            // Since the signifier of the different `<link>` purposes are based on it's `rel` tag value
-                            /**@type {string[]} */
-                            const incomingRel  = incomingChild.rel.split(" ")
-                            /**@type {string[]} */
-                            const currentRel  = currentChild.rel.split(" ")
-
-                            // If the value includes 'stylesheet', a normal `.isEqualNode()` check will suffice
-                            if (incomingRel.includes("stylesheet") && currentRel.includes("stylesheet")){
-                                debug.headInjector.log("\t\t Are of type 'stylesheet'")
-                                if (incomingChild.isEqualNode(currentChild)){
-                                    debug.headInjector.log("\t\t Don't append")
-                                    toAppend = false
-                                }
-                            }
-
-                            // If the value includes 'shortcut' & 'icon' in both children
-                            else if (incomingRel.includes("shortcut") && incomingRel.includes("icon")){
-                                if (currentRel.includes("shortcut") && currentRel.includes("icon")){
-                                    debug.headInjector.log("\t\t Are of type 'shortcut icon'")
-                                    
-                                    // No matter the result of the equality check, never appeand child
-                                    // Instead, check equality using `.isEqualNode()` and then update `.href` accordingly
-                                    if (!(incomingChild.isEqualNode(currentChild))){
-                                        currentChild.href = incomingChild.href
-                                    }
-                                    debug.headInjector.log("\t\t Don't append")
-                                    toAppend = false
-                                }
-                            }
-                            break;
+                            //  Grabs the `content` attribute
+                            const incomingContent = incomingChild.getAttribute("content")
+                            const currentContent = currentChild.getAttribute("content")
                             
-                        default:
-                            // The default behaviour is to use `isEqualNode()` since it is sufficient enough in nearly all cases
-                            // console.log("default", incomingChild.tagName)
+                            // Checks the `content` for each child, if they are not the same, update current child with the value of `incoming`
+                            // Although this would technically make them not 'equal', in this case they are equal regardless of this value
+                            if (incomingContent != currentContent){
+                                currentChild.setAttribute("content", incomingChild.getAttribute("content"))
+                            }
+
+                            debug.headInjector.log("\t\t It's a match!")
+                            toAppend = false
+                        }
+
+                        // If the `property` attribute doesn't exist for both children, check equality using built-in `isEqualNode` function
+                        else{
                             if (incomingChild.isEqualNode(currentChild)){
-                                debug.headInjector.log("\t\t Don't append")
+                                debug.headInjector.log("\t\t It's a match!")
                                 toAppend = false
                             }
-                            break
-                    }
-                }
-                if (toAppend == false){
-                    debug.headInjector.log("\t\t Match found, no more checks")
-                    matchFound = true
+                        }
+
+                        break;
+                    
+                    // Since `<link>` tags have multiple different purposes, depending on the purpose there are different criteria for 'equal'
+                    case "LINK":
+                        // Since the signifier of the different `<link>` purposes are based on it's `rel` tag value
+                        /**@type {string[]} */
+                        const incomingRel  = incomingChild.rel.split(" ")
+                        /**@type {string[]} */
+                        const currentRel  = currentChild.rel.split(" ")
+
+                        // If the value includes 'stylesheet', a normal `.isEqualNode()` check will suffice
+                        if (incomingRel.includes("stylesheet") && currentRel.includes("stylesheet")){
+                            debug.headInjector.log("\t\t Both are of type 'stylesheet'")
+                            if (incomingChild.isEqualNode(currentChild)){
+                                debug.headInjector.log("\t\t It's a match!")
+                                toAppend = false
+                            }
+                        }
+
+                        // If the value includes 'shortcut' & 'icon' in both children
+                        else if (incomingRel.includes("shortcut") && incomingRel.includes("icon")){
+                            if (currentRel.includes("shortcut") && currentRel.includes("icon")){
+                                debug.headInjector.log("\t\t Both are of type 'shortcut icon'")
+                                
+                                // No matter the result of the equality check, never appeand child
+                                // Instead, check equality using `.isEqualNode()` and then update `.href` accordingly
+                                if (!(incomingChild.isEqualNode(currentChild))){
+                                    currentChild.href = incomingChild.href
+                                }
+                                debug.headInjector.log("\t\t It's a match!")
+                                toAppend = false
+                            }
+                        }
+                        break;
+                        
+                    default:
+                        // The default behaviour is to use `isEqualNode()` since it is sufficient enough in nearly all cases
+                        // console.log("default", incomingChild.tagName)
+                        if (incomingChild.isEqualNode(currentChild)){
+                            debug.headInjector.log("\t\t Don't append")
+                            toAppend = false
+                        }
+                        break
                 }
             }
+            if (toAppend == false){
+                debug.headInjector.log("\t Match found, no more checks")
+                break
+            }
+            
 
-        })
+        }
 
         // If the incoming child never matches with a current child, add it to a list of elements to add
         if (toAppend){
@@ -334,7 +333,7 @@ function headInjector(newDom){
                 }
             }
         }
-    })
+    }
 
     // After iterating through all the incoming children, try to resolve all the incoming stylesheet promises
     Promise.allSettled(newUniqueStylesheetPromises).then((results)=>{
@@ -446,15 +445,14 @@ function deepCompare(element1, element2){
 
             // For each of the classes in the second element
             for (const element2Class of element2Classes){
-                // Only keep going until a match is found
-                if (!matchFound){
-                    // If class names are the same, it's a match
-                    debug.deepCompare.log("\t\t\t Checking against: '"+ element2Class + "'")
-                    if (element1Class == element2Class){
-                            debug.deepCompare.log("\t\t\t\t A match was found!")
-                            matchFound = true
-                        }
-                    }
+                // If class names are the same, it's a match
+                debug.deepCompare.log("\t\t\t Checking against: '"+ element2Class + "'")
+                if (element1Class == element2Class){
+                        debug.deepCompare.log("\t\t\t\t A match was found!")
+                        matchFound = true
+                        break
+                }
+                
             }
             // If all the element2 classes have been iterated through, and no match was found, that means elements are not the same
             if (matchFound = false){
@@ -583,10 +581,10 @@ function bodyInjector(newDom){
     // For each of the incoming sections, compare it with each of the current sections
         // Goal is to find equal sections between the incoming and current sections
     debug.bodyInjector.log("\t Checking for duplicate sections...")
-    incomingSections.forEach((incoming)=>{
+    for (const incoming of incomingSections){
         debug.bodyInjector.log("\t\t Checking incoming section:", incoming)
         let dupeFound = false 
-        currentSections.forEach((current)=>{
+        for (const current of currentSections){
             debug.bodyInjector.log("\t\t\t Checking current section:", current)
             if (deepCompare(incoming, current)){
                 // If a dupe was found, add the current version into the new merged section, `newSectionsContainer`
@@ -595,14 +593,15 @@ function bodyInjector(newDom){
                 debug.bodyInjector.log("\t\t\t\t Match found! Keeping current version")
                 dupeFound = true
                 newSectionsContainer.appendChild(current)
+                break
             }
-        })
+        }
         // If a dupe wasn't found, append the incomnig version into the new merged section, `newSectionsContainer`
         if (!dupeFound){
             debug.bodyInjector.log("\t\t\t Match not found! Adding incoming child")
             newSectionsContainer.appendChild(incoming)
         }
-    })
+    }
 
     //// Applying `newSectionsContainer`
     // If `currentSectionsContainer` doesn't exist, simply append the new `newSectionsContainer`
