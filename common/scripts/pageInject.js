@@ -352,7 +352,7 @@ function headInjector(newDom){
         })
         // If all the promises successfully resolved/ if all the stylesheets successfully loaded
         if (allGood){
-            debug.headInjector.log("\t All promises resolved correctly!")
+            debug.headInjector.log("\t\t\t\t All promises resolved correctly!")
             // Set the current body to "block" (ie. make it visable again)
             currentBody.style.display = "block" 
         }
