@@ -295,7 +295,7 @@ function headInjector(newDom){
                         // The default behaviour is to use `isEqualNode()` since it is sufficient enough in nearly all cases
                         // console.log("default", incomingChild.tagName)
                         if (incomingChild.isEqualNode(currentChild)){
-                            debug.headInjector.log("\t\t Don't append")
+                            debug.headInjector.log("\t\t It's a match!")
                             toAppend = false
                         }
                         break
