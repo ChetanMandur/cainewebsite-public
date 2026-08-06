@@ -653,7 +653,7 @@ function bodyInjector(newDom){
     debug.bodyInjector.log("\t Removing additional tags from incoming body...")
     incomingChildren.forEach((incoming)=>{
         if ((incoming.tagName!= "SLIDE-SCROLL") && !(incoming.classList.contains("overlay")) && (incoming.tagName != "SCRIPT")){
-            debug.bodyInjector.log("\t\t Removing from current:", current)
+            debug.bodyInjector.log("\t\t Removing from current:", incoming)
             currentBody.appendChild(incoming)
         }
     })
