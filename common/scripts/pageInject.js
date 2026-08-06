@@ -171,22 +171,23 @@ function headInjector(newDom){
     // Grabbing the current and new DOM's `<head>` tag
     const currentHead = document.getElementsByTagName("head")[0]
     const incomingHead = newDom.getElementsByTagName("head")[0]
-    debug.headInjector.log("Head injection current head:", currentHead, "incoming head:", incomingHead)
+    debug.headInjector.log("\t Head injection current head:", currentHead, "incoming head:", incomingHead)
 
     // Remove all custom (ie. page specific) style tags
+    debug.headInjector.log("\t Removing style tags from current head...")
     Array.from(currentHead.children).forEach((current)=>{
         if ((current.tagName == "STYLE")){
-            debug.headInjector.log("Removing", current, "from current head")
+            debug.headInjector.log("\t\t Removing", current, "from current head")
             current.remove()
         }
     })
 
     // Strip the current head of its scripts
-    debug.headInjector.log("Removing scripts from current head")
+    debug.headInjector.log("\t Removing scripts from current head")
     const currentScripts = scriptExtractor(currentHead)
 
     // Grab a list of the incoming head's scripts
-    debug.headInjector.log("Removing scripts from incoming head")
+    debug.headInjector.log("\t Removing scripts from incoming head")
     const incomingScripts = scriptExtractor(incomingHead)
     
 
@@ -199,8 +200,9 @@ function headInjector(newDom){
     currentBody.style.display = "none"
 
     // Iterate through all the incoming child tags
+    debug.headInjector.log("\t Checking for duplicate children...")
     for (const incomingChild of incomingHead.children){
-        debug.headInjector.log("Checking incoming child:", incomingChild)
+        debug.headInjector.log("\t\t Checking incoming child:", incomingChild)
         
         // Signifies whether or not the child element is to be added to the current DOM
         var toAppend = true
@@ -208,18 +210,18 @@ function headInjector(newDom){
         // Iterate through all the current child tags, looking for a match with the current incoming child
         for (const currentChild of currentHead.children){
             
-            debug.headInjector.log("\t Checking current child:", currentChild)
+            debug.headInjector.log("\t\t\t Checking current child:", currentChild)
 
             // Check if tag names between the two children are the same
             if (incomingChild.tagName == currentChild.tagName){
-                debug.headInjector.log("\t\t Tag names match!", incomingChild.tagName)
+                debug.headInjector.log("\t\t\t\t Tag names match!", incomingChild.tagName)
                 
                 // Based on the tag name, different criteria need to be met for them to be considered the 'equal'
                 // If they are considered the same, the element will not be added to the current DOM (as it would be considered a duplicate)
                 switch (incomingChild.tagName){
                     // For `<title>`, only the `innerHTML` content needs to be equal
                     case "TITLE":
-                        debug.headInjector.log("\t\t Don't append")
+                        debug.headInjector.log("\t\t\t\t Don't append")
                         currentChild.innerHTML = incomingChild.innerHTML
                         toAppend = false
                         break;
@@ -232,7 +234,7 @@ function headInjector(newDom){
 
                         // If the `property` attribute exists for both children, and they are the same, they are `equal`
                         if ((incomingProperty == currentProperty) && (incomingProperty != null) && (currentProperty != null)){
-                            debug.headInjector.log("\t\t Same 'property' value!")
+                            debug.headInjector.log("\t\t\t\t Same 'property' value!")
 
                             //  Grabs the `content` attribute
                             const incomingContent = incomingChild.getAttribute("content")
@@ -244,14 +246,14 @@ function headInjector(newDom){
                                 currentChild.setAttribute("content", incomingChild.getAttribute("content"))
                             }
 
-                            debug.headInjector.log("\t\t It's a match!")
+                            debug.headInjector.log("\t\t\t\t It's a match!")
                             toAppend = false
                         }
 
                         // If the `property` attribute doesn't exist for both children, check equality using built-in `isEqualNode` function
                         else{
                             if (incomingChild.isEqualNode(currentChild)){
-                                debug.headInjector.log("\t\t It's a match!")
+                                debug.headInjector.log("\t\t\t\t It's a match!")
                                 toAppend = false
                             }
                         }
@@ -268,9 +270,9 @@ function headInjector(newDom){
 
                         // If the value includes 'stylesheet', a normal `.isEqualNode()` check will suffice
                         if (incomingRel.includes("stylesheet") && currentRel.includes("stylesheet")){
-                            debug.headInjector.log("\t\t Both are of type 'stylesheet'")
+                            debug.headInjector.log("\t\t\t\t Both are of type 'stylesheet'")
                             if (incomingChild.isEqualNode(currentChild)){
-                                debug.headInjector.log("\t\t It's a match!")
+                                debug.headInjector.log("\t\t\t\t It's a match!")
                                 toAppend = false
                             }
                         }
@@ -278,14 +280,14 @@ function headInjector(newDom){
                         // If the value includes 'shortcut' & 'icon' in both children
                         else if (incomingRel.includes("shortcut") && incomingRel.includes("icon")){
                             if (currentRel.includes("shortcut") && currentRel.includes("icon")){
-                                debug.headInjector.log("\t\t Both are of type 'shortcut icon'")
+                                debug.headInjector.log("\t\t\t\t Both are of type 'shortcut icon'")
                                 
                                 // No matter the result of the equality check, never appeand child
                                 // Instead, check equality using `.isEqualNode()` and then update `.href` accordingly
                                 if (!(incomingChild.isEqualNode(currentChild))){
                                     currentChild.href = incomingChild.href
                                 }
-                                debug.headInjector.log("\t\t It's a match!")
+                                debug.headInjector.log("\t\t\t\t It's a match!")
                                 toAppend = false
                             }
                         }
@@ -295,14 +297,14 @@ function headInjector(newDom){
                         // The default behaviour is to use `isEqualNode()` since it is sufficient enough in nearly all cases
                         // console.log("default", incomingChild.tagName)
                         if (incomingChild.isEqualNode(currentChild)){
-                            debug.headInjector.log("\t\t It's a match!")
+                            debug.headInjector.log("\t\t\t\t It's a match!")
                             toAppend = false
                         }
                         break
                 }
             }
             if (toAppend == false){
-                debug.headInjector.log("\t Match found, no more checks")
+                debug.headInjector.log("\t\t\t Match found, no more checks")
                 break
             }
             
@@ -311,20 +313,20 @@ function headInjector(newDom){
 
         // If the incoming child never matches with a current child, add it to a list of elements to add
         if (toAppend){
-            debug.headInjector.log("Appending incoming child:", incomingChild)
+            debug.headInjector.log("\t\tAppending incoming child:", incomingChild)
 
             newUniqueChildren.push(incomingChild)
             // If the incoming child is a `<link>` element, with a 'stylesheet' `rel`/relationship value
             if (incomingChild.tagName == "LINK"){
                 const rel = incomingChild.rel.split(" ")
                 if (rel.includes("stylesheet")){
-                    debug.headInjector.log("Creating promise....")
+                    debug.headInjector.log("\t\t\t Creating promise....")
                     // Create a new promise, in a list of promises, that resolves once the stylesheet has fully loaded/applied
                     newUniqueStylesheetPromises.push(
                         new Promise(
                             (resolve)=>{
                                 incomingChild.onload = () =>{
-                                    debug.headInjector.log("Resolving promise for:", incomingChild)
+                                    debug.headInjector.log("\t\t\t\t Resolving promise for:", incomingChild)
                                     resolve("loaded") //Resolve result value to look for, to indicate a successful load
                                 }
                             }
@@ -349,7 +351,7 @@ function headInjector(newDom){
         })
         // If all the promises successfully resolved/ if all the stylesheets successfully loaded
         if (allGood){
-            debug.headInjector.log("All promises resolved correctly!")
+            debug.headInjector.log("\t All promises resolved correctly!")
             // Set the current body to "block" (ie. make it visable again)
             currentBody.style.display = "block" 
         }
@@ -361,14 +363,15 @@ function headInjector(newDom){
     })
 
     // Finally, for each incoming new child, append them to the current `<head>` tag
+    debug.headInjector.log("\t Appending new children to current head...")
     newUniqueChildren.forEach((newChild)=>{
-        debug.headInjector.log("Appending", newChild, "to current head")
+        debug.headInjector.log("\t\t Appending", newChild, "to current head")
         currentHead.appendChild(newChild)
     })
 
     scriptAppender(currentHead,incomingScripts)
 
-    debug.headInjector.log("Finished head injection with", newDom)
+    debug.headInjector.log("\t Finished head injection with", newDom)
 }
 
 /**
