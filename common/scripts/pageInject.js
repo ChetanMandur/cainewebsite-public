@@ -7,7 +7,7 @@ const debug = {
     tagInjector: new Debug (false, "PageInject-TagInjector"),
     headInjector: new Debug (false, "PageInject-HeadInjector"),
     deepCompare: new Debug (true, "PageInject-DeepCompare"),
-    bodyInjector: new Debug (false, "PageInject-BodyInjector"),
+    bodyInjector: new Debug (true, "PageInject-BodyInjector"),
     pageInject : new Debug (false, "PageInject-PageInject"),
 }
 
@@ -519,31 +519,39 @@ function bodyInjector(newDom){
     // Grab the current and incoming `<body>` tags
     const currentBody = document.getElementsByTagName("body")[0]
     const incomingBody = newDom.getElementsByTagName("body")[0]
-    debug.headInjector.log("Body injection current body:", currentBody, "incoming body:", incomingBody)
+    debug.bodyInjector.log("\t Body injection current body:", currentBody, "incoming body:", incomingBody)
 
     // Grab the children of both the tags
     const currentChildren = Array.from(currentBody.children)
     const incomingChildren = Array.from(incomingBody.children)
-    debug.headInjector.log()
+    debug.bodyInjector.log("\t Grabbed children:")
+    debug.bodyInjector.log("\t\t Current children:", currentChildren)
+    debug.bodyInjector.log("\t\t Incoming children:", incomingChildren)
 
     // Grab the sections container for both of the tags
     const currentSectionsContainer = currentBody.getElementsByTagName("slide-scroll")[0]
     const incomingSectionsContainer = incomingBody.getElementsByTagName("slide-scroll")[0]
-    debug.headInjector.log
+    debug.bodyInjector.log("\t Grabbed section containers (ie. <slide-scroll>):")    
+    debug.bodyInjector.log("\t\t Current container:", currentSectionsContainer)
+    debug.bodyInjector.log("\t\t Incoming container:", incomingSectionsContainer)
 
     // Grab the overlay container for both of the tags
     const currentOverlay = currentBody.getElementsByClassName("overlay")[0]
     const incomingOverlay = incomingBody.getElementsByClassName("overlay")[0]
-    debug.headInjector.log
+    debug.bodyInjector.log("\t Grabbed overlays:")
+    debug.bodyInjector.log("\t\t Current overlay:", currentOverlay)
+    debug.bodyInjector.log("\t\t Incoming overlay:", incomingOverlay)
     
     // Extract and grab the scripts for both of the tags
     const currentScripts = scriptExtractor(currentBody)    
     const incomingScripts = scriptExtractor(incomingBody)
-    debug.headInjector.log
+    debug.bodyInjector.log("\t Grabbed scripts:")
+    debug.bodyInjector.log("\t\t Grabbed current scripts:", currentScripts)
+    debug.bodyInjector.log("\t\t Grabbed incoming scripts:", incomingScripts)
     
     // Create a new sections container (this is where both of the incoming and current sections will merge into)
     const newSectionsContainer = document.createElement("slide-scroll")
-    debug.bodyInjector.log
+    debug.bodyInjector.log("\t Created new sections container (ie. <slide-scroll>)")
 
     // Define variables to hold the incoming and current sections
     var incomingSections = []
@@ -552,41 +560,42 @@ function bodyInjector(newDom){
     // If the incoming sections container exist, 
     if (incomingSectionsContainer != undefined){
         // Apply the attributes of the container to the new sections container
-        debug.bodyInjector.log
+        debug.bodyInjector.log("\t Applying attributes of incoming sections container into new sections container...")
         Array.from(incomingSectionsContainer.attributes).forEach(attribute => {
             newSectionsContainer.setAttribute(attribute.name, attribute.value)
         });
 
         // Grab the sections from the incoming sections container
         incomingSections = Array.from(incomingSectionsContainer.children)
-        debug.bodyInjector.log
+        debug.bodyInjector.log("\t Grabbed sections from incoming sections container:", incomingSections)
     }
 
     // If the current sections container exist, grab the sections
     if (currentSectionsContainer != undefined){
         currentSections = Array.from(currentSectionsContainer.children)
-        debug.bodyInjector.log
+        debug.bodyInjector.log("\t Grabbed sections from current sections container:", currentSections)
     }
 
     // For each of the incoming sections, compare it with each of the current sections
         // Goal is to find equal sections between the incoming and current sections
+    debug.bodyInjector.log("\t Checking for duplicate sections...")
     incomingSections.forEach((incoming)=>{
-        debug.bodyInjector.log
+        debug.bodyInjector.log("\t\t Checking incoming section:", incoming)
         let dupeFound = false 
         currentSections.forEach((current)=>{
-            debug.bodyInjector.log
+            debug.bodyInjector.log("\t\t\t Checking current section:", current)
             if (deepCompare(incoming, current)){
                 // If a dupe was found, add the current version into the new merged section, `newSectionsContainer`
                     // Use this version since it has already 'loaded' into memory/the DOM
                         // Easier than reloading the element by adding the incoming version
-                debug.bodyInjector.log
+                debug.bodyInjector.log("\t\t\t\t Match found! Keeping current version")
                 dupeFound = true
                 newSectionsContainer.appendChild(current)
             }
         })
         // If a dupe wasn't found, append the incomnig version into the new merged section, `newSectionsContainer`
         if (!dupeFound){
-            debug.bodyInjector.log
+            debug.bodyInjector.log("\t\t\t Match not found! Adding incoming child")
             newSectionsContainer.appendChild(incoming)
         }
     })
@@ -594,12 +603,12 @@ function bodyInjector(newDom){
     //// Applying `newSectionsContainer`
     // If `currentSectionsContainer` doesn't exist, simply append the new `newSectionsContainer`
     if (currentSectionsContainer == undefined){
-        debug.bodyInjector.log
+        debug.bodyInjector.log("\t A sections container doesn't exist in current body: appending new sections container to current body")
         currentBody.appendChild(newSectionsContainer)
     }
     // If `currentSectionsContainer` exists, replace it with the `newSectionsContainer`
     else{
-        debug.bodyInjector.log
+        debug.bodyInjector.log("\t A sections container exists in current body: replacing with new sections container")
         currentSectionsContainer.replaceWith(newSectionsContainer)
     }
 
@@ -609,7 +618,7 @@ function bodyInjector(newDom){
         // And `incomingOverlay` is defined
         if (incomingOverlay != undefined){
             // Simply append the overlay into current DOM
-            debug.bodyInjector.log
+            debug.bodyInjector.log("\t A current overlay doesn't exist in the current body: appending incoming overlay")
             currentBody.appendChild(incomingOverlay)
         }
     }
@@ -618,41 +627,42 @@ function bodyInjector(newDom){
         // And `incomingOverlay` is defined
         if (incomingOverlay != undefined){
             // Replace `currentOverlay` with `incomingOverlay`
-            debug.bodyInjector.log
+            debug.bodyInjector.log("\t A current overlay exists in the current body: replacing with incoming overlay")
             currentOverlay.replaceWith(incomingOverlay)
         }
 
         // If `incomingOverlay` is not defined
         else{
             // Remove `currentOverlay`
-            debug.bodyInjector.log
+            debug.bodyInjector.log("\t A current overlay exists in the current body, but not in the incoming body: removing current overlay")
             currentOverlay.remove()
         }
     }
 
-    // Non-scroll, overlay, script tags in the current DOM are removed from DOM
+    // Tags that aren't scroll, overlay, or script in the current DOM are removed from DOM
+    debug.bodyInjector.log("\t Removing additional tags from current body...")
     currentChildren.forEach((current)=>{
         if ((current.tagName != "SLIDE-SCROLL") && !(current.classList.contains("overlay")) && (current.tagName != "SCRIPT") ){
             // console.log("remove current", current)
-            debug.bodyInjector.log
+            debug.bodyInjector.log("\t Removing from current:", current)
             current.remove()
         }
     })
 
-    // Non-scroll, overlay, script tags in the incoming DOM are appended into DOM
+    // Tags that aren't scroll, overlay, or script in the incoming DOM are appended into DOM
+    debug.bodyInjector.log("\t Removing additional tags from incoming body...")
     incomingChildren.forEach((incoming)=>{
         if ((incoming.tagName!= "SLIDE-SCROLL") && !(incoming.classList.contains("overlay")) && (incoming.tagName != "SCRIPT")){
-            // console.log("add incoming", incoming)
-            debug.bodyInjector.log
+            debug.bodyInjector.log("\t\t Removing from current:", current)
             currentBody.appendChild(incoming)
         }
     })
     
     // Append all the scripts from the incoming DOM into the current DOM
+    debug.bodyInjector.log("\t Appending incoming scripts...")
     scriptAppender(currentBody,incomingScripts)
-    debug.bodyInjector.log
-    debug.bodyInjector.log
 
+    debug.bodyInjector.log("Finished body injection with", newDom)
 }
 
 /**
