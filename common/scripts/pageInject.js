@@ -1,14 +1,14 @@
 import Debug from "../functions/Debug.js"
 
 const debug = {
-    scriptExtractor: new Debug (false, "PageInject-ScriptExtractor"),
-    scriptAppender: new Debug (false, "PageInject-ScriptAppender"),
-    pageFetch: new Debug (false, "PageInject-PageFetch"),
-    tagInjector: new Debug (false, "PageInject-TagInjector"),
+    scriptExtractor: new Debug (true, "PageInject-ScriptExtractor"),
+    scriptAppender: new Debug (true, "PageInject-ScriptAppender"),
+    pageFetch: new Debug (true, "PageInject-PageFetch"),
+    tagInjector: new Debug (true, "PageInject-TagInjector"),
     headInjector: new Debug (true, "PageInject-HeadInjector"),
     deepCompare: new Debug (true, "PageInject-DeepCompare"),
     bodyInjector: new Debug (true, "PageInject-BodyInjector"),
-    pageInject : new Debug (false, "PageInject-PageInject"),
+    pageInject : new Debug (true, "PageInject-PageInject"),
 }
 
 /**
@@ -57,7 +57,7 @@ function scriptExtractor(source){
     const scripts = Array.from(source.getElementsByTagName("script"))
     const extractedScripts = []
     
-    debug.scriptExtractor.log("Grabbed scripts:", scripts)
+    debug.scriptExtractor.log("\t Grabbed scripts:", scripts)
 
     // For each of the orignal scripts
     scripts.forEach((currentScript)=>{
@@ -73,13 +73,13 @@ function scriptExtractor(source){
         })
         
         // Add the new copy into the return array and remove the original tag from the DOM/source
-        debug.scriptExtractor.log("\t Copied", currentScript, "into", newScript)
+        debug.scriptExtractor.log("\t\t Copied", currentScript, "into", newScript)
         extractedScripts.push(newScript)
         currentScript.remove()
 
     })
 
-    debug.scriptExtractor.log("Finished extracting scripts:", extractedScripts)
+    debug.scriptExtractor.log("\t Finished extracting scripts:", extractedScripts)
     return extractedScripts
 }
 
@@ -91,12 +91,13 @@ function scriptExtractor(source){
  */
 function scriptAppender(parent, scripts){
     debug.scriptAppender.log("Starting script appending on:", parent, " using the scripts:", scripts)
+    debug.scriptAppender.log("\t Appending scripts...")
     scripts.forEach((currentScript)=>{
         parent.appendChild(currentScript)
-        debug.scriptAppender.log("\t Appended:", currentScript)
+        debug.scriptAppender.log("\t\t Appended:", currentScript)
     })
 
-    debug.scriptAppender.log("Added scripts to parent", parent)
+    debug.scriptAppender.log("\t Added scripts to parent", parent)
     return parent
 }
 
@@ -688,12 +689,15 @@ function bodyInjector(newDom){
  * @param {boolean} overwriteBody - (Unused) Determined whether to merge or overwrite the `<body>` tag
  */
 async function pageInject(page, overwriteHead, overwriteBody){
+    debug.pageInject.log("Dispatching a `PageInjected` event, with `before = true`")
     document.dispatchEvent((new PageInjectedEvent(true)))
-    
+
     const pageDom = await pageFetch(page)
     headInjector(pageDom)
 
     bodyInjector(pageDom)
+
+    debug.pageInject.log("Dispatching a `PageInjected` event, with `before = false`")
     document.dispatchEvent((new PageInjectedEvent(false)))
 
     // tagInjector(pageDom, "head",overwriteHead)
