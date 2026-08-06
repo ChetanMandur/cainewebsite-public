@@ -669,7 +669,7 @@ function bodyInjector(newDom){
     debug.bodyInjector.log("\t Appending incoming scripts...")
     scriptAppender(currentBody,incomingScripts)
 
-    debug.bodyInjector.log("Finished body injection with", newDom)
+    debug.bodyInjector.log("\t Finished body injection with", newDom)
 }
 
 /**
