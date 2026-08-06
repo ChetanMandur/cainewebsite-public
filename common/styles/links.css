@@ -4,6 +4,7 @@ a {
     --link-hover-colour: red;
     user-select: none;
     color: var(--link-colour);
+    cursor: pointer;
 }
 
 
