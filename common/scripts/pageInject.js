@@ -381,7 +381,7 @@ function headInjector(newDom){
  * @returns {boolean} - Whether or not the values are determined to be equal or not
  */
 function deepCompare(element1, element2){
-    debug.deepCompare.log("COMPARING", element1, element2)
+    debug.deepCompare.log("Starting Deep Compare with:", element1, element2)
 
     //// If tag names are not equal, then elements are (obviously) not equal
     debug.deepCompare.log("\t Comparing tag names...")
@@ -514,66 +514,79 @@ function deepCompare(element1, element2){
  * @param {Document} newDom - The DOM in which the `<head>` tag is extracted from
  */
 function bodyInjector(newDom){
+    debug.bodyInjector.log("Starting body injection using:", newDom)
+
     // Grab the current and incoming `<body>` tags
     const currentBody = document.getElementsByTagName("body")[0]
     const incomingBody = newDom.getElementsByTagName("body")[0]
+    debug.headInjector.log("Body injection current body:", currentBody, "incoming body:", incomingBody)
 
     // Grab the children of both the tags
     const currentChildren = Array.from(currentBody.children)
     const incomingChildren = Array.from(incomingBody.children)
+    debug.headInjector.log()
 
     // Grab the sections container for both of the tags
     const currentSectionsContainer = currentBody.getElementsByTagName("slide-scroll")[0]
     const incomingSectionsContainer = incomingBody.getElementsByTagName("slide-scroll")[0]
+    debug.headInjector.log
 
     // Grab the overlay container for both of the tags
     const currentOverlay = currentBody.getElementsByClassName("overlay")[0]
     const incomingOverlay = incomingBody.getElementsByClassName("overlay")[0]
-
+    debug.headInjector.log
+    
     // Extract and grab the scripts for both of the tags
     const currentScripts = scriptExtractor(currentBody)    
     const incomingScripts = scriptExtractor(incomingBody)
-
+    debug.headInjector.log
+    
     // Create a new sections container (this is where both of the incoming and current sections will merge into)
     const newSectionsContainer = document.createElement("slide-scroll")
-    
-    // If the incoming sections container exists
-    if (incomingSectionsContainer != undefined){
-        // Apply the attributes of the container to the new sections container
-        Array.from(incomingSectionsContainer.attributes).forEach(attribute => {
-            newSectionsContainer.setAttribute(attribute.name, attribute.value)
-        });
-    }
+    debug.bodyInjector.log
 
     // Define variables to hold the incoming and current sections
     var incomingSections = []
     var currentSections = []
     
-    // If the incoming sections container exist, grab the sections
+    // If the incoming sections container exist, 
     if (incomingSectionsContainer != undefined){
+        // Apply the attributes of the container to the new sections container
+        debug.bodyInjector.log
+        Array.from(incomingSectionsContainer.attributes).forEach(attribute => {
+            newSectionsContainer.setAttribute(attribute.name, attribute.value)
+        });
+
+        // Grab the sections from the incoming sections container
         incomingSections = Array.from(incomingSectionsContainer.children)
+        debug.bodyInjector.log
     }
 
     // If the current sections container exist, grab the sections
     if (currentSectionsContainer != undefined){
         currentSections = Array.from(currentSectionsContainer.children)
+        debug.bodyInjector.log
     }
 
     // For each of the incoming sections, compare it with each of the current sections
         // Goal is to find equal sections between the incoming and current sections
     incomingSections.forEach((incoming)=>{
+        debug.bodyInjector.log
         let dupeFound = false 
         currentSections.forEach((current)=>{
+            debug.bodyInjector.log
             if (deepCompare(incoming, current)){
                 // If a dupe was found, add the current version into the new merged section, `newSectionsContainer`
                     // Use this version since it has already 'loaded' into memory/the DOM
                         // Easier than reloading the element by adding the incoming version
+                debug.bodyInjector.log
                 dupeFound = true
                 newSectionsContainer.appendChild(current)
             }
         })
         // If a dupe wasn't found, append the incomnig version into the new merged section, `newSectionsContainer`
         if (!dupeFound){
+            debug.bodyInjector.log
             newSectionsContainer.appendChild(incoming)
         }
     })
@@ -581,10 +594,12 @@ function bodyInjector(newDom){
     //// Applying `newSectionsContainer`
     // If `currentSectionsContainer` doesn't exist, simply append the new `newSectionsContainer`
     if (currentSectionsContainer == undefined){
+        debug.bodyInjector.log
         currentBody.appendChild(newSectionsContainer)
     }
     // If `currentSectionsContainer` exists, replace it with the `newSectionsContainer`
     else{
+        debug.bodyInjector.log
         currentSectionsContainer.replaceWith(newSectionsContainer)
     }
 
@@ -594,6 +609,7 @@ function bodyInjector(newDom){
         // And `incomingOverlay` is defined
         if (incomingOverlay != undefined){
             // Simply append the overlay into current DOM
+            debug.bodyInjector.log
             currentBody.appendChild(incomingOverlay)
         }
     }
@@ -602,12 +618,14 @@ function bodyInjector(newDom){
         // And `incomingOverlay` is defined
         if (incomingOverlay != undefined){
             // Replace `currentOverlay` with `incomingOverlay`
+            debug.bodyInjector.log
             currentOverlay.replaceWith(incomingOverlay)
         }
 
         // If `incomingOverlay` is not defined
         else{
             // Remove `currentOverlay`
+            debug.bodyInjector.log
             currentOverlay.remove()
         }
     }
@@ -616,6 +634,7 @@ function bodyInjector(newDom){
     currentChildren.forEach((current)=>{
         if ((current.tagName != "SLIDE-SCROLL") && !(current.classList.contains("overlay")) && (current.tagName != "SCRIPT") ){
             // console.log("remove current", current)
+            debug.bodyInjector.log
             current.remove()
         }
     })
@@ -624,12 +643,15 @@ function bodyInjector(newDom){
     incomingChildren.forEach((incoming)=>{
         if ((incoming.tagName!= "SLIDE-SCROLL") && !(incoming.classList.contains("overlay")) && (incoming.tagName != "SCRIPT")){
             // console.log("add incoming", incoming)
+            debug.bodyInjector.log
             currentBody.appendChild(incoming)
         }
     })
     
     // Append all the scripts from the incoming DOM into the current DOM
     scriptAppender(currentBody,incomingScripts)
+    debug.bodyInjector.log
+    debug.bodyInjector.log
 
 }
 
