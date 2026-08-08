@@ -60,16 +60,16 @@ class VideoCanvasElement extends HTMLElement{
         // Checks if valid
         if (this.#validConfigCheck()){
             // Begin styling component
-            this.style.height = "100%"
-            this.style.width = "100%"
+            this.style.height = "100dvh"
+            this.style.width = "100dvw"
 
             const stylesheet = new CSSStyleSheet()
 
             stylesheet.replaceSync(
                 `
                     canvas {
-                        width: 100%;
-                        height: 100%;
+                        width: 100dvw;
+                        height: 100dvh;
 
                         @media screen and (width <= 1000px) {
                             &.mobile-fill {

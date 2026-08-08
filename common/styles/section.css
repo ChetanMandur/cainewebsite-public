@@ -2,27 +2,27 @@
 .sections-container{
     position: absolute;
     overflow: hidden;
-    width: 100%;
-    height: 100%;
+    width: 100dvw;
+    height: 100dvh;
 }
 
 .section{
-    width:100%;
-    height:100%;
+    width:100dvw;
+    height:100dvh;
     display: flex;
     flex-direction: column;
     position: absolute;
     background-color: black;
     overflow: hidden;
     transition: 0.5s;
-    top:100%;
+    /* top:100%; */
     justify-content: center;
 	align-items: center;
 }
 
 /* SECTION COMMON STYLES */
 .first-section {
-    top:0%
+    top:0dvh
 }
 
 .transparent-background{
@@ -52,8 +52,8 @@
 }
 
 .section > canvas{
-    width: 100%;
-    height: 100%;
+    width: 100dvw;
+    height: 100dvh;
 
     @media screen and (width <= 1000px) {
         &.mobile-fill {

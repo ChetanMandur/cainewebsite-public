@@ -135,13 +135,13 @@ class SlideScrollElement extends HTMLElement{
     #toTheLocation(location, index){
         switch (location) {
             case "TOP":
-                this.#sections[index].style.top="-100%"
+                this.#sections[index].style.top="-100dvh"
                 break;
             case "CENTER":
-                this.#sections[index].style.top="0%"
+                this.#sections[index].style.top="0dvh"
                 break;
             case "BOTTOM":
-                this.#sections[index].style.top="100%"
+                this.#sections[index].style.top="100dvh"
                 break;
             default:
                 break;
