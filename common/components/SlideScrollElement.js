@@ -60,6 +60,10 @@ class SlideScrollElement extends HTMLElement{
         document.addEventListener("keydown", this)
         window.addEventListener("popstate", this)
 
+        // Used to block sections at the bottom
+            // Needed cuz iOS Safari doesn't allow `100%`, `100vh`, `100dvh`, etc to go behind the address bar
+                // Which makes sense from an accessibility standpoint, but annoying for me cuz I need to do something like this 
+                    // (Me acting like this mess of a codebase isn't a mess of a codebase)
         const blocker = document.createElement("div")
         blocker.style.position = "absolute"
         blocker.style.width = "100dvw"
