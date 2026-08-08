@@ -77,13 +77,13 @@
 
             document.getElementById("tongues-enter").addEventListener(
                 "pointerdown", (event)=>{
-                    pageInject("/pages/tongues/tongues.html",false,false)
+                    pageInject("/pages/tongues/tongues.html",{section:0, page:"/pages"})
                 }
             )
 
             document.getElementById("lie2me-enter").addEventListener(
                 "pointerdown", (event)=>{
-                    pageInject("/pages/lie2me",false,false)
+                    pageInject("/pages/lie2me",{section:1,page:"/pages"})
                 }
             )
 

@@ -685,23 +685,35 @@ function bodyInjector(newDom){
  * 
  * This is the main 'injection' function, everything else is just helper functions for this
  * @param {string} page - Local file path to the `HTML` file path
- * @param {boolean} overwriteHead - (Unused) Determined whether to merge or overwrite the `<head>` tag
- * @param {boolean} overwriteBody - (Unused) Determined whether to merge or overwrite the `<body>` tag
- */
-async function pageInject(page, overwriteHead, overwriteBody){
+ * @param {object|boolean} state - The state object that is used in `History.replaceState`. If `false`, then nothing is added to the `History` stack
+ * 
+*/
+async function pageInject(page,state){
+    // Dispatching event to signify that `PageInject` has started
     debug.pageInject.log("Dispatching a `PageInjected` event, with `before = true`")
     document.dispatchEvent((new PageInjectedEvent(true)))
+    
+    // Manipulate `History` stack
+    if (state != false && state != undefined && state != null){
+        debug.pageInject.log("State is defined and not `false`! State is:", state, "\nUpdating history stack!")
+        history.replaceState(state,"","/") // Add state value to current page
+        history.pushState({}, "","/") // New stack entry for the page being traversed to
+    }
+    else{
+        debug.pageInject.log("State is either not defined or is `false`!\nHistory stack is not updating!")
+        history.replaceState(null, "", "/")
+    }
 
+    // Fetch page
     const pageDom = await pageFetch(page)
-    headInjector(pageDom)
 
+    // Inject `<head>` and `<body>`
+    headInjector(pageDom)
     bodyInjector(pageDom)
 
+    // Dispatching event to signify that `PageInject` has ended
     debug.pageInject.log("Dispatching a `PageInjected` event, with `before = false`")
     document.dispatchEvent((new PageInjectedEvent(false)))
-
-    // tagInjector(pageDom, "head",overwriteHead)
-    // tagInjector(pageDom, "body",overwriteBody)
 }
 
 export default pageInject

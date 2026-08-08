@@ -1,5 +1,7 @@
 import Debug from "../functions/Debug.js"
+import pageInject from "../scripts/pageInject.js";
 if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+
 class SlideScrollElement extends HTMLElement{
     static observedAttributes = ["id", "debug"]
     //// Attributes
@@ -56,6 +58,7 @@ class SlideScrollElement extends HTMLElement{
         document.addEventListener("wheel", this)
         document.addEventListener("pointerdown",this)
         document.addEventListener("keydown", this)
+        window.addEventListener("popstate", this)
 
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
@@ -71,6 +74,7 @@ class SlideScrollElement extends HTMLElement{
         document.removeEventListener("wheel", this)
         document.removeEventListener("pointerdown", this)
         document.removeEventListener("keydown", this)
+        window.removeEventListener("popstate", this)
 
         // Since the 'pointerdown' event creates some other event listeners, we need to also destroy them
         // I can use an `AbortController` and do `{signal: controller.signal}`
@@ -98,6 +102,8 @@ class SlideScrollElement extends HTMLElement{
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
         this.scrollHandler()
+
+        document.dispatchEvent((new Event("ScrollCasesSet")))
     }
 
     /**
@@ -112,6 +118,8 @@ class SlideScrollElement extends HTMLElement{
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
         this.scrollHandler()
+
+        document.dispatchEvent((new Event("ScrollCasesSet")))
     }
 
     // -----------------------------------------------------------------
@@ -296,7 +304,75 @@ class SlideScrollElement extends HTMLElement{
             case "keydown":
                 this.#scrollKeyDownEvent(event)
                 break;
+            case "popstate":
+                this.#popstateEvent(event)
+                break
         }
+    }
+
+    /**
+     * Popstate event (ie. when the user traverses the history stack)
+     * 
+     * Since this is a SPA, there is no traditional 'history stack', so we need to handle it ourselves
+     * 
+     * `pageInject` already handles creating a history stack when the proper parameters are given, it is up to the elements/pages to handle stack traversal
+     * 
+     * In this case, it is up to the `<slide-scroll>` element to properly traverse back to the proper section
+     * @param {PopStateEvent} event 
+     */
+    #popstateEvent(event){
+        // Initiate a `pageInject` once a history stack traversal is initated
+            // TBH this part would make more sense in `pageInject` (or anywhere else, since this part is universal with all stack traversal calls)
+                // But after a quick test of moving the logic into `pageInject`, things were breaking
+                    // For future me (or anyone), I think the right call is to:
+                        // - Remove the `{once:true}` for `PageInjected` event (maybe `ScrollCasesSetEvent` too idk)
+                        // - Add an `AbortController` in place (since we want the event to die eventually, ideally after a successful event call)
+                        // - For `PageInjected`, MAKE SURE `.before` IS SET TO `false` BEFORE CONTINUING
+                            // - Right now, it just so happens to be `false` due to timing, so we blessed
+                                // - Another reason why this is held together by duct tape
+        this.#debug.log("Popstate | Event occured! State object:", event.state)
+        pageInject(event.state.page)
+
+        // Check for `PageInjected` event to know when the page has been injected with the stack data
+        document.addEventListener("PageInjected",(pageInjectedEvent)=>{
+            this.#debug.log("Popstate | PageInjected | Event occured! With `before` value:", pageInjectedEvent.before)
+            while (document.readyState == "loading"){
+                this.#debug.log("Popstate | PageInjected | Page is loading...")
+            }
+            // Once the page is loaded and ready
+            if (document.readyState == "complete"){
+                this.#debug.log("Popstate | PageInjected | Page completed loading!")
+
+                // Check when the page has successfully loaded its scroll cases
+                document.addEventListener("ScrollCasesSet", (ScrollCasesSetEvent)=>{
+                    this.#debug.log("Popstate | PageInjected | ScrollCasesSet | Event occured!")
+
+                    const slideScroll = document.getElementsByTagName("slide-scroll")[0]
+                    const sections = Array.from(slideScroll.getElementsByClassName("section"))
+
+                    // Set transitions to `0s` so that the page/section is travelled to without any delay
+                    this.#debug.log("Popstate | PageInjected | ScrollCasesSet | Event is setting all section transitions to `0s`")
+                    sections.forEach((section)=>{
+                        section.style.transition = "0s"
+
+                    })
+                
+                    // Travel to section as defined in history stack
+                    this.#debug.log("Popstate | PageInjected | ScrollCasesSet | Event is setting the current pages `#currentSection` (with `scrollHandler()`) to:", event.state.section)
+                    slideScroll.scrollHandler(event.state.section)
+
+                    // Set transitons back to default values so scroll (and other) animations work as expected
+                        // I put in a `0.1s` timeout since I am tryna beat a race condition and instead of making a proper implementation with events, I'm moving like my ancestors and just YOLO'ing to beat race conditions
+                    setTimeout(()=>{
+                        this.#debug.log("Popstate | PageInjected | ScrollCasesSet | Event is setting all section transitions back to it default value")
+                        sections.forEach((section)=>{
+                            section.style.transition = null
+                        })
+                    },10)
+                    
+                }, {once:true})
+            }
+        }, {once:true})
     }
     
 
