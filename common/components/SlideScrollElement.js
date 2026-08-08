@@ -60,6 +60,15 @@ class SlideScrollElement extends HTMLElement{
         document.addEventListener("keydown", this)
         window.addEventListener("popstate", this)
 
+        const blocker = document.createElement("div")
+        blocker.style.position = "absolute"
+        blocker.style.width = "100dvw"
+        blocker.style.height = "100dvh"
+        blocker.style.backgroundColor = "black"
+        blocker.style.top = "100dvh"
+        blocker.style.zIndex = "9999"
+        document.body.appendChild(blocker)
+
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
         this.#debug.log("Hello from SlideScroll", this.#id+"."+" We currently have", this.#sections)
