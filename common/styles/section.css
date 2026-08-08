@@ -15,7 +15,7 @@
     background-color: black;
     overflow: hidden;
     transition: 0.5s;
-    /* top:100%; */
+    top:100dvh; /* Makes all elements start off screen (ie. at the bottom), without it, all non-starting sections will flash on screen */
     justify-content: center;
 	align-items: center;
 }
