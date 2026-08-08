@@ -402,39 +402,42 @@ class SlideScrollElement extends HTMLElement{
      * Click and Drag Event (For mobile devices)
      * @param {PointerEvent} event  */
     #scrollPointerDownEvent(event){
-        event.preventDefault()
-        // Grabs current pointer position
-        var pointerDownPosition = event.offsetY
-        // Defines new variable to measure pointer displacement from current position
-        var pointerMovePosition = 0
-
-        // Defines + sets new `pointermove` event handler to handle updating `pointerMovePosition`
-        function pointerMove (event) {
+        if ((event.pointerType=="mouse" && event.button == 0) || (event.pointerType == "touch") || (event.pointerType == "pen")){
             event.preventDefault()
+            // Grabs current pointer position
+            var pointerDownPosition = event.offsetY
+            // Defines new variable to measure pointer displacement from current position
+            var pointerMovePosition = 0
 
-            pointerMovePosition = event.offsetY - pointerDownPosition
+            // Defines + sets new `pointermove` event handler to handle updating `pointerMovePosition`
+            function pointerMove (event) {
+                event.preventDefault()
+
+                pointerMovePosition = event.offsetY - pointerDownPosition
+            }
+            document.addEventListener("pointermove", pointerMove)
+
+            // Defines + sets one-off `pointerup` event handler to handle checking if the pointer moved from it's original position
+            document.addEventListener("pointerup", (event)=>{
+                event.preventDefault()
+
+                // If the displacement is negative, register as a scroll up
+                if (pointerMovePosition > 0){
+                    this.#scrollUp()	
+
+                }
+
+                // If the displacement is postive, register as a scroll down
+                else if (pointerMovePosition < 0){
+                    this.#scrollDown()
+
+                }
+
+                // Remove the event listener for `pointermove` as it is no longer needed
+                document.removeEventListener("pointermove", pointerMove)
+            },{once:true})
         }
-        document.addEventListener("pointermove", pointerMove)
-
-        // Defines + sets one-off `pointerup` event handler to handle checking if the pointer moved from it's original position
-        document.addEventListener("pointerup", (event)=>{
-            event.preventDefault()
-
-            // If the displacement is negative, register as a scroll up
-            if (pointerMovePosition > 0){
-                this.#scrollUp()	
-
-            }
-
-            // If the displacement is postive, register as a scroll down
-            else if (pointerMovePosition < 0){
-                this.#scrollDown()
-
-            }
-
-            // Remove the event listener for `pointermove` as it is no longer needed
-            document.removeEventListener("pointermove", pointerMove)
-        },{once:true})
+        
     }
 
     /**
