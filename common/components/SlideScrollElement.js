@@ -60,18 +60,7 @@ class SlideScrollElement extends HTMLElement{
         document.addEventListener("keydown", this)
         window.addEventListener("popstate", this)
 
-        // Used to block sections at the bottom
-            // Needed cuz iOS Safari doesn't allow `100%`, `100vh`, `100dvh`, etc to go behind the address bar
-                // Which makes sense from an accessibility standpoint, but annoying for me cuz I need to do something like this 
-                    // (Me acting like this mess of a codebase isn't a mess of a codebase)
-        const blocker = document.createElement("div")
-        blocker.style.position = "absolute"
-        blocker.style.width = "100dvw"
-        blocker.style.height = "100dvh"
-        blocker.style.backgroundColor = "black"
-        blocker.style.top = "100dvh"
-        blocker.style.zIndex = "9999"
-        document.body.appendChild(blocker)
+        this.classList.add("sections-container")
 
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
@@ -148,13 +137,13 @@ class SlideScrollElement extends HTMLElement{
     #toTheLocation(location, index){
         switch (location) {
             case "TOP":
-                this.#sections[index].style.top="-100dvh"
+                this.#sections[index].style.top="-100%"
                 break;
             case "CENTER":
-                this.#sections[index].style.top="0dvh"
+                this.#sections[index].style.top="0%"
                 break;
             case "BOTTOM":
-                this.#sections[index].style.top="100dvh"
+                this.#sections[index].style.top="100%"
                 break;
             default:
                 break;
