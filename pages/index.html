@@ -78,11 +78,11 @@
 			import pageInject from "/common/scripts/pageInject.js"
             import Debug from "/common/functions/Debug.js"
 
-	        const debug = new Debug(false, "pages-buttons-assigner")
+	        const debugButtons = new Debug(true, "pages-buttons-assigner")
 
             // Grab all the `enter` buttons
             const enterButtons = Array.from(document.querySelectorAll("h1[enter-button]"))
-            debug.log("Enter button elements:", enterButtons)
+            debugButtons.log("Enter button elements:", enterButtons)
 
             // List of all `enter` button links
                 // In order of appearance
@@ -90,14 +90,14 @@
                 "/pages/tongues/tongues.html",
                 "/pages/lie2me"
             ]
-            debug.log("Enter button links:", enterButtonLinks)
+            debugButtons.log("Enter button links:", enterButtonLinks)
 
             // Assigning `pointerdown` events to buttons with links
             for (var i=0; i<enterButtons.length; i++){
                 const currentLink = enterButtonLinks[i]
                 const currentSection = i
 
-                debug.log("\nAssigning link: '" +currentLink+"'\n\nWith section:", currentSection, "\n\nTo button:", enterButtons[i])
+                debugButtons.log("\nAssigning link: '" +currentLink+"'\n\nWith section:", currentSection, "\n\nTo button:", enterButtons[i])
                 enterButtons[i].addEventListener("pointerdown", (event)=>{
                     pageInject(currentLink,{section:currentSection, page:"/pages"})
                 })
@@ -107,7 +107,7 @@
 
         <script type="module">
             import Debug from "/common/functions/Debug.js"
-	        const debug = new Debug(false, "pages-scrollCase-creator")
+	        const debugScrollCases = new Debug(true, "pages-scrollCase-creator")
 
             // Grab `<slide-scroll>` tag
             const slideScroll = document.getElementsByTagName("slide-scroll")[0]
@@ -141,7 +141,7 @@
                 // Top
                 // Moves all sections before the first center section to the top
                 for (var j=0; j < firstCenterSection; j++){
-                    debug.log("section:", currentSection, "top", (j))
+                    debugScrollCases.log("section:", currentSection, "top", (j))
                     scrollCases[currentSection]["top"].push(j)
                 }
                 // // Instead of having a bloated array, we can just do this notation to grab all sections past 0
@@ -152,7 +152,7 @@
                 // Center
                 // Moves the first center section (along with the section right after) to the center
                 for (var j=0; j<=1; j++ ){
-                    debug.log("section:", currentSection, "center", (j+firstCenterSection))
+                    debugScrollCases.log("section:", currentSection, "center", (j+firstCenterSection))
                     scrollCases[currentSection]["center"].push(j+firstCenterSection)
 
                 }
@@ -161,24 +161,24 @@
                 // If not the final (visible) section, move all sections past the `firstCenterSection` (and its partner) to the bottom
                     //  In the format of "{number}+"
                 if (currentSection != (totalSections -1)){
-                    debug.log("section:", currentSection, "bottom", String((2+firstCenterSection))+"+")
+                    debugScrollCases.log("section:", currentSection, "bottom", String((2+firstCenterSection))+"+")
                     scrollCases[currentSection]["bottom"].push(String((2+firstCenterSection))+"+")
                 }
 
-                debug.log("======")
+                debugScrollCases.log("======")
             }
 
 
             // The final section is not visible (or rather, should not be visible), and should instead just move back to the last visible section
-            debug.log("section:", totalSections, "goTo", totalSections-1)
+            debugScrollCases.log("section:", totalSections, "goTo", totalSections-1)
             scrollCases[totalSections] = {
                 "goTo": [totalSections-1]
             }
-            debug.log("======")
+            debugScrollCases.log("======")
 
 
             // Finally, set `scrollCases` to the `<slide-scroll>` tag
-            debug.log("Final scrollCases object:",scrollCases)
+            debugScrollCases.log("Final scrollCases object:",scrollCases)
             slideScroll.scrollCases = scrollCases
 
             const scrollDownButton = document.getElementById("first-page-footer-button")
