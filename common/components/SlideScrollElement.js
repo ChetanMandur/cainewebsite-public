@@ -55,12 +55,18 @@ class SlideScrollElement extends HTMLElement{
         this.#id = this.getAttribute("id")
         this.#debug = new Debug(this.getAttribute("debug") == undefined ? false : true, this.#id == undefined ? "slide-scroll" : ("slide-scroll: "+ this.#id))
 
+        // Styling for the element
+            // Acts as `.sections-container`
+        this.style.position = "absolute"
+        this.style.overflow = "hidden"
+        this.style.width = "100dvw"
+        this.style.height = "100dvh"
+        this.style.overflow = "hidden"
+
         document.addEventListener("wheel", this)
         document.addEventListener("pointerdown",this)
         document.addEventListener("keydown", this)
         window.addEventListener("popstate", this)
-
-        this.classList.add("sections-container")
 
         this.#currentSection = 0
         this.#sections = Array.from(this.getElementsByClassName("section"))
