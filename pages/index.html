@@ -46,6 +46,7 @@
 		    </div>
             <div class="section transparent-background first-section">
                 <h1 
+                    enter-button
                     id="tongues-enter"
                     class="floating-element clickable-element">
                         [TONGUES]
@@ -63,6 +64,7 @@
 
             <div class="section transparent-background">
                 <h1
+                    enter-button
                     id="lie2me-enter"
                     class="floating-element clickable-element">
                         [WON'T YOU (Demos)]
@@ -75,17 +77,19 @@
         <script type="module">
 			import pageInject from "/common/scripts/pageInject.js"
 
-            document.getElementById("tongues-enter").addEventListener(
-                "pointerdown", (event)=>{
-                    pageInject("/pages/tongues/tongues.html",{section:0, page:"/pages"})
-                }
-            )
+            const enterButtons = Array.from(document.querySelectorAll("h1[enter-button]"))
+            const enterButtonLinks = [
+                "/pages/tongues/tongues.html",
+                "/pages/lie2me"
+            ]
 
-            document.getElementById("lie2me-enter").addEventListener(
-                "pointerdown", (event)=>{
-                    pageInject("/pages/lie2me",{section:1,page:"/pages"})
-                }
-            )
+            for (var i=0; i<enterButtons.length; i++){
+                const currentLink = enterButtonLinks[i]
+                const currentSection = i
+                enterButtons[i].addEventListener("pointerdown", (event)=>{
+                    pageInject(currentLink,{section:currentSection, page:"/pages"})
+                })
+            }
 
         </script>
 
