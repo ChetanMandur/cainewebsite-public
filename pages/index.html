@@ -76,16 +76,28 @@
 	
         <script type="module">
 			import pageInject from "/common/scripts/pageInject.js"
+            import Debug from "/common/functions/Debug.js"
 
+	        const debug = new Debug(false, "pages-buttons-assigner")
+
+            // Grab all the `enter` buttons
             const enterButtons = Array.from(document.querySelectorAll("h1[enter-button]"))
+            debug.log("Enter button elements:", enterButtons)
+
+            // List of all `enter` button links
+                // In order of appearance
             const enterButtonLinks = [
                 "/pages/tongues/tongues.html",
                 "/pages/lie2me"
             ]
+            debug.log("Enter button links:", enterButtonLinks)
 
+            // Assigning `pointerdown` events to buttons with links
             for (var i=0; i<enterButtons.length; i++){
                 const currentLink = enterButtonLinks[i]
                 const currentSection = i
+
+                debug.log("\nAssigning link: '" +currentLink+"'\n\nWith section:", currentSection, "\n\nTo button:", enterButtons[i])
                 enterButtons[i].addEventListener("pointerdown", (event)=>{
                     pageInject(currentLink,{section:currentSection, page:"/pages"})
                 })
