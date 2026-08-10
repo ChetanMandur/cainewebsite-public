@@ -14,9 +14,18 @@
 </head>
 <body>
 	<div class="overlay">
-		<h1 class="timer" id="timer"></h1>
+		<countdown-timer debug 
+			date="https://api.securityofgod.com/get/releaseDate/test" 
+			result="https://api.securityofgod.com/get/timerResult/test"
+			delete-speed="200"
+			replace-speed="500"
+			replace-text="TEST"
+		></countdown-timer>
 	</div>
-	<div class="sections-container" id="sections-container">
+	<slide-scroll id="test1" debug>
+		<div class="section">
+			<video-canvas debug src="/pages/album1/assets/videos/test.webm" mobile-fit="cover" desktop-fit="scale-down" quality="high"></video-canvas>
+		</div>
 		<div class="section"> 
 			<!-- <div class="section first-section"> -->
 			<div class="section-link-tree">
@@ -24,6 +33,9 @@
 					test 1 page 1
 				</div>
 			</div>
+			<h1>
+				what is up
+			</h1>
 		</div>
 		<div class="section">
 			<div class="section-link-tree">
@@ -35,50 +47,41 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</slide-scroll>
 	<script type="module">
+		import Debug from "/common/functions/Debug.js"
 
-		import Timer from "/common/scripts/timer.js"
-		const timer = new Timer(
-			// Timer.TenSeconds,
-			"https://api.securityofgod.com/get/releaseDate/test",
-			"https://api.securityofgod.com/get/timerResult/test"
-		)
-		
-		timer.enterHandler = (async (event)=>{
-			/**@type {Response}*/
-			const result = await timer.getResult()
-			if (result != undefined){
-				console.log(await result.text())
-			}
-			else{
+		const debug = new Debug(true, "test1/index.html")
+
+		document.addEventListener("TimerEntered",async (event)=>{
+			debug.log("Event caught!", event)
+			const result = await event.result
+			if (result == undefined){
 				console.log("bruh")
 			}
+			else{
+				console.log(await result.text())
+			}
 		})
-
-		timer.start()
 	</script>
 	<script type="module">
-		import SlideScroll from "/common/scripts/slideScroll.js"
-		const scroll = new SlideScroll("test1")
-		scroll.setScrollFunction((section)=>{
-			switch (section) {
-				case 0:
+		const slideScroll = document.getElementsByTagName("slide-scroll")[0]
+
+		slideScroll.setScrollCases({
+			0:{
+				"top":[],
+				"center":[0],
+				"bottom":[1],
+				"function":()=>{
 					console.log("YO MAMA")
-					scroll.toTheCenter(0)
-					scroll.toTheBottom(1)
-					break;
-				
-				default:
-					scroll.scrollSwitchDefaultCase(section)
-					break;
-			}
+				}
+			},
 		})
 	</script>
 	<script type="module">
 		import pageInject from "/common/scripts/pageInject.js"
 		document.getElementById("wazup-button").addEventListener("pointerdown",(event)=>{
-			pageInject("/pages/lie2me", true, true)
+			pageInject("/pages/album1", true, true)
 		})
 	</script>
 </body>

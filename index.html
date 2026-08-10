@@ -20,15 +20,16 @@
 
 		<meta property="og:url" content="https://securityofgod.com/"/>
 		<meta property="og:image" content="https://securityofgod.mov/common/assets/images/angel_logo.png"/>
-
-		<script type="module" src="/DomContentChangedEvent.js"></script>
 	</head>
 	<body>
 		<!-- Dynamic HTML loading -->
 		<script type="module">
 			import pageInject from "/common/scripts/pageInject.js"
+			import "/common/components/VideoCanvasElement.js"
+			import "/common/components/TimerElement.js"
+			import "/common/components/SlideScrollElement.js"
 			document.addEventListener("DOMContentLoaded", async ()=>{
-				await pageInject("./pages/tongues/tongues.html", false,false)
+				await pageInject("./pages", false,false)
 			})
 		</script>
 	</body>

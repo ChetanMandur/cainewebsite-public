@@ -10,6 +10,17 @@ body{
     overflow-y:hidden;
 }
 
-a{
-    color:black
+h1, h2, h3, h4, h5, h6{
+    width:fit-content;
+    height:fit-content;
+    font-family: monospace;
+    text-align: center;
+    opacity: 50%;
+    color: white;
+    background-color: black;
+}
+
+.clickable-element{
+    pointer-events: visible;
+    cursor: pointer;
 }

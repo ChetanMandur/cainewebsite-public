@@ -19,10 +19,9 @@
 
 
 <body>
-	<div class="sections-container" id="sections-container">
+	<slide-scroll id="tongues">
 		<div class="section first-section">
-			<video class="video-canvas" src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4"></video>
-			<canvas class="video-canvas mobile-contain desktop-fill"></canvas>
+			<video-canvas src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4" mobile-fit="contain" desktop-fit="contain"></video-canvas>
 		</div>
 
 		<div class="section transparent-background first-section">
@@ -43,35 +42,23 @@
 				<a href="https://www.tiktok.com/@securityofg0d">tiktok</a>
 			</div>
 		</div>
-	</div>
+	</slide-scroll>
 
 	<!-- Scroll script -->
 	<script type="module">
-		import SlideScroll from "/common/scripts/slideScroll.js"
-		const scroll = new SlideScroll()
-		scroll.setScrollFunction((section)=>{
-			switch (section) {
-				case 0:
-					scroll.toTheCenter(0)
-					scroll.toTheCenter(1)
-					break;
-				case 1:
-					scroll.scrollHandler(0)
-					break;
-				default:
-					scroll.scrollSwitchDefaultCase(section)
-					break;
+		const container = document.getElementsByTagName("slide-scroll")[0]
+		container.setScrollCases({
+			0:{
+				"top":[],
+				"center":[0,1],
+				"bottom":[]
+			},
+			1:{
+				"top":[],
+				"center":[0,1],
+				"bottom":[]
 			}
 		})
-
-	</script>
-
-
-	<!-- Canvas Script -->
-	<script type="module">
-		import VideoCanvas from "/common/scripts/videoCanvas.js"
-		const videoCanvas = new VideoCanvas("TONGUES")
-		videoCanvas.play()
 	</script>
 
 </body>

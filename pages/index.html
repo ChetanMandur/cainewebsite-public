@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" href="/common/styles/base.css">
+        <link rel="stylesheet" href="/common/styles/base.css">
+        <link rel="stylesheet" href="/common/styles/overlay.css">
+        <link rel="stylesheet" href="/common/styles/section.css">
+        <link rel="stylesheet" href="/common/styles/links.css">
+
+        <style>
+            a{
+                --link-colour: gray;
+                --link-hover-colour: gray;
+            }
+        </style>
+
+		<title>SECURITY OF GOD</title>
+		<link rel="shortcut icon" href="/common/assets/images/angel_logo.png" type="image/x-icon">	
+		<meta name="description" content="SECURITY OF GOD // CAINE NOT CORSO // 2026">
+		<meta name="author" content="CAINE NOT CORSO">
+		<meta name="keywords" content="MUSIC, ARTIST, ART, GOTHIC">
+
+
+		<!-- OPEN GRAPH PROTOCOL -->
+		<meta property="og:title" content="SECURITY OF GOD"/>
+		<meta property="og:type" content="website" />
+		<meta property="og:description " content="SECURITY OF GOD // CAINE NOT CORSO // 2026" />
+
+		<meta property="og:locale" content="en_CA" />
+		<meta property="og:site_name" content="SECURITY OF GOD"/>
+
+		<meta property="og:url" content="https://securityofgod.com/"/>
+		<meta property="og:image" content="https://securityofgod.mov/common/assets/images/angel_logo.png"/>
+
+        <!-- IMPORTS -->
+        <script type="module">
+			import "/common/components/SlideScrollElement.js"
+			import "/common/components/VideoCanvasElement.js"
+			import "/common/components/TimerElement.js"
+		</script>
+	</head>
+	<body>
+		<slide-scroll id="pages">
+            <div class="section first-section">
+			    <video-canvas src="/pages/tongues/assets/videos/tonguesClippedv2Loop.mp4" mobile-fit="contain" desktop-fit="contain"></video-canvas>
+		    </div>
+            <div class="section transparent-background first-section">
+                <h1 
+                    enter-button
+                    id="tongues-enter"
+                    class="floating-element clickable-element">
+                        [TONGUES]
+                        <br>ENTER
+                        <br>(APRIL 21ST 2026)
+                </h1>
+                <div id="first-page-footer" class="section-footer">
+                    <a id="first-page-footer-button">(scroll down)</a>
+                </div>
+            </div>
+
+            <div class="section">
+                <video-canvas src="/pages/lie2me/assets/videos/l2m_mute.mp4" quality="high" mobile-fit="cover" desktop-fit="cover"></video-canvas>
+            </div>
+
+            <div class="section transparent-background">
+                <h1
+                    enter-button
+                    id="lie2me-enter"
+                    class="floating-element clickable-element">
+                        [WON'T YOU (Demos)]
+                        <br>ENTER
+                        <br>(APRIL 3RD 2026) 
+                </h1>
+            </div>
+        </slide-scroll>
+	
+        <script type="module">
+			import pageInject from "/common/scripts/pageInject.js"
+            import Debug from "/common/functions/Debug.js"
+
+	        const debugButtons = new Debug(true, "pages-buttons-assigner")
+
+            // Grab all the `enter` buttons
+            const enterButtons = Array.from(document.querySelectorAll("h1[enter-button]"))
+            debugButtons.log("Enter button elements:", enterButtons)
+
+            // List of all `enter` button links
+                // In order of appearance
+            const enterButtonLinks = [
+                "/pages/tongues/tongues.html",
+                "/pages/lie2me"
+            ]
+            debugButtons.log("Enter button links:", enterButtonLinks)
+
+            // Assigning `pointerdown` events to buttons with links
+            for (var i=0; i<enterButtons.length; i++){
+                const currentLink = enterButtonLinks[i]
+                const currentSection = i
+
+                debugButtons.log("\nAssigning link: '" +currentLink+"'\n\nWith section:", currentSection, "\n\nTo button:", enterButtons[i])
+                enterButtons[i].addEventListener("pointerdown", (event)=>{
+                    pageInject(currentLink,{section:currentSection, page:"/pages"})
+                })
+            }
+
+        </script>
+
+        <script type="module">
+            import Debug from "/common/functions/Debug.js"
+	        const debugScrollCases = new Debug(true, "pages-scrollCase-creator")
+
+            // Grab `<slide-scroll>` tag
+            const slideScroll = document.getElementsByTagName("slide-scroll")[0]
+
+            //// Generating `scrollCases`
+            // Grab all `.section` tags
+            const sections = Array.from(slideScroll.querySelectorAll(".section"))
+
+            // The amount of sections in the final `scrollCases` will be half of the total sections
+                // Since one section will hold the `<VideoCanvasElement>` tag
+                // And the other will hold the link to enter the page
+                // These two, together, will equal one section in `scrollCases`
+            const totalSections = Math.ceil(sections.length / 2)
+
+            // Empty object that will hold all the scroll cases
+            const scrollCases = {}
+
+            // Begin generating cases starting from the first (ie. 0)
+            for (var currentSection=0; currentSection < totalSections; currentSection++){
+                
+                // Define properties for the current section
+                scrollCases[currentSection] = {
+                    "top":[],
+                    "center":[],
+                    "bottom":[],
+                }
+
+                // The first section that will be in the center
+                const firstCenterSection = 2*currentSection
+
+                // Top
+                // Moves all sections before the first center section to the top
+                for (var j=0; j < firstCenterSection; j++){
+                    debugScrollCases.log("section:", currentSection, "top", (j))
+                    scrollCases[currentSection]["top"].push(j)
+                }
+                // // Instead of having a bloated array, we can just do this notation to grab all sections past 0
+                // // This works since if any sections past 0 are in `center` or `bottom` as well as `top`, they will appear there instead  
+                // scrollCases[currentSection]["top"].push("0+")
+
+
+                // Center
+                // Moves the first center section (along with the section right after) to the center
+                for (var j=0; j<=1; j++ ){
+                    debugScrollCases.log("section:", currentSection, "center", (j+firstCenterSection))
+                    scrollCases[currentSection]["center"].push(j+firstCenterSection)
+
+                }
+
+                // Bottom
+                // If not the final (visible) section, move all sections past the `firstCenterSection` (and its partner) to the bottom
+                    //  In the format of "{number}+"
+                if (currentSection != (totalSections -1)){
+                    debugScrollCases.log("section:", currentSection, "bottom", String((2+firstCenterSection))+"+")
+                    scrollCases[currentSection]["bottom"].push(String((2+firstCenterSection))+"+")
+                }
+
+                debugScrollCases.log("======")
+            }
+
+
+            // The final section is not visible (or rather, should not be visible), and should instead just move back to the last visible section
+            debugScrollCases.log("section:", totalSections, "goTo", totalSections-1)
+            scrollCases[totalSections] = {
+                "goTo": [totalSections-1]
+            }
+            debugScrollCases.log("======")
+
+
+            // Finally, set `scrollCases` to the `<slide-scroll>` tag
+            debugScrollCases.log("Final `scrollCases` object:",scrollCases)
+            slideScroll.scrollCases = scrollCases
+
+            const scrollDownButton = document.getElementById("first-page-footer-button")
+            scrollDownButton.addEventListener("pointerup",(event)=>{
+                event.stopPropagation()
+                event.preventDefault()
+                slideScroll.scrollHandler(1)
+            })
+        </script>
+	</body>
+</html>

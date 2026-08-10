@@ -1,10 +1,63 @@
-// Given a source element, find all child <script> tags and return a list of recreated script tags
-    //  Essentially, this is removing <script> tags from the source and adding them to an array which is returned
-        //  The new tags are not a full copy, but contain all key data
+import Debug from "../functions/Debug.js"
+
+const debug = {
+    scriptExtractor: new Debug (false, "PageInject-ScriptExtractor"),
+    scriptAppender: new Debug (false, "PageInject-ScriptAppender"),
+    pageFetch: new Debug (false, "PageInject-PageFetch"),
+    tagInjector: new Debug (false, "PageInject-TagInjector"),
+    headInjector: new Debug (false, "PageInject-HeadInjector"),
+    deepCompare: new Debug (false, "PageInject-DeepCompare"),
+    bodyInjector: new Debug (false, "PageInject-BodyInjector"),
+    pageInject : new Debug (false, "PageInject-PageInject"),
+}
+
+/**
+ * 
+ * Event that is dispatched before and after `pageInject`
+ * 
+ * Event name to listen for is `PageInjected`
+ */
+class PageInjectedEvent extends Event{
+    /**@type {boolean} */
+    #before
+    
+    /**@type {Debug} */
+    #debug
+
+    /**
+     * Need to define whether the event is dispatched before or after `pageInject` 
+     * @param {boolean} before 
+     */
+    constructor(before){
+        super("PageInjected")
+        this.#before = before
+        this.#debug = new Debug (false, "PageInjectedEvent")
+        this.#debug.log("CONSTRUCTED 'PageInjected' EVENT")
+
+    }
+
+    /** Getter function for getting the `before` value */
+    get before(){
+        this.#debug.log("GETTER 'before' INVOKED, RETURNING DATA:", this.#before)
+        return this.#before
+    }
+}
+
+/**
+ * Given a source element, find all child `<script>` tags and return a list of re-created `<script>` tags
+ * 
+ * The re-created tags are not full copies, but rather copies containing all important/attribute data
+ * @param {HTMLElement} source - Element which `<script>` tags are extracted from
+ * @returns {HTMLScriptElement[]} - List of re-created tags
+ */
 function scriptExtractor(source){
+    debug.scriptExtractor.log("Starting script extraction on:", source)
+
     // From source, grab all the script tags (as an array) and prepare the final return array
     const scripts = Array.from(source.getElementsByTagName("script"))
     const extractedScripts = []
+    
+    debug.scriptExtractor.log("\t Grabbed scripts:", scripts)
 
     // For each of the orignal scripts
     scripts.forEach((currentScript)=>{
@@ -20,39 +73,73 @@ function scriptExtractor(source){
         })
         
         // Add the new copy into the return array and remove the original tag from the DOM/source
+        debug.scriptExtractor.log("\t\t Copied", currentScript, "into", newScript)
         extractedScripts.push(newScript)
         currentScript.remove()
 
     })
+
+    debug.scriptExtractor.log("\t Finished extracting scripts:", extractedScripts)
     return extractedScripts
 }
 
-// Given a parent element and an array of <script> tags, append all the tags onto the parent element
+/**
+ * Given a parent element, and an array of `<script>` tags, append all tags into the parent element
+ * @param {HTMLElement} parent - The element in which the tags are appended into 
+ * @param {HTMLScriptElement[]} scripts - The list of `<script>` tags that are to be appended into `parent`
+ * @returns {HTMLElement} - The final `parent` element, with the scripts appended
+ */
 function scriptAppender(parent, scripts){
+    debug.scriptAppender.log("Starting script appending on:", parent, " using the scripts:", scripts)
+    debug.scriptAppender.log("\t Appending scripts...")
     scripts.forEach((currentScript)=>{
         parent.appendChild(currentScript)
+        debug.scriptAppender.log("\t\t Appended:", currentScript)
     })
+
+    debug.scriptAppender.log("\t Added scripts to parent", parent)
     return parent
 }
 
-// Given a (file) path, fetch the HTML data, parse/process it, return processed HTML/DOM
+
+/**
+ * Given a local file path to a `.HTML` file, fetch the data, parse/process it, and return the processed data as a `Document` object (ie. DOM)
+ * 
+ * Essentially, this turns the `.HTML` file into a workable DOM
+ * @param {string} page - Local file path to a `.HTML` file 
+ * @returns {Promise<Document | undefined>} - The file data as a usable DOM
+ */
 async function pageFetch(page) {
+    debug.pageFetch.log("Starting page fetch on:", page)
+
     const pageResponse = await fetch(page)
+
+    debug.pageFetch.log("Page fetch response:", pageResponse)
+
     if (pageResponse.ok){
         // Once successful, grab response data
         const pageResult = await pageResponse.text()
-
-        // Grab <head> and <body> from DOM
-        const mainHead = document.getElementsByTagName("head")[0]
-        const mainBody = document.getElementsByTagName("body")[0]
+        debug.pageFetch.log("Page fetch result data:", pageResult)
         
         // Parse and return the processed fetched HTML
         const domParser = new DOMParser()
-        return domParser.parseFromString(pageResult, "text/html")
+        const domDocument = domParser.parseFromString(pageResult, "text/html") 
+    
+        debug.pageFetch.log("Parsed DOM:", domDocument)
+        return domDocument
     }
 }
 
-// Given a DOM (from DOMParser) and a tag, extract the tag from the given DOM and apply it to the main DOM
+/**
+ * OLD AND NOT CURRENTLY IN USE: Superseded by `bodyInjector()` and `headInjector()`
+ * 
+ * Given a DOM (ie. from `pageFetch`) and a tag name, extract the first matching tag from the DOM and merge/overwrite it into the current DOM
+ * 
+ * Was used to inject `<head>` and `<body>` tags from a DOM into the current DOM
+ * @param {Document} newDom - DOM to extract tag from
+ * @param {string} tag - Tag name to be extracted 
+ * @param {boolean} overwrite - Identify whether or not to overwrite the tag in the current DOM, or simply append the tag to the current DOM's tag
+ */
 function tagInjector(newDom, tag, overwrite){
     // Grab the tags from both the main (place of injection) and newDom (what will be injected)
     const mainDomTag = document.getElementsByTagName(tag)[0]
@@ -76,215 +163,557 @@ function tagInjector(newDom, tag, overwrite){
 }
 
 /**
- * 
- * @param {Document} newDom 
+ * Given a DOM, extract the `<head>` tag and merge it into the current DOM's `<head>` tag
+ * @param {Document} newDom - The DOM in which the `<head>` tag is extracted from
  */
 function headInjector(newDom){
+    debug.headInjector.log("Starting head injection using:", newDom)
+
+    // Grabbing the current and new DOM's `<head>` tag
     const currentHead = document.getElementsByTagName("head")[0]
     const incomingHead = newDom.getElementsByTagName("head")[0]
+    debug.headInjector.log("\t Head injection current head:", currentHead, "incoming head:", incomingHead)
 
-    scriptExtractor(currentHead)
+    // Remove all custom (ie. page specific) style tags
+    debug.headInjector.log("\t Removing style tags from current head...")
+    Array.from(currentHead.children).forEach((current)=>{
+        if ((current.tagName == "STYLE")){
+            debug.headInjector.log("\t\t Removing", current, "from current head")
+            current.remove()
+        }
+    })
+
+    // Strip the current head of its scripts
+    debug.headInjector.log("\t Removing scripts from current head")
+    const currentScripts = scriptExtractor(currentHead)
+
+    // Grab a list of the incoming head's scripts
+    debug.headInjector.log("\t Removing scripts from incoming head")
     const incomingScripts = scriptExtractor(incomingHead)
+    
 
+    // Set up lists of new (and unique) child elements and stylesheet (ie. unique child `<link>` tags)
     var newUniqueChildren = []
+    var newUniqueStylesheetPromises = []
 
-    Array.from(incomingHead.children).forEach((incomingChild)=>{
+    // Grab the current `<body>` tag and make it invisible while `<head>` injection is taking place
+    const currentBody = document.getElementsByTagName("body")[0]
+    currentBody.style.display = "none"
+
+    // Iterate through all the incoming child tags
+    debug.headInjector.log("\t Checking for duplicate children...")
+    for (const incomingChild of incomingHead.children){
+        debug.headInjector.log("\t\t Checking incoming child:", incomingChild)
+        
+        // Signifies whether or not the child element is to be added to the current DOM
         var toAppend = true
 
-        Array.from(currentHead.children).forEach((currentChild)=>{
+        // Iterate through all the current child tags, looking for a match with the current incoming child
+        for (const currentChild of currentHead.children){
+            
+            debug.headInjector.log("\t\t\t Checking current child:", currentChild)
+
+            // Check if tag names between the two children are the same
             if (incomingChild.tagName == currentChild.tagName){
+                debug.headInjector.log("\t\t\t\t Tag names match!", incomingChild.tagName)
+                
+                // Based on the tag name, different criteria need to be met for them to be considered the 'equal'
+                // If they are considered the same, the element will not be added to the current DOM (as it would be considered a duplicate)
                 switch (incomingChild.tagName){
+                    // For `<title>`, only the `innerHTML` content needs to be equal
                     case "TITLE":
+                        debug.headInjector.log("\t\t\t\t Don't append")
                         currentChild.innerHTML = incomingChild.innerHTML
                         toAppend = false
                         break;
 
+                    // Since `<meta>` tags have different purposes, depending on the purpose there are different criteria for 'equal'  
                     case "META":
-                        if (incomingChild.isEqualNode(currentChild)){
+                        // Grabs the `property` attribute
+                        const incomingProperty = incomingChild.getAttribute("property")
+                        const currentProperty = currentChild.getAttribute("property")
+
+                        // If the `property` attribute exists for both children, and they are the same, they are `equal`
+                        if ((incomingProperty == currentProperty) && (incomingProperty != null) && (currentProperty != null)){
+                            debug.headInjector.log("\t\t\t\t Same 'property' value!")
+
+                            //  Grabs the `content` attribute
+                            const incomingContent = incomingChild.getAttribute("content")
+                            const currentContent = currentChild.getAttribute("content")
+                            
+                            // Checks the `content` for each child, if they are not the same, update current child with the value of `incoming`
+                            // Although this would technically make them not 'equal', in this case they are equal regardless of this value
+                            if (incomingContent != currentContent){
+                                currentChild.setAttribute("content", incomingChild.getAttribute("content"))
+                            }
+
+                            debug.headInjector.log("\t\t\t\t It's a match!")
                             toAppend = false
                         }
-                        break;
 
-                    case "LINK":
-                        /**@type {string[]} */
-                        const rel  = incomingChild.rel.split(" ")
-
-                        if (rel.includes("stylesheet")){
+                        // If the `property` attribute doesn't exist for both children, check equality using built-in `isEqualNode` function
+                        else{
                             if (incomingChild.isEqualNode(currentChild)){
+                                debug.headInjector.log("\t\t\t\t It's a match!")
+                                toAppend = false
+                            }
+                        }
+
+                        break;
+                    
+                    // Since `<link>` tags have multiple different purposes, depending on the purpose there are different criteria for 'equal'
+                    case "LINK":
+                        // Since the signifier of the different `<link>` purposes are based on it's `rel` tag value
+                        /**@type {string[]} */
+                        const incomingRel  = incomingChild.rel.split(" ")
+                        /**@type {string[]} */
+                        const currentRel  = currentChild.rel.split(" ")
+
+                        // If the value includes 'stylesheet', a normal `.isEqualNode()` check will suffice
+                        if (incomingRel.includes("stylesheet") && currentRel.includes("stylesheet")){
+                            debug.headInjector.log("\t\t\t\t Both are of type 'stylesheet'")
+                            if (incomingChild.isEqualNode(currentChild)){
+                                debug.headInjector.log("\t\t\t\t It's a match!")
+                                toAppend = false
+                            }
+                        }
+
+                        // If the value includes 'shortcut' & 'icon' in both children
+                        else if (incomingRel.includes("shortcut") && incomingRel.includes("icon")){
+                            if (currentRel.includes("shortcut") && currentRel.includes("icon")){
+                                debug.headInjector.log("\t\t\t\t Both are of type 'shortcut icon'")
+                                
+                                // No matter the result of the equality check, never appeand child
+                                // Instead, check equality using `.isEqualNode()` and then update `.href` accordingly
+                                if (!(incomingChild.isEqualNode(currentChild))){
+                                    currentChild.href = incomingChild.href
+                                }
+                                debug.headInjector.log("\t\t\t\t It's a match!")
                                 toAppend = false
                             }
                         }
                         break;
                         
                     default:
+                        // The default behaviour is to use `isEqualNode()` since it is sufficient enough in nearly all cases
                         // console.log("default", incomingChild.tagName)
+                        if (incomingChild.isEqualNode(currentChild)){
+                            debug.headInjector.log("\t\t\t\t It's a match!")
+                            toAppend = false
+                        }
                         break
                 }
             }
-        })
+            if (toAppend == false){
+                debug.headInjector.log("\t\t\t Match found, no more checks")
+                break
+            }
+            
 
+        }
+
+        // If the incoming child never matches with a current child, add it to a list of elements to add
         if (toAppend){
+            debug.headInjector.log("\t\tAppending incoming child:", incomingChild)
+
             newUniqueChildren.push(incomingChild)
+            // If the incoming child is a `<link>` element, with a 'stylesheet' `rel`/relationship value
+            if (incomingChild.tagName == "LINK"){
+                const rel = incomingChild.rel.split(" ")
+                if (rel.includes("stylesheet")){
+                    debug.headInjector.log("\t\t\t Creating promise....")
+                    // Create a new promise, in a list of promises, that resolves once the stylesheet has fully loaded/applied
+                    newUniqueStylesheetPromises.push(
+                        new Promise(
+                            (resolve)=>{
+                                incomingChild.onload = () =>{
+                                    debug.headInjector.log("\t\t\t\t Resolving promise for:", incomingChild)
+                                    resolve("loaded") //Resolve result value to look for, to indicate a successful load
+                                }
+                            }
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    // After iterating through all the incoming children, try to resolve all the incoming stylesheet promises
+    Promise.allSettled(newUniqueStylesheetPromises).then((results)=>{
+        // Set a variable to distinguish if all the incoming stylesheets have successfully loaded
+        var allGood = true
+        // Iterate through all the promise's results
+        results.forEach((result)=>{
+            // If the promise's resolve result value isn't 'loaded', means the specific stylesheet didn't load successfully
+            // console.log(result.value)
+            if (result.value != "loaded"){
+                allGood = false
+            }
+        })
+        // If all the promises successfully resolved/ if all the stylesheets successfully loaded
+        if (allGood){
+            debug.headInjector.log("\t\t\t\t All promises resolved correctly!")
+            // Set the current body to "block" (ie. make it visable again)
+            currentBody.style.display = "block" 
+        }
+        // If all the promises didn't successfully resolve/ if all the stylesheets didn't load successfully
+        else{
+            // Do something (right now it's just a console log)
+            console.log("something went wrong with the stylesheets")
         }
     })
 
-
+    // Finally, for each incoming new child, append them to the current `<head>` tag
+    debug.headInjector.log("\t Appending new children to current head...")
     newUniqueChildren.forEach((newChild)=>{
+        debug.headInjector.log("\t\t Appending", newChild, "to current head")
         currentHead.appendChild(newChild)
     })
 
     scriptAppender(currentHead,incomingScripts)
 
+    debug.headInjector.log("\t Finished head injection with", newDom)
 }
 
 /**
+ * Given two element, do a 'deep compare' of them to evaluate equality
  * 
- * @param {Element} element1 
- * @param {Element} element2 
- * @returns 
+ * Essentially, this is just a re-implementation of `.isEqualNode()`, but re-written to allow for adjustments on the 'equality' criteria at each step
+ * @param {Element} element1 - The first element to be compared
+ * @param {Element} element2 - The second element to be compared
+ * @returns {boolean} - Whether or not the values are determined to be equal or not
  */
 function deepCompare(element1, element2){
-    // console.log("COMPARING", element1, element2)
+    debug.deepCompare.log("Starting Deep Compare with:", element1, element2)
 
+    //// If tag names are not equal, then elements are (obviously) not equal
+    debug.deepCompare.log("\t Comparing tag names...")
     if (element1.tagName != element2.tagName){
-        // console.log("TAG NAME NOT THE SAME", element1.tagName, element2.tagName)
+        debug.deepCompare.log("\t\tTAG NAME NOT THE SAME", element1.tagName, element2.tagName)
         return false
     }
-
-
-    // console.log("Attributes:",element1.attributes, element2.attributes)
-
-    if (element1.attributes.class.value != element2.attributes.class.value){return false}
+    debug.deepCompare.log("\t\t Tag names match!")
+    
+    //// Based on the tag name, do additional specific check on its equality
+    debug.deepCompare.log("\t Comparing tag attributes...")
+    debug.deepCompare.log("\t\t Element 1 Attributes:",element1.attributes,"\n\t\t Element 2 Attributes",element2.attributes)
     switch(element1.tagName){
+        // For 'VIDEO' and 'VIDEO-CANVAS' elements, need to check if `src` attribute values are equal
         case("VIDEO"):
             if (
                 element1.attributes.src.value != element2.attributes.src.value
-            ){return false}
+            ){debug.deepCompare.log("\t\tSRC VALUE NOT THE SAME"); return false}
             break
         
+        case ("VIDEO-CANVAS"):
+            if (
+                element1.attributes.src.value != element2.attributes.src.value
+            ){debug.deepCompare.log("\t\tSRC VALUE NOT THE SAME");return false}
+            break
         default: break
     }
+    debug.deepCompare.log("\t\t Tag attributes match!")
 
-    if (element1.textContent != element2.textContent){
-        // console.log("MISSING TEXT CONTEXT", element1.textContent, element2.textContent)
+    //// Checks on the element's 'class' value
+    debug.deepCompare.log("\t Comparing class values...")
+    // If they both exist
+    if (element1.attributes.class != undefined && element2.attributes.class != undefined){
+        // Need to check if all (but the ignored) classes are the same
+        // List of classes to ignore
+        const ignoredClasses = ["first-section"]
+
+        // Grab the classes of both the elements (don't include the ignored classes)
+        /**@type {string[]} */
+        var element1Classes = element1.attributes.class.value.split(" ").filter((currentClass)=>{
+            return !(ignoredClasses.includes(currentClass))
+        }) 
+
+        /**@type {string[]} */
+        var element2Classes = element2.attributes.class.value.split(" ").filter((currentClass)=>{
+            return !(ignoredClasses.includes(currentClass))
+        }) 
+        debug.deepCompare.log("\t\t Element 1 (Filtered) Classes:", element1Classes)
+        debug.deepCompare.log("\t\t Element 2 (Filtered) Classes:", element2Classes)
+
+        if (element1Classes.length != element2Classes.length){
+            debug.deepCompare.log("\t\t CLASSES DO NOT MATCH (different class sizes)")
+            debug.deepCompare.log("\t\t\t element1 classes length:", element1Classes)
+            debug.deepCompare.log("\t\t\t element2 classes length:", element2Classes)
+            return false
+        }
+
+        // For each of the classes in the first element
+        for (const element1Class of element1Classes){
+            debug.deepCompare.log("\t\t Checking if '"+ element1Class+ "' from element 1 exists in element 2")
+            var matchFound = false // Indicates if a match has been found
+
+            // For each of the classes in the second element
+            for (const element2Class of element2Classes){
+                // If class names are the same, it's a match
+                debug.deepCompare.log("\t\t\t Checking against: '"+ element2Class + "'")
+                if (element1Class == element2Class){
+                        debug.deepCompare.log("\t\t\t\t A match was found!")
+                        matchFound = true
+                        break
+                }
+                
+            }
+            // If all the element2 classes have been iterated through, and no match was found, that means elements are not the same
+            if (matchFound = false){
+                debug.deepCompare.log("\t\t\t\t No match was found!")
+                debug.deepCompare.log("\t\t CLASSES DO NOT MATCH (missing class)")
+                return false
+            }
+        }
+    }
+    // Checks if only one of the elements contain a 'class' value
+    else if (element1.attributes.class != undefined && element2.attributes.class == undefined){
+        debug.deepCompare.log("\t\t CLASSES DO NOT MATCH (element2 does not have a class attribute)")    
+        return false
+    }
+    else if (element1.attributes.class == undefined && element2.attributes.class != undefined){
+        debug.deepCompare.log("\t\t CLASSES DO NOT MATCH (element1 does not have a class attribute)")
         return false
     }
 
+    debug.deepCompare.log("\t\t Class values match!")
+
+
+    //// Checks the element's `textContext` (with leading and trailing white spaces removed)
+    debug.deepCompare.log("\t Checking element's `textContext`...")
+    if (element1.textContent.trim() != element2.textContent.trim()){
+        debug.deepCompare.log("\t\t MISSING TEXT CONTEXT", element1.textContent, element2.textContent)
+        return false
+    }
+    debug.deepCompare.log("\t\t `textContext` match!")
+
+    //// Obtain a list of both element's children
     const element1Children = Array.from(element1.children)
     const element2Children = Array.from(element2.children)
+    debug.deepCompare.log("\t Checking element children...")
+    debug.deepCompare.log("\t\t element1 children:", element1Children)
+    debug.deepCompare.log("\t\t element2 children:", element2Children)
 
+    // If the length of children are not the same, both elements are not equal
     if (element1Children.length != element2Children.length){
-        // console.log("CHILDREN LENGTH NOT THE SAME", element1Children.length, element2Children.length)
+        debug.deepCompare.log("\t\t\t CHILDREN LENGTHS ARE NOT THE SAME", element1Children.length, element2Children.length)
         return false
     }
 
+    // Start recursively checking all the children
     for (var i=0; i< element1Children.length; i++){
-        // console.log("RUNNING DEEP COMPARE ON CHILDREN:")
+        debug.deepCompare.log("\t\t Running Deep Compare on Children:",element1Children[i],"AND", element2Children[i])
         if ((deepCompare(element1Children[i], element2Children[i])) == false){
+            debug.deepCompare.log("\t ELEMENTS "+"(" , element1 , "," , element2 , ")"+" ARE NOT THE SAME")
             return false
         }
     }
 
-    // console.log("THEY ARE THE SAME", element1, element2)
+    // If everything passes, the elements are the same 
+    debug.deepCompare.log("\t ELEMENTS "+"(" , element1 , "," , element2 , ")"+" ARE THE SAME")
     return true
 }
 
 
 /**
- * 
- * @param {Document} newDom 
+* Given a DOM, extract the `<body>` tag and merge it into the current DOM's `<body>` tag
+ * @param {Document} newDom - The DOM in which the `<head>` tag is extracted from
  */
 function bodyInjector(newDom){
+    debug.bodyInjector.log("Starting body injection using:", newDom)
+
+    // Grab the current and incoming `<body>` tags
     const currentBody = document.getElementsByTagName("body")[0]
     const incomingBody = newDom.getElementsByTagName("body")[0]
+    debug.bodyInjector.log("\t Body injection current body:", currentBody, "incoming body:", incomingBody)
 
+    // Grab the children of both the tags
     const currentChildren = Array.from(currentBody.children)
     const incomingChildren = Array.from(incomingBody.children)
+    debug.bodyInjector.log("\t Grabbed children:")
+    debug.bodyInjector.log("\t\t Current children:", currentChildren)
+    debug.bodyInjector.log("\t\t Incoming children:", incomingChildren)
 
-    const currentSectionsContainer = currentBody.getElementsByClassName("sections-container")[0]
-    const incomingSectionsContainer = incomingBody.getElementsByClassName("sections-container")[0]
+    // Grab the sections container for both of the tags
+    const currentSectionsContainer = currentBody.getElementsByTagName("slide-scroll")[0]
+    const incomingSectionsContainer = incomingBody.getElementsByTagName("slide-scroll")[0]
+    debug.bodyInjector.log("\t Grabbed section containers (ie. <slide-scroll>):")    
+    debug.bodyInjector.log("\t\t Current container:", currentSectionsContainer)
+    debug.bodyInjector.log("\t\t Incoming container:", incomingSectionsContainer)
 
+    // Grab the overlay container for both of the tags
     const currentOverlay = currentBody.getElementsByClassName("overlay")[0]
     const incomingOverlay = incomingBody.getElementsByClassName("overlay")[0]
-
+    debug.bodyInjector.log("\t Grabbed overlays:")
+    debug.bodyInjector.log("\t\t Current overlay:", currentOverlay)
+    debug.bodyInjector.log("\t\t Incoming overlay:", incomingOverlay)
+    
+    // Extract and grab the scripts for both of the tags
     const currentScripts = scriptExtractor(currentBody)    
     const incomingScripts = scriptExtractor(incomingBody)
+    debug.bodyInjector.log("\t Grabbed scripts:")
+    debug.bodyInjector.log("\t\t Grabbed current scripts:", currentScripts)
+    debug.bodyInjector.log("\t\t Grabbed incoming scripts:", incomingScripts)
+    
+    // Create a new sections container (this is where both of the incoming and current sections will merge into)
+    const newSectionsContainer = document.createElement("slide-scroll")
+    debug.bodyInjector.log("\t Created new sections container (ie. <slide-scroll>)")
 
-    const newSections = document.createElement("div")
-    newSections.className = "sections-container"
-
-
+    // Define variables to hold the incoming and current sections
     var incomingSections = []
     var currentSections = []
+    
+    // If the incoming sections container exist, 
     if (incomingSectionsContainer != undefined){
+        // Apply the attributes of the container to the new sections container
+        debug.bodyInjector.log("\t Applying attributes of incoming sections container into new sections container...")
+        Array.from(incomingSectionsContainer.attributes).forEach(attribute => {
+            newSectionsContainer.setAttribute(attribute.name, attribute.value)
+        });
+
+        // Grab the sections from the incoming sections container
         incomingSections = Array.from(incomingSectionsContainer.children)
+        debug.bodyInjector.log("\t Grabbed sections from incoming sections container:", incomingSections)
     }
 
+    // If the current sections container exist, grab the sections
     if (currentSectionsContainer != undefined){
         currentSections = Array.from(currentSectionsContainer.children)
+        debug.bodyInjector.log("\t Grabbed sections from current sections container:", currentSections)
     }
 
-    incomingSections.forEach((incoming)=>{
-        let dupeFound = false
-        currentSections.forEach((current)=>{
+    // For each of the incoming sections, compare it with each of the current sections
+        // Goal is to find equal sections between the incoming and current sections
+    debug.bodyInjector.log("\t Checking for duplicate sections...")
+    for (const incoming of incomingSections){
+        debug.bodyInjector.log("\t\t Checking incoming section:", incoming)
+        let dupeFound = false 
+        for (const current of currentSections){
+            debug.bodyInjector.log("\t\t\t Checking current section:", current)
             if (deepCompare(incoming, current)){
+                // If a dupe was found, add the current version into the new merged section, `newSectionsContainer`
+                    // Use this version since it has already 'loaded' into memory/the DOM
+                        // Easier than reloading the element by adding the incoming version
+                debug.bodyInjector.log("\t\t\t\t Match found! Keeping current version")
                 dupeFound = true
-                newSections.appendChild(current)
+                newSectionsContainer.appendChild(current)
+                break
             }
-        })
-
+        }
+        // If a dupe wasn't found, append the incomnig version into the new merged section, `newSectionsContainer`
         if (!dupeFound){
-            newSections.appendChild(incoming)
+            debug.bodyInjector.log("\t\t\t Match not found! Adding incoming child")
+            newSectionsContainer.appendChild(incoming)
         }
-    })
+    }
 
+    //// Applying `newSectionsContainer`
+    // If `currentSectionsContainer` doesn't exist, simply append the new `newSectionsContainer`
     if (currentSectionsContainer == undefined){
-        currentBody.appendChild(newSections)
+        debug.bodyInjector.log("\t A sections container doesn't exist in current body: appending new sections container to current body")
+        currentBody.appendChild(newSectionsContainer)
     }
+    // If `currentSectionsContainer` exists, replace it with the `newSectionsContainer`
     else{
-        currentSectionsContainer.replaceWith(newSections)
+        debug.bodyInjector.log("\t A sections container exists in current body: replacing with new sections container")
+        currentSectionsContainer.replaceWith(newSectionsContainer)
     }
 
+    //// Applying overlay
+    // If the `currentOverlay` is undefined
     if (currentOverlay == undefined){
+        // And `incomingOverlay` is defined
         if (incomingOverlay != undefined){
+            // Simply append the overlay into current DOM
+            debug.bodyInjector.log("\t A current overlay doesn't exist in the current body: appending incoming overlay")
             currentBody.appendChild(incomingOverlay)
         }
     }
+    // If `currentOverlay` is defined
     else{
+        // And `incomingOverlay` is defined
         if (incomingOverlay != undefined){
-            currentBody.appendChild(incomingOverlay)
+            // Replace `currentOverlay` with `incomingOverlay`
+            debug.bodyInjector.log("\t A current overlay exists in the current body: replacing with incoming overlay")
+            currentOverlay.replaceWith(incomingOverlay)
         }
+
+        // If `incomingOverlay` is not defined
         else{
+            // Remove `currentOverlay`
+            debug.bodyInjector.log("\t A current overlay exists in the current body, but not in the incoming body: removing current overlay")
             currentOverlay.remove()
         }
     }
 
+    // Tags that aren't scroll, overlay, or script in the current DOM are removed from DOM
+    debug.bodyInjector.log("\t Removing additional tags from current body...")
     currentChildren.forEach((current)=>{
-        if (!(current.classList.contains("sections-container")) && !(current.classList.contains("overlay")) && (current.tagName != "SCRIPT") ){
+        if ((current.tagName != "SLIDE-SCROLL") && !(current.classList.contains("overlay")) && (current.tagName != "SCRIPT") ){
             // console.log("remove current", current)
+            debug.bodyInjector.log("\t Removing from current:", current)
             current.remove()
         }
     })
 
+    // Tags that aren't scroll, overlay, or script in the incoming DOM are appended into DOM
+    debug.bodyInjector.log("\t Removing additional tags from incoming body...")
     incomingChildren.forEach((incoming)=>{
-        if (!(incoming.classList.contains("sections-container")) && !(incoming.classList.contains("overlay")) && (incoming.tagName != "SCRIPT")){
-            // console.log("add incoming", incoming)
+        if ((incoming.tagName!= "SLIDE-SCROLL") && !(incoming.classList.contains("overlay")) && (incoming.tagName != "SCRIPT")){
+            debug.bodyInjector.log("\t\t Removing from current:", incoming)
             currentBody.appendChild(incoming)
         }
     })
     
+    // Append all the scripts from the incoming DOM into the current DOM
+    debug.bodyInjector.log("\t Appending incoming scripts...")
     scriptAppender(currentBody,incomingScripts)
 
+    debug.bodyInjector.log("\t Finished body injection with", newDom)
 }
 
-async function pageInject(page, overwriteHead, overwriteBody){
-    const pageDom = await pageFetch(page)
-    headInjector(pageDom)
+/**
+ * Given a local file path to a `HTML` file, merge its contents into the current DOM
+ * 
+ * Works by:
+ * - Fetching the local file from path
+ * - Parse the fetched file with the `DOMParser` interface
+ *      - This turns the file into a usable DOM object (`Document` object)
+ * - The fetched + parsed DOM is then merged into the current DOM
+ *      - First the `<head>` tag is merged
+ *      - Then the `<body>` tag is merged
+ * 
+ * This is the main 'injection' function, everything else is just helper functions for this
+ * @param {string} page - Local file path to the `HTML` file path
+ * @param {object|boolean} state - The state object that is used in `History.replaceState`. If `false`, then nothing is added to the `History` stack
+ * 
+*/
+async function pageInject(page,state){
+    // Dispatching event to signify that `PageInject` has started
+    debug.pageInject.log("Dispatching a `PageInjected` event, with `before = true`")
+    document.dispatchEvent((new PageInjectedEvent(true)))
+    
+    // Manipulate `History` stack
+    if (state != false && state != undefined && state != null){
+        debug.pageInject.log("State is defined and not `false`! State is:", state, "\nUpdating history stack!")
+        history.replaceState(state,"","/") // Add state value to current page
+        history.pushState({}, "","/") // New stack entry for the page being traversed to
+    }
+    else{
+        debug.pageInject.log("State is either not defined or is `false`!\nHistory stack is not updating!")
+        history.replaceState(null, "", "/")
+    }
 
+    // Fetch page
+    const pageDom = await pageFetch(page)
+
+    // Inject `<head>` and `<body>`
+    headInjector(pageDom)
     bodyInjector(pageDom)
 
-    // tagInjector(pageDom, "head",overwriteHead)
-    // tagInjector(pageDom, "body",overwriteBody)
+    // Dispatching event to signify that `PageInject` has ended
+    debug.pageInject.log("Dispatching a `PageInjected` event, with `before = false`")
+    document.dispatchEvent((new PageInjectedEvent(false)))
 }
 
 export default pageInject

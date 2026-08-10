@@ -1,20 +1,14 @@
 /* Section Styles */
-.sections-container{
-    position: absolute;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-}
-
 .section{
     width:100%;
     height:100%;
     display: flex;
+    flex-direction: column;
     position: absolute;
     background-color: black;
     overflow: hidden;
     transition: 0.5s;
-    top:100%;
+    top:100dvh; /* Makes all elements start off screen (ie. at the bottom), without it, all non-starting sections will flash on screen */
     justify-content: center;
 	align-items: center;
 }
@@ -29,46 +23,25 @@
 }
 
 /* SECTION COMMON CHILDREN */
-.section > * { 
-    position: absolute;
-    -webkit-user-drag: none;
+
+.section > * {
     font-family: monospace;
-    white-space: nowrap;
-    user-select: none;
     color: white;
+    white-space: nowrap;
 }
 
-.section > canvas{
-    width: 100%;
-    height: 100%;
+.section > .floating-element{ 
+    position: absolute;
+    -webkit-user-drag: none;
+    user-select: none;
+}
 
-    @media screen and (width <= 1000px) {
-        &.mobile-fill {
-            object-fit:fill;
-        }
-        
-        &.mobile-contain {
-            object-fit:contain;
-        }
-
-        &.mobile-cover {
-            object-fit:cover;
-        }
-    }
-
-    @media screen and (width > 1000px) {
-        &.desktop-fill {
-            object-fit:fill;
-        }
-
-        &.desktop-contain {
-            object-fit:contain;
-        }
-
-        &.desktop-cover {
-            object-fit:cover;
-        }
-    }
+.section > .section-tree {
+    position: absolute;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .section > .mute-button{
@@ -96,9 +69,10 @@
 }
 
 
-
 /* LINK TREE */
 .section > .section-link-tree{
+    color: white;
+    font-family: monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -110,6 +84,7 @@
     padding: 0% 2vw;
     width: 100%;
     box-sizing: border-box;
+    user-select: none;
 
 }
 

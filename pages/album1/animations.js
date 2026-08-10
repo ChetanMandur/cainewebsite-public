@@ -37,6 +37,7 @@ function moveElement(element,{topMax,topMin}, {leftMax,leftMin}){
 // Moving word text
 for (var i=0; i<50;i++){
     const newTextBox = document.createElement("h1")
+    newTextBox.classList.add("floating-element")
     const newTextBoxContent = document.createTextNode(arrayOfWords[Math.floor(Math.random() * arrayOfWords.length )])
     newTextBox.appendChild(newTextBoxContent)
 
@@ -56,6 +57,7 @@ for (var i=0; i<50;i++){
 // Moving number text
 for (var i=0; i<50;i++){
     const newTextBox = document.createElement("h1")
+    newTextBox.classList.add("floating-element")
 
     numberMax = 9999999
     numberMin = 1000000
@@ -80,6 +82,7 @@ for (var i=0; i<50;i++){
 for (var i=0; i<10; i++){
     for (var j=0; j<4;j++){
         const newImage = document.createElement("img")
+        newImage.classList.add("floating-element")
         secondSection.appendChild(newImage)
         
         switch (j) {
@@ -112,23 +115,24 @@ for (var i=0; i<10; i++){
 // Moving eyeball
 for (var i=0; i<10; i++){
     const newImage = document.createElement("img")
-        secondSection.appendChild(newImage)
-        newImage.src = "/pages/album1/assets/images/doodle4.png"
+    newImage.classList.add("floating-element")
+    secondSection.appendChild(newImage)
+    newImage.src = "/pages/album1/assets/images/doodle4.png"
 
-        newImage.style.transform = "rotateZ(" + randomInt(40,-40) +"deg)"
+    newImage.style.transform = "rotateZ(" + randomInt(40,-40) +"deg)"
 
+    moveElement(newImage, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+
+    setInterval(()=>{
         moveElement(newImage, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
+    },3000)
 
-        setInterval(()=>{
-            moveElement(newImage, {topMax:100,topMin:0}, {leftMax:100, leftMin:0} )
-        },3000)
+    setInterval(()=>{
+        newImage.src = "/pages/album1/assets/images/doodle4part2.png"
+        setTimeout(()=>{
+            newImage.src = "/pages/album1/assets/images/doodle4.png"
+        },randomInt(600,50))
 
-        setInterval(()=>{
-            newImage.src = "/pages/album1/assets/images/doodle4part2.png"
-            setTimeout(()=>{
-                newImage.src = "/pages/album1/assets/images/doodle4.png"
-            },randomInt(600,50))
-
-        },randomInt(3000,1000))
+    },randomInt(3000,1000))
 }
 
