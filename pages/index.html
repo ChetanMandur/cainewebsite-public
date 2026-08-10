@@ -94,20 +94,80 @@
         </script>
 
         <script type="module">
+            import Debug from "/common/functions/Debug.js"
+	        const debug = new Debug(false, "pages-scrollCase-creator")
+
+            // Grab `<slide-scroll>` tag
             const slideScroll = document.getElementsByTagName("slide-scroll")[0]
-            slideScroll.scrollCases = {
-                0:{
+
+            //// Generating `scrollCases`
+            // Grab all `.section` tags
+            const sections = Array.from(slideScroll.querySelectorAll(".section"))
+
+            // The amount of sections in the final `scrollCases` will be half of the total sections
+                // Since one section will hold the `<VideoCanvasElement>` tag
+                // And the other will hold the link to enter the page
+                // These two, together, will equal one section in `scrollCases`
+            const totalSections = Math.ceil(sections.length / 2)
+
+            // Empty object that will hold all the scroll cases
+            const scrollCases = {}
+
+            // Begin generating cases starting from the first (ie. 0)
+            for (var currentSection=0; currentSection < totalSections; currentSection++){
+                
+                // Define properties for the current section
+                scrollCases[currentSection] = {
                     "top":[],
-                    "center":[0,1],
-                    "bottom":["2+"]
-                },
-                1:{
-                    "top":[0,1],
-                    "center":[2,3],
-                    "bottom":[]
-                },
-                2:{"goTo":1}
+                    "center":[],
+                    "bottom":[],
+                }
+
+                // The first section that will be in the center
+                const firstCenterSection = 2*currentSection
+
+                // Top
+                // Moves all sections before the first center section to the top
+                for (var j=0; j < firstCenterSection; j++){
+                    debug.log("section:", currentSection, "top", (j))
+                    scrollCases[currentSection]["top"].push(j)
+                }
+                // // Instead of having a bloated array, we can just do this notation to grab all sections past 0
+                // // This works since if any sections past 0 are in `center` or `bottom` as well as `top`, they will appear there instead  
+                // scrollCases[currentSection]["top"].push("0+")
+
+
+                // Center
+                // Moves the first center section (along with the section right after) to the center
+                for (var j=0; j<=1; j++ ){
+                    debug.log("section:", currentSection, "center", (j+firstCenterSection))
+                    scrollCases[currentSection]["center"].push(j+firstCenterSection)
+
+                }
+
+                // Bottom
+                // If not the final (visible) section, move all sections past the `firstCenterSection` (and its partner) to the bottom
+                    //  In the format of "{number}+"
+                if (currentSection != (totalSections -1)){
+                    debug.log("section:", currentSection, "bottom", String((2+firstCenterSection))+"+")
+                    scrollCases[currentSection]["bottom"].push(String((2+firstCenterSection))+"+")
+                }
+
+                debug.log("======")
             }
+
+
+            // The final section is not visible (or rather, should not be visible), and should instead just move back to the last visible section
+            debug.log("section:", totalSections, "goTo", totalSections-1)
+            scrollCases[totalSections] = {
+                "goTo": [totalSections-1]
+            }
+            debug.log("======")
+
+
+            // Finally, set `scrollCases` to the `<slide-scroll>` tag
+            debug.log("Final scrollCases object:",scrollCases)
+            slideScroll.scrollCases = scrollCases
 
             const scrollDownButton = document.getElementById("first-page-footer-button")
             scrollDownButton.addEventListener("pointerup",(event)=>{
