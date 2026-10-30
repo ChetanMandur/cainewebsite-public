@@ -70,7 +70,7 @@ This file provides:
     - When no project is being rolled out, this points to `./pages/index.html`
 
 ### API
-Currently the API is not included in this source code.
+Currently, the API is not included in this source code.
 
 Not for any privacy reason, but because **I made the API using Cloudflare Workers in the web UI, and I have not migrated off of it** (im so dumb)
 
