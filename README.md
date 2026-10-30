@@ -1,8 +1,8 @@
 # CAINE Website
-[cainenotcorso.com](cainenotcorso.com)
-[securityofgod.com](securityofgod.com)
+[cainenotcorso.com](https://cainenotcorso.com)
+[securityofgod.com](https://securityofgod.com)
 [securityofgod.mov](https://securityofgod.net)
-[securityofgod.net](securityofgod.net)
+[securityofgod.net](https://securityofgod.net)
 
 This websites main goal is to promote/tease an upcoming project by CAINE, or (if no project is currently being rolled out), provide a scrollable archive list of past projects with links to their release pages.
 
@@ -68,3 +68,14 @@ This file provides:
 - Loads defined 'starting' page
     - When a project is being rolled out, this points to the projects `index.html`
     - When no project is being rolled out, this points to `./pages/index.html`
+
+### API
+Currently the API is not included in this source code.
+
+Not for any privacy reason, but because **I made the API using Cloudflare Workers in the web UI, and I have not migrated off of it** (im so dumb)
+
+I originally planned to use it as a quick temporary API while I tested things out, but got caught up in project release rollouts to migrate off.
+
+I was going to migrate the code to `Deno`, but they announced they got bought out by Cloudflare and are gonna cease development (what a cruel twist of events)
+
+So for now, the API code is not public. (But trust me, it is nothing special)
