@@ -29,17 +29,17 @@
 
 <body>
 
-<slide-scroll id="lie2me">
+<slide-scroll id="musicvideo">
 	<div id="firstSection" class="section first-section">
 		<video-canvas src="/pages/thedifferencemv/assets/videos/mv.webm" quality="high" mobile-fit="cover" desktop-fit="cover"></video-canvas>
 	</div>
 
 	<div class="section transparent-background first-section" >
-		<a id="l2m-mv-button" style="font-size: xx-large;user-select: none;">WATCH MUSIC VIDEO</a>
-		<div id="l2m-mv-footer" class="section-footer">
-			<a id="l2m-mv-footer-button">(scroll down)</a>
+		<a id="mv-button" style="font-size: xx-large;user-select: none;">WATCH MUSIC VIDEO</a>
+		<div id="mv-footer" class="section-footer">
+			<a id="mv-footer-button">(scroll down)</a>
 		</div>
-		<iframe style="display:none; width: 100%; height:100%" id="l2m-mv-youtube" width="1280px" height="720px" src="https://www.youtube.com/embed/IGTTWm_zGKI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+		<iframe style="display:none; width: 100%; height:100%" id="mv-youtube" width="1280px" height="720px" src="https://www.youtube.com/embed/IGTTWm_zGKI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 	</div>
 
 	<div class="section transparent-background">
@@ -146,22 +146,22 @@
 			"goTo":1
 		}
 	})
-	const l2m_button = document.getElementById("l2m-mv-button")
-	const l2m_youtube = document.getElementById("l2m-mv-youtube")
+	const mv_button = document.getElementById("mv-button")
+	const mv_youtube = document.getElementById("mv-youtube")
 
-	const l2m_footer = document.getElementById("l2m-mv-footer")
-	const l2m_footer_button = document.getElementById("l2m-mv-footer-button")
+	const mv_footer = document.getElementById("mv-footer")
+	const mv_footer_button = document.getElementById("mv-footer-button")
 
 
-	l2m_button.addEventListener("pointerdown",()=>{
-		l2m_button.style.display = "none"
-		l2m_footer.style.display = "none"
-		l2m_footer_button.style.display = "none"
+	mv_button.addEventListener("pointerdown",()=>{
+		mv_button.style.display = "none"
+		mv_footer.style.display = "none"
+		mv_footer_button.style.display = "none"
 
-		l2m_youtube.style.display = "block"
+		mv_youtube.style.display = "block"
 	})
 
-	l2m_footer_button.addEventListener("pointerup",(event)=>{
+	mv_footer_button.addEventListener("pointerup",(event)=>{
 		event.preventDefault()
 		event.stopPropagation()
 		// console.log("hiiii")
